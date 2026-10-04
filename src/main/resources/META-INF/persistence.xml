@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence" version="3.1">
+ <persistence-unit name="tarea3" transaction-type="RESOURCE_LOCAL">
+  <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+  <class>edu.proyecto.model.Estudiante</class>
+  <class>edu.proyecto.model.SesionEstudio</class>
+  <class>edu.proyecto.model.BloquePomodoro</class>
+  <class>edu.proyecto.model.ConfiguracionPomodoro</class>
+  <exclude-unlisted-classes>true</exclude-unlisted-classes>
+  <properties>
+   <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>
+   <property name="jakarta.persistence.jdbc.url" value="jdbc:h2:file:./data/pomora"/>
+   <property name="jakarta.persistence.jdbc.user" value="sa"/>
+   <property name="jakarta.persistence.jdbc.password" value=""/>
+   <property name="hibernate.hbm2ddl.auto" value="update"/>
+   <property name="hibernate.show_sql" value="true"/>
+  </properties>
+ </persistence-unit>
+</persistence>
