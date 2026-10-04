@@ -79,6 +79,6 @@
   <p class="bottom-note"><span>✦</span> No necesitas hacerlo todo ahora. Solo empieza con este bloque.</p>
  </c:otherwise>
  </c:choose>
- <footer class="page-footer"><span>pomora · un espacio para concentrarte</span><span>Un bloque a la vez.</span></footer>
+ <footer class="page-footer"><span>Pomora · un espacio para concentrarte</span><span>Un bloque a la vez.</span></footer>
 </main>
 </body></html>
