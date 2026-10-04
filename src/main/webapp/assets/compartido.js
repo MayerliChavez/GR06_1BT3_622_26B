@@ -3,6 +3,7 @@
  const card = document.getElementById("sharedCard"); if (!card) return;
  let id = card.dataset.session, waiting = card.dataset.waiting === "true", busy = false;
  let remaining = Number(card.dataset.remaining), target = Number(card.dataset.target), sampled = performance.now(), connected = true;
+ let order = Number(card.dataset.order), type = card.dataset.type;
  const message = document.getElementById("sharedConnection");
  function render() {
   if (!id) return;
@@ -20,6 +21,8 @@
    if (!response.ok) throw new Error("No se pudo sincronizar la sesión.");
    const next = await response.json();
    if (next.compartidaId !== id || next.esperando !== waiting) { location.reload(); return; }
+   if (id && next.orden > order) window.PomoraUI?.blockEnded({key:`${id}:${order}`, type});
+   order = next.orden; type = next.tipo; card.dataset.type = type;
    remaining = next.restanteMillis; target = next.objetivoMillis; sampled = performance.now(); connected = true;
    if (id) {
     document.getElementById("sharedOrder").textContent = `BLOQUE ${next.orden}`;

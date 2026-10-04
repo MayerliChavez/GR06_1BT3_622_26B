@@ -6,20 +6,20 @@
  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
  <meta name="theme-color" content="#29243b">
  <title>${esHistorial ? 'Historial' : 'Tu enfoque'} · Pomora</title>
- <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/pomora.css?v=compartida3">
- <script src="${pageContext.request.contextPath}/assets/pomora.js" defer></script>
-</head>
+ <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/pomora.css?v=vida1">
+ <script src="${pageContext.request.contextPath}/assets/pomora.js?v=vida1" defer></script>
+<script src="${pageContext.request.contextPath}/assets/pomora-ui.js?v=vida1" defer></script></head>
 <body>
 <aside class="sidebar">
- <a class="brand" href="${pageContext.request.contextPath}/pomodoro"><img class="brand-logo" width="160" src="${pageContext.request.contextPath}/assets/pomora-logo.png" alt="Pomora"></a>
+ <a class="brand" href="${pageContext.request.contextPath}/pomodoro"><img class="brand-logo" width="160" src="${pageContext.request.contextPath}/assets/pomora-logo-menu.png" alt="Pomora"></a>
  <p class="nav-caption">TU ESPACIO</p>
  <nav aria-label="Navegación principal">
   <a class="nav-link ${!esHistorial ? 'selected' : ''}" href="${pageContext.request.contextPath}/pomodoro"><span aria-hidden="true">◷</span> Temporizador <span class="nav-marker"></span></a>
   <a class="nav-link ${esHistorial ? 'selected' : ''}" href="${pageContext.request.contextPath}/historial"><span aria-hidden="true">▤</span> Historial de estudio</a>
   <a class="nav-link" href="${pageContext.request.contextPath}/compartido"><span aria-hidden="true">♧</span> Estudio compartido</a>
- </nav><form class="logout-form" action="${pageContext.request.contextPath}/salir" method="post"><input type="hidden" name="csrf" value="${csrf}"><button type="submit">Cerrar sesión</button></form>
+ </nav>
  <div class="sidebar-note"><span class="note-symbol">✦</span><p>El progreso empieza<br>con un pequeño paso.</p><span>Haz espacio para lo que importa.</span></div>
- <div class="profile"><span class="avatar">E</span><div><strong><c:out value="${sessionScope.nombreVisible}"/></strong><small>Espacio individual</small></div><span class="online-dot" title="Aplicación local"></span></div>
+ <details class="profile-menu"><summary class="profile" aria-label="Abrir opciones de mi perfil"><span class="avatar">E</span><span class="profile-copy"><strong class="profile-name"><c:out value="${sessionScope.nombreVisible}"/></strong><small>Mi espacio de estudio</small></span><span class="profile-chevron" aria-hidden="true">⌃</span></summary><div class="profile-dropdown"><span class="profile-dropdown-label">TU CUENTA</span><strong><c:out value="${sessionScope.nombreVisible}"/></strong><a href="${pageContext.request.contextPath}/historial">Ver mi historial <span>↗</span></a><form class="logout-form" action="${pageContext.request.contextPath}/salir" method="post"><input type="hidden" name="csrf" value="${csrf}"><button type="submit">Cerrar sesión <span>→</span></button></form></div></details>
 </aside>
 <main class="workspace">
  <header class="topbar"><span>${enSesionCompartida && !esHistorial ? 'SESIÓN COMPARTIDA ACTIVA' : 'POMODORO INDIVIDUAL'}</span><span id="fechaHoy"></span></header>
@@ -71,6 +71,7 @@
     <p class="timer-hint" id="timerHint">${estadoBloque == 'PAUSADO' ? 'Continúa cuando estés listo.' : 'Puedes hacer una pausa cuando lo necesites.'}</p>
     <c:if test="${hayActiva}"><div class="session-actions"><form method="post" action="${pageContext.request.contextPath}/pomodoro"><input type="hidden" name="csrf" value="${csrf}"><input type="hidden" name="sesionId" value="${sesionId}"><button name="accion" value="finalizar" class="text-button">Finalizar sesión</button></form><span>·</span><form method="post" action="${pageContext.request.contextPath}/pomodoro"><input type="hidden" name="csrf" value="${csrf}"><input type="hidden" name="sesionId" value="${sesionId}"><button name="accion" value="abandonar" class="text-button muted">Abandonar</button></form></div></c:if>
     <noscript><p class="connection-message">Activa JavaScript para ver la cuenta regresiva y completar los bloques automáticamente.</p></noscript>
+    <div class="sound-controls"><button class="sound-toggle" type="button" aria-pressed="false">♪ Activar sonido</button><span aria-hidden="true">·</span><button class="sound-preview" type="button">Probar alarma</button></div>
     <p class="connection-message" id="connectionMessage" role="status"></p>
    </section>
    <aside class="focus-aside"><section class="rhythm-card"><span class="card-symbol">✳</span><p class="eyebrow">ENCUENTRA TU RITMO</p><h2>Pequeños bloques.<br>Grandes avances.</h2><p>Concentrarte también significa darte tiempo para descansar.</p><div class="rhythm-step"><span class="step-dot focus-dot"></span><span>Concentración</span><strong>25 min</strong></div><div class="rhythm-step"><span class="step-dot short-dot"></span><span>Descanso corto</span><strong>5 min</strong></div><div class="rhythm-step"><span class="step-dot long-dot"></span><span>Descanso largo</span><strong>15 min</strong></div><small>Un descanso largo cada 4 concentraciones completadas.</small></section>
