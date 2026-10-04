@@ -6,12 +6,12 @@
  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
  <meta name="theme-color" content="#29243b">
  <title>${esHistorial ? 'Historial' : 'Tu enfoque'} · Pomora</title>
- <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/pomora.css">
+ <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/pomora.css?v=compartida3">
  <script src="${pageContext.request.contextPath}/assets/pomora.js" defer></script>
 </head>
 <body>
 <aside class="sidebar">
- <a class="brand" href="${pageContext.request.contextPath}/pomodoro"><span class="brand-icon">p</span>pomora<span class="brand-dot">.</span></a>
+ <a class="brand" href="${pageContext.request.contextPath}/pomodoro"><img class="brand-logo" width="160" src="${pageContext.request.contextPath}/assets/pomora-logo.png" alt="Pomora"></a>
  <p class="nav-caption">TU ESPACIO</p>
  <nav aria-label="Navegación principal">
   <a class="nav-link ${!esHistorial ? 'selected' : ''}" href="${pageContext.request.contextPath}/pomodoro"><span aria-hidden="true">◷</span> Temporizador <span class="nav-marker"></span></a>
@@ -22,7 +22,7 @@
  <div class="profile"><span class="avatar">E</span><div><strong><c:out value="${sessionScope.nombreVisible}"/></strong><small>Espacio individual</small></div><span class="online-dot" title="Aplicación local"></span></div>
 </aside>
 <main class="workspace">
- <header class="topbar"><span>POMODORO INDIVIDUAL</span><span id="fechaHoy"></span></header>
+ <header class="topbar"><span>${enSesionCompartida && !esHistorial ? 'SESIÓN COMPARTIDA ACTIVA' : 'POMODORO INDIVIDUAL'}</span><span id="fechaHoy"></span></header>
  <c:if test="${not empty mensaje}"><div class="notice" role="alert"><c:out value="${mensaje}"/></div></c:if>
  <c:choose>
  <c:when test="${esHistorial}">
@@ -40,6 +40,24 @@
     </c:forEach>
    </tbody></table></div></c:otherwise></c:choose>
   </section>
+ </c:when>
+ <c:when test="${enSesionCompartida}">
+  <div class="shared-notice-layout">
+  <section class="page-heading"><p class="eyebrow">UN MISMO RITMO</p><h1>Estás estudiando en compañía<span>.</span></h1><p>Tu temporizador pertenece a una sesión compartida activa.</p></section>
+  <section class="timer-card shared-session-notice" aria-labelledby="sharedSessionTitle">
+   <span class="shared-session-symbol" aria-hidden="true">♧</span>
+   <h2 id="sharedSessionTitle">Tienes una sesión compartida activa</h2>
+   <p>Consulta el tiempo y a tu compañero en la pantalla de estudio compartido. Aquí volverá a aparecer el temporizador individual cuando salgas de esa sesión.</p>
+   <a class="button primary" href="${pageContext.request.contextPath}/compartido">Volver a mi sesión compartida <span>→</span></a>
+   <p class="timer-hint">Tu sesión sigue en curso.</p>
+  </section>
+  <div class="shared-notice-details" aria-label="Estudiar en compañía">
+   <div><span aria-hidden="true">◷</span><strong>Un ritmo común</strong><p>Concentración y descanso en el mismo momento.</p></div>
+   <div><span aria-hidden="true">♧</span><strong>En buena compañía</strong><p>Comparte el enfoque, cada uno con su propia tarea.</p></div>
+   <div><span aria-hidden="true">▤</span><strong>Tu progreso cuenta</strong><p>Tu tiempo de estudio permanece en tu historial.</p></div>
+  </div>
+  <p class="shared-notice-note">Un poco de compañía. Un bloque a la vez.</p>
+  </div>
  </c:when>
  <c:otherwise>
   <section class="page-heading"><p class="eyebrow">MENOS RUIDO, MÁS ENFOQUE</p><h1>Tu momento de enfoque<span>.</span></h1><p>Una tarea. Un bloque. A tu ritmo.</p></section>
