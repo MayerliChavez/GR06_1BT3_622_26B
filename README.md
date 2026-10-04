@@ -89,4 +89,4 @@ El lanzador usa IPv4 y una ruta inexistente para activar la alternativa TCP inte
 - `src/main/webapp`: JSP, CSS y JavaScript.
 - `src/test/java/edu/proyecto` y `scripts`: pruebas reproducibles.
 
-Repositorio público: [MayerliChavez/GR06_1BT3_622_26B.](https://github.com/MayerliChavez/GR06_1BT3_622_26B.).
+Repositorio público: [MayerliChavez/GR06_1BT3_622_26B](https://github.com/MayerliChavez/GR06_1BT3_622_26B).
