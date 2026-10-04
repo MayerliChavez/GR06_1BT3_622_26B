@@ -1,5 +1,6 @@
 param([string]$BaseUrl = 'http://127.0.0.1:8080')
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'cuentas-prueba.ps1')
 $BaseUrl = $BaseUrl.TrimEnd('/')
 function Assert-Web($Condicion, [string]$Mensaje) {
     if (-not $Condicion) { throw $Mensaje }
@@ -17,7 +18,7 @@ function Post-Accion([string]$Accion, [string]$SesionId, [string]$Token, $Navega
     }
 }
 
-$pagina = Invoke-WebRequest "$BaseUrl/pomodoro" -UseBasicParsing -SessionVariable navegador
+$navegador=Nueva-CuentaPrueba $BaseUrl; $pagina = Invoke-WebRequest "$BaseUrl/pomodoro" -UseBasicParsing -WebSession $navegador
 $csrf = [regex]::Match($pagina.Content, 'data-csrf="([^"]+)"').Groups[1].Value
 Assert-Web ($pagina.StatusCode -eq 200 -and $pagina.Content.Contains('25:00')) 'CU01: inicio muestra 25:00'
 $vacio = Invoke-WebRequest "$BaseUrl/historial" -UseBasicParsing -WebSession $navegador
@@ -44,7 +45,7 @@ $reanudado = $reanudar.Content | ConvertFrom-Json
 Assert-Web ($reanudado.estado -eq 'EN_EJECUCION' -and $reanudado.restanteMillis -le $pausado.restanteMillis) 'CU03: reanuda desde el tiempo conservado'
 $historial = Invoke-WebRequest "$BaseUrl/historial" -UseBasicParsing -WebSession $navegador
 Assert-Web ($historial.Content.Contains('Historial de sesiones') -and $historial.Content.Contains('CONCENTRACION')) 'CU04: sesión y bloques presentes en la tabla JSP'
-$otro = Invoke-WebRequest "$BaseUrl/pomodoro" -UseBasicParsing -SessionVariable otroNavegador
+$otroNavegador=Nueva-CuentaPrueba $BaseUrl; $otro = Invoke-WebRequest "$BaseUrl/pomodoro" -UseBasicParsing -WebSession $otroNavegador
 $otroCsrf = [regex]::Match($otro.Content, 'data-csrf="([^"]+)"').Groups[1].Value
 $ajena = Post-Accion 'pausar' $estado.sesionId $otroCsrf $otroNavegador
 Assert-Web ($ajena.StatusCode -eq 403) 'No se modifica una sesión de otra identidad de navegador'

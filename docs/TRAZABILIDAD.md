@@ -50,7 +50,7 @@ Las clases de pruebas contienen métodos de verificación, no operaciones del pr
 
 ## Entidades y relaciones ORM
 
-Solo `Estudiante`, `SesionEstudio` y `BloquePomodoro` llevan `@Entity`. `ConfiguracionPomodoro` es `@Embeddable`: su ciclo de vida pertenece a la sesión, como exige la composición. No posee id ni tabla independiente. Las tres enumeraciones conservan los valores exactos del diagrama.
+En el alcance original del incremento 1, `Estudiante`, `SesionEstudio` y `BloquePomodoro` llevan `@Entity`; el incremento 2 y la ampliación autorizada añaden las entidades detalladas en INCREMENTO2.md. `ConfiguracionPomodoro` es `@Embeddable`: su ciclo de vida pertenece a la sesión, como exige la composición. No posee id ni tabla independiente. Las tres enumeraciones conservan los valores exactos del diagrama.
 
 Los campos `estudiante`, `configuracion` y `bloques` en `SesionEstudio` materializan las relaciones dibujadas. No se han añadido atributos de negocio independientes. La composición de bloques se guarda mediante cascada y clave foránea; no se añade una entidad intermedia. `RepositorioSesionesJpa`, `PomodoroServlet` y `PersistenceListener` son infraestructura, sin `@Entity`.
 
@@ -63,6 +63,6 @@ Se retiró `Verificacion`, la entidad temporal de prueba del entorno. La aplicac
 - Una sesión sigue ACTIVA cuando su bloque está PAUSADO. Nunca se añade PAUSADA a `EstadoSesion`.
 - `finalizar` cierra la sesión como FINALIZADA; si hay un bloque con tiempo pendiente se cancela, conservando el trabajo realizado. `abandonar` la cierra como ABANDONADA. Solo los bloques de concentración contribuyen a `tiempoEstudiado`, incluidos los minutos efectivamente trabajados en bloques cancelados.
 - El tiempo nunca supera la duración objetivo; completar registra el instante efectivo de vencimiento, aunque la notificación del navegador llegue después.
-- Sin un caso de uso de autenticación se utiliza una identidad anónima por navegador, conservada en una cookie UUID. No es un mecanismo de autenticación: está pensado para este entorno individual local. Borrar cookies genera otra identidad; cambiar de navegador no comparte el historial.
+- La identidad anónima del incremento 1 inicial fue sustituida por la cuenta autenticada del incremento 2. El historial pertenece al Estudiante asociado a CuentaUsuario y puede recuperarse desde otro navegador al ingresar; los registros anónimos anteriores permanecen sin asignarse a nuevas cuentas.
 - Los POST validan un token CSRF y que la sesión corresponda a la identidad del navegador. El servicio serializa las modificaciones en esta única instancia local para impedir dobles inicios entre pestañas. Una instalación con varios servidores necesitaría otra estrategia de concurrencia.
 - El navegador consulta el estado cada 3 segundos; al recargar o regresar a una pestaña vuelve a leer lo guardado. La cuenta visual se calcula con un reloj monotónico. La confirmación y el guardado de la finalización de un bloque se realizan al contactar con el servidor; sin conexión no se inventan transiciones guardadas.

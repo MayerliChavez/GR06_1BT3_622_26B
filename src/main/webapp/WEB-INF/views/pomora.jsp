@@ -16,9 +16,10 @@
  <nav aria-label="Navegación principal">
   <a class="nav-link ${!esHistorial ? 'selected' : ''}" href="${pageContext.request.contextPath}/pomodoro"><span aria-hidden="true">◷</span> Temporizador <span class="nav-marker"></span></a>
   <a class="nav-link ${esHistorial ? 'selected' : ''}" href="${pageContext.request.contextPath}/historial"><span aria-hidden="true">▤</span> Historial de estudio</a>
- </nav>
+  <a class="nav-link" href="${pageContext.request.contextPath}/compartido"><span aria-hidden="true">♧</span> Estudio compartido</a>
+ </nav><form class="logout-form" action="${pageContext.request.contextPath}/salir" method="post"><input type="hidden" name="csrf" value="${csrf}"><button type="submit">Cerrar sesión</button></form>
  <div class="sidebar-note"><span class="note-symbol">✦</span><p>El progreso empieza<br>con un pequeño paso.</p><span>Haz espacio para lo que importa.</span></div>
- <div class="profile"><span class="avatar">E</span><div><strong>Estudiante</strong><small>Espacio individual</small></div><span class="online-dot" title="Aplicación local"></span></div>
+ <div class="profile"><span class="avatar">E</span><div><strong><c:out value="${sessionScope.nombreVisible}"/></strong><small>Espacio individual</small></div><span class="online-dot" title="Aplicación local"></span></div>
 </aside>
 <main class="workspace">
  <header class="topbar"><span>POMODORO INDIVIDUAL</span><span id="fechaHoy"></span></header>

@@ -12,7 +12,12 @@ public class RepositorioSesionesJpa implements RepositorioSesiones {
     @Override public void guardar(SesionEstudio sesion) {
         try (var em = factory.createEntityManager()) {
             var tx = em.getTransaction();
-            try { tx.begin(); em.merge(sesion); tx.commit(); }
+            try {
+                tx.begin();
+                var cuenta = em.find(CuentaUsuario.class, sesion.getEstudiante().getId());
+                if (cuenta != null) sesion.getEstudiante().cambiarNombreVisible(cuenta.getEstudiante().getNombreVisible());
+                em.merge(sesion); tx.commit();
+            }
             catch (RuntimeException e) { if (tx.isActive()) tx.rollback(); throw e; }
         }
     }

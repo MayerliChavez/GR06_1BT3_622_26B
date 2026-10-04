@@ -2,6 +2,7 @@ package edu.proyecto.web;
 
 import edu.proyecto.model.*;
 import edu.proyecto.repository.RepositorioSesiones;
+import edu.proyecto.repository.RepositorioSesionesCompartidas;
 import edu.proyecto.service.ServicioPomodoro;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebServlet;
@@ -49,9 +50,15 @@ public class PomodoroServlet extends HttpServlet {
         var servicio = (ServicioPomodoro) getServletContext().getAttribute("servicioPomodoro");
         var repositorio = (RepositorioSesiones) getServletContext().getAttribute("repositorioSesiones");
         try {
-            synchronized (servicio) {
+            synchronized (getServletContext().getAttribute("servicioCompartido")) { synchronized (servicio) {
                 Instant ahora = Instant.now();
                 String accion = Objects.toString(req.getParameter("accion"), "");
+                var compartidas = (RepositorioSesionesCompartidas) getServletContext().getAttribute("repositorioCompartidas");
+                if (compartidas.buscarAbiertaPorEstudiante(estudianteId).isPresent())
+                    throw new IllegalStateException("Usa la pantalla compartida para gestionar esta sesión sincronizada.");
+                ((edu.proyecto.service.ServicioEstudioCompartido) getServletContext().getAttribute("servicioCompartido")).cancelarEspera(estudianteId);
+                ((PresenciaCompartida) getServletContext().getAttribute("presenciaCompartida")).olvidar(estudianteId);
+                req.getSession().setAttribute("esperando", false);
                 if (accion.equals("iniciar")) {
                     servicio.iniciarSesion(estudianteId,
                             new ConfiguracionPomodoro(Duration.ofMinutes(25), Duration.ofMinutes(5), Duration.ofMinutes(15), 4), ahora);
@@ -72,7 +79,7 @@ public class PomodoroServlet extends HttpServlet {
                         default -> throw new IllegalArgumentException("Acción desconocida.");
                     }
                 }
-            }
+            } }
         } catch (IllegalStateException | IllegalArgumentException e) {
             if ("json".equals(req.getParameter("formato"))) {
                 resp.setStatus(HttpServletResponse.SC_CONFLICT);
@@ -89,27 +96,7 @@ public class PomodoroServlet extends HttpServlet {
     }
 
     private UUID identificarEstudiante(HttpServletRequest req, HttpServletResponse resp) {
-        // Identidad local anónima: el modelo no incluye un caso de uso de autenticación.
-        var session = req.getSession();
-        UUID id = (UUID) session.getAttribute("estudianteId");
-        if (id == null && req.getCookies() != null) {
-            for (Cookie cookie : req.getCookies()) {
-                if (cookie.getName().equals("pomora-estudiante")) {
-                    try { id = UUID.fromString(cookie.getValue()); } catch (IllegalArgumentException ignored) { }
-                    break;
-                }
-            }
-        }
-        if (id == null) id = UUID.randomUUID();
-        session.setAttribute("estudianteId", id);
-        var cookie = new Cookie("pomora-estudiante", id.toString());
-        cookie.setPath(req.getContextPath().isEmpty() ? "/" : req.getContextPath());
-        cookie.setHttpOnly(true);
-        cookie.setSecure(req.isSecure());
-        cookie.setAttribute("SameSite", "Lax");
-        cookie.setMaxAge(60 * 60 * 24 * 365);
-        resp.addCookie(cookie);
-        return id;
+        return IdentidadWeb.estudiante(req, resp);
     }
 
     private String tokenCsrf(HttpServletRequest req) {

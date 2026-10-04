@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
  <modelVersion>4.0.0</modelVersion><groupId>edu.proyecto</groupId><artifactId>GR06_1BT3_622_26B</artifactId><version>1.0-SNAPSHOT</version><packaging>war</packaging>
- <properties><maven.compiler.release>17</maven.compiler.release><project.build.sourceEncoding>UTF-8</project.build.sourceEncoding></properties>
+ <properties><maven.compiler.release>17</maven.compiler.release><project.build.sourceEncoding>UTF-8</project.build.sourceEncoding><pomora.host>127.0.0.1</pomora.host></properties>
  <dependencies>
   <dependency><groupId>jakarta.servlet</groupId><artifactId>jakarta.servlet-api</artifactId><version>6.0.0</version><scope>provided</scope></dependency>
   <dependency><groupId>org.hibernate.orm</groupId><artifactId>hibernate-core</artifactId><version>6.6.58.Final</version></dependency>
@@ -14,6 +14,6 @@
   <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><version>3.14.0</version></plugin>
   <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-war-plugin</artifactId><version>3.4.0</version></plugin>
   <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-surefire-plugin</artifactId><version>3.5.3</version></plugin>
-  <plugin><groupId>org.eclipse.jetty.ee10</groupId><artifactId>jetty-ee10-maven-plugin</artifactId><version>12.0.35</version><configuration><httpConnector><host>127.0.0.1</host><port>8080</port></httpConnector><webApp><contextPath>/</contextPath></webApp></configuration><dependencies><dependency><groupId>org.eclipse.jetty.ee10</groupId><artifactId>jetty-ee10-apache-jsp</artifactId><version>12.0.35</version></dependency></dependencies></plugin>
+  <plugin><groupId>org.eclipse.jetty.ee10</groupId><artifactId>jetty-ee10-maven-plugin</artifactId><version>12.0.35</version><configuration><httpConnector><host>${pomora.host}</host><port>8080</port></httpConnector><webApp><contextPath>/</contextPath></webApp></configuration><dependencies><dependency><groupId>org.eclipse.jetty.ee10</groupId><artifactId>jetty-ee10-apache-jsp</artifactId><version>12.0.35</version></dependency></dependencies></plugin>
  </plugins></build>
 </project>

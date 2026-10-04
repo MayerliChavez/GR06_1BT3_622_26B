@@ -1,4 +1,12 @@
-# Verificación del incremento 1
+# Verificación de la entrega
+
+Estado actual: 18 pruebas Java aprobadas y 34 comprobaciones HTTP (6 de acceso, 13 de estudio compartido y 15 de Pomodoro individual). Se verificaron registro, credenciales incorrectas, CSRF, cierre de sesión y nombres reales en el primer emparejamiento. El metamodelo final tiene seis entidades: Estudiante, SesionEstudio, BloquePomodoro, SesionCompartida, ParticipacionCompartida y CuentaUsuario; ConfiguracionPomodoro es embebida. La compilación final genera el WAR mediante mvnw.cmd package.
+
+Las capturas 06 y 07 muestran el estudio compartido; 08 y 09 muestran ingreso y registro. Los scripts de verificación crean cuentas independientes con credenciales temporales generadas durante la ejecución.
+
+## Registro histórico de verificación del incremento 1
+
+Lo siguiente describe la primera versión y su identidad anónima, sustituida por las cuentas en la entrega actual.
 
 Fecha de comprobación: 3 de octubre de 2026, hora de Colombia.
 

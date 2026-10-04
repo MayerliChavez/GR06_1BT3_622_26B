@@ -103,3 +103,7 @@ El diagrama no especifica multiplicidades ni todos los detalles de ejecución. L
 ## Alcance de esta revisión
 
 Esta auditoría no modifica la aplicación ni el diagrama. Los métodos adicionales siguen presentes. La lista explica la diferencia; documentarlos no hace que el código cumpla el criterio de igualdad estricta. Los auxiliares privados se pueden integrar dentro de las operaciones modeladas; los getters y constructores requieren adaptar sus consumidores. Los constructores sin argumentos corresponden al contrato de instanciación de JPA; Servlet y la implementación concreta del repositorio necesitan infraestructura técnica fuera del dibujo.
+
+## Ampliación de cuentas autorizada
+
+Los métodos originales de ambos diagramas se mantienen. Se incorporaron explícitamente CuentaUsuario y ServicioCuentas.registrar(String, String, String): CuentaUsuario / autenticar(String, String): Optional<CuentaUsuario>, autorizados por la solicitud del usuario de implementar el registro, el inicio de sesión y nombres reales para el compañero. Por ello, la igualdad funcional con el UML aplica a sus clases originales, y estas dos operaciones adicionales se declaran por separado en INCREMENTO2.md.

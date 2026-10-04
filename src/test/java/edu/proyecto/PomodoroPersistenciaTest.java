@@ -74,7 +74,7 @@ class PomodoroPersistenciaTest {
 
     @Test void entidadesRegistradasCoincidenConElDiagrama() {
         var tipos = factory.getMetamodel().getEntities().stream().map(e -> e.getJavaType().getSimpleName()).collect(java.util.stream.Collectors.toSet());
-        assertEquals(Set.of("Estudiante", "SesionEstudio", "BloquePomodoro"), tipos);
+        assertEquals(Set.of("Estudiante", "SesionEstudio", "BloquePomodoro", "SesionCompartida", "ParticipacionCompartida", "CuentaUsuario"), tipos);
         assertEquals(ConfiguracionPomodoro.class, factory.getMetamodel().embeddable(ConfiguracionPomodoro.class).getJavaType());
     }
 }
