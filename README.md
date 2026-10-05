@@ -78,7 +78,10 @@ El lanzador usa IPv4 y una ruta inexistente para activar la alternativa TCP inte
 
 ## Documentación y estructura
 
-- [Informe PDF](output/pdf/Informe_Pomora_GR06_1BT3_622_26B.pdf): implementación, trazabilidad y evidencias.
+- [Informe actualizado en Word](output/word/Informe_Pomora_GR06_1BT3_622_26B.docx): trazabilidad de los siete casos de uso, secuencias del flujo principal, código y evidencias.
+- [Informe actualizado en PDF](output/word/Informe_Pomora_GR06_1BT3_622_26B.pdf): versión de 22 páginas para revisión y entrega.
+- [Modelo de clases actualizado](docs/modelos/incremento2-clases-actualizado.jpg): incluye CuentaUsuario y ServicioCuentas.
+- [Informe PDF anterior](output/pdf/Informe_Pomora_GR06_1BT3_622_26B.pdf): documentación histórica de la implementación.
 - [Trazabilidad del incremento 1](docs/TRAZABILIDAD.md).
 - [Incremento 2 y ampliación de cuentas](docs/INCREMENTO2.md).
 - [Auditoría de métodos](docs/AUDITORIA-METODOS.md).
