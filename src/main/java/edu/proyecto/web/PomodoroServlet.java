@@ -107,6 +107,8 @@ public class PomodoroServlet extends HttpServlet {
     }
 
     private void prepararVista(HttpServletRequest req, UUID estudianteId) {
+        var compartidas = (RepositorioSesionesCompartidas) getServletContext().getAttribute("repositorioCompartidas");
+        req.setAttribute("enSesionCompartida", compartidas.buscarAbiertaPorEstudiante(estudianteId).isPresent());
         var servicio = (ServicioPomodoro) getServletContext().getAttribute("servicioPomodoro");
         var repositorio = (RepositorioSesiones) getServletContext().getAttribute("repositorioSesiones");
         synchronized (servicio) {

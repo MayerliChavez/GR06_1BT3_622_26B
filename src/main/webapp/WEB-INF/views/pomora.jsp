@@ -6,23 +6,23 @@
  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
  <meta name="theme-color" content="#29243b">
  <title>${esHistorial ? 'Historial' : 'Tu enfoque'} · Pomora</title>
- <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/pomora.css">
- <script src="${pageContext.request.contextPath}/assets/pomora.js" defer></script>
-</head>
+ <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/pomora.css?v=vida1">
+ <script src="${pageContext.request.contextPath}/assets/pomora.js?v=vida1" defer></script>
+<script src="${pageContext.request.contextPath}/assets/pomora-ui.js?v=vida1" defer></script></head>
 <body>
 <aside class="sidebar">
- <a class="brand" href="${pageContext.request.contextPath}/pomodoro"><span class="brand-icon">p</span>pomora<span class="brand-dot">.</span></a>
+ <a class="brand" href="${pageContext.request.contextPath}/pomodoro"><img class="brand-logo" width="160" src="${pageContext.request.contextPath}/assets/pomora-logo-menu.png" alt="Pomora"></a>
  <p class="nav-caption">TU ESPACIO</p>
  <nav aria-label="Navegación principal">
   <a class="nav-link ${!esHistorial ? 'selected' : ''}" href="${pageContext.request.contextPath}/pomodoro"><span aria-hidden="true">◷</span> Temporizador <span class="nav-marker"></span></a>
   <a class="nav-link ${esHistorial ? 'selected' : ''}" href="${pageContext.request.contextPath}/historial"><span aria-hidden="true">▤</span> Historial de estudio</a>
   <a class="nav-link" href="${pageContext.request.contextPath}/compartido"><span aria-hidden="true">♧</span> Estudio compartido</a>
- </nav><form class="logout-form" action="${pageContext.request.contextPath}/salir" method="post"><input type="hidden" name="csrf" value="${csrf}"><button type="submit">Cerrar sesión</button></form>
- <div class="sidebar-note"><span class="note-symbol">✦</span><p>El progreso empieza<br>con un pequeño paso.</p><span>Haz espacio para lo que importa.</span></div>
- <div class="profile"><span class="avatar">E</span><div><strong><c:out value="${sessionScope.nombreVisible}"/></strong><small>Espacio individual</small></div><span class="online-dot" title="Aplicación local"></span></div>
+ </nav>
+ <div class="sidebar-note"><img class="custom-note-icon" src="${pageContext.request.contextPath}/assets/mi_icono_pomodora.png" alt="Pomora"><p>El progreso empieza<br>con un pequeño paso.</p><span>Haz espacio para lo que importa.</span></div>
+ <details class="profile-menu"><summary class="profile" aria-label="Abrir opciones de mi perfil"><span class="avatar">E</span><span class="profile-copy"><strong class="profile-name"><c:out value="${sessionScope.nombreVisible}"/></strong><small>Mi espacio de estudio</small></span><span class="profile-chevron" aria-hidden="true">⌃</span></summary><div class="profile-dropdown"><span class="profile-dropdown-label">TU CUENTA</span><strong><c:out value="${sessionScope.nombreVisible}"/></strong><a href="${pageContext.request.contextPath}/historial">Ver mi historial <span>↗</span></a><form class="logout-form" action="${pageContext.request.contextPath}/salir" method="post"><input type="hidden" name="csrf" value="${csrf}"><button type="submit">Cerrar sesión <span>→</span></button></form></div></details>
 </aside>
 <main class="workspace">
- <header class="topbar"><span>POMODORO INDIVIDUAL</span><span id="fechaHoy"></span></header>
+ <header class="topbar"><span>${enSesionCompartida && !esHistorial ? 'SESIÓN COMPARTIDA ACTIVA' : 'POMODORO INDIVIDUAL'}</span><span id="fechaHoy"></span></header>
  <c:if test="${not empty mensaje}"><div class="notice" role="alert"><c:out value="${mensaje}"/></div></c:if>
  <c:choose>
  <c:when test="${esHistorial}">
@@ -41,6 +41,24 @@
    </tbody></table></div></c:otherwise></c:choose>
   </section>
  </c:when>
+ <c:when test="${enSesionCompartida}">
+  <div class="shared-notice-layout">
+  <section class="page-heading"><p class="eyebrow">UN MISMO RITMO</p><h1>Estás estudiando en compañía<span>.</span></h1><p>Tu temporizador pertenece a una sesión compartida activa.</p></section>
+  <section class="timer-card shared-session-notice" aria-labelledby="sharedSessionTitle">
+   <span class="shared-session-symbol" aria-hidden="true">♧</span>
+   <h2 id="sharedSessionTitle">Tienes una sesión compartida activa</h2>
+   <p>Consulta el tiempo y a tu compañero en la pantalla de estudio compartido. Aquí volverá a aparecer el temporizador individual cuando salgas de esa sesión.</p>
+   <a class="button primary" href="${pageContext.request.contextPath}/compartido">Volver a mi sesión compartida <span>→</span></a>
+   <p class="timer-hint">Tu sesión sigue en curso.</p>
+  </section>
+  <div class="shared-notice-details" aria-label="Estudiar en compañía">
+   <div><span aria-hidden="true">◷</span><strong>Un ritmo común</strong><p>Concentración y descanso en el mismo momento.</p></div>
+   <div><span aria-hidden="true">♧</span><strong>En buena compañía</strong><p>Comparte el enfoque, cada uno con su propia tarea.</p></div>
+   <div><span aria-hidden="true">▤</span><strong>Tu progreso cuenta</strong><p>Tu tiempo de estudio permanece en tu historial.</p></div>
+  </div>
+  <p class="shared-notice-note">Un poco de compañía. Un bloque a la vez.</p>
+  </div>
+ </c:when>
  <c:otherwise>
   <section class="page-heading"><p class="eyebrow">MENOS RUIDO, MÁS ENFOQUE</p><h1>Tu momento de enfoque<span>.</span></h1><p>Una tarea. Un bloque. A tu ritmo.</p></section>
   <div class="focus-layout">
@@ -53,6 +71,7 @@
     <p class="timer-hint" id="timerHint">${estadoBloque == 'PAUSADO' ? 'Continúa cuando estés listo.' : 'Puedes hacer una pausa cuando lo necesites.'}</p>
     <c:if test="${hayActiva}"><div class="session-actions"><form method="post" action="${pageContext.request.contextPath}/pomodoro"><input type="hidden" name="csrf" value="${csrf}"><input type="hidden" name="sesionId" value="${sesionId}"><button name="accion" value="finalizar" class="text-button">Finalizar sesión</button></form><span>·</span><form method="post" action="${pageContext.request.contextPath}/pomodoro"><input type="hidden" name="csrf" value="${csrf}"><input type="hidden" name="sesionId" value="${sesionId}"><button name="accion" value="abandonar" class="text-button muted">Abandonar</button></form></div></c:if>
     <noscript><p class="connection-message">Activa JavaScript para ver la cuenta regresiva y completar los bloques automáticamente.</p></noscript>
+    <div class="sound-controls"><button class="sound-toggle" type="button" aria-pressed="false">♪ Activar sonido</button></div>
     <p class="connection-message" id="connectionMessage" role="status"></p>
    </section>
    <aside class="focus-aside"><section class="rhythm-card"><span class="card-symbol">✳</span><p class="eyebrow">ENCUENTRA TU RITMO</p><h2>Pequeños bloques.<br>Grandes avances.</h2><p>Concentrarte también significa darte tiempo para descansar.</p><div class="rhythm-step"><span class="step-dot focus-dot"></span><span>Concentración</span><strong>25 min</strong></div><div class="rhythm-step"><span class="step-dot short-dot"></span><span>Descanso corto</span><strong>5 min</strong></div><div class="rhythm-step"><span class="step-dot long-dot"></span><span>Descanso largo</span><strong>15 min</strong></div><small>Un descanso largo cada 4 concentraciones completadas.</small></section>
@@ -61,6 +80,6 @@
   <p class="bottom-note"><span>✦</span> No necesitas hacerlo todo ahora. Solo empieza con este bloque.</p>
  </c:otherwise>
  </c:choose>
- <footer class="page-footer"><span>pomora · un espacio para concentrarte</span><span>Un bloque a la vez.</span></footer>
+ <footer class="page-footer"><span>Pomora · un espacio para concentrarte</span><span>Un bloque a la vez.</span></footer>
 </main>
 </body></html>

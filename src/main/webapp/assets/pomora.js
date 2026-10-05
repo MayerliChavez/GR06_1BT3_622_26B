@@ -22,6 +22,9 @@
  }
 
  function apply(next) {
+  if (next.sesionId === state.sesionId && next.orden === state.orden && next.estado === "COMPLETADO" && state.estado !== "COMPLETADO") {
+   window.PomoraUI?.blockEnded({key:`${state.sesionId}:${state.orden}`, type:state.tipo});
+  }
   const changed = next.estado !== state.estado || next.sesionId !== state.sesionId || next.orden !== state.orden;
   // Una acción realizada en otra pestaña debe actualizar también los formularios de cierre.
   if (next.sesionId !== state.sesionId) { window.location.reload(); return; }
