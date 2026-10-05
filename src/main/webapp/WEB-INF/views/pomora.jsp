@@ -18,7 +18,7 @@
   <a class="nav-link ${esHistorial ? 'selected' : ''}" href="${pageContext.request.contextPath}/historial"><span aria-hidden="true">▤</span> Historial de estudio</a>
   <a class="nav-link" href="${pageContext.request.contextPath}/compartido"><span aria-hidden="true">♧</span> Estudio compartido</a>
  </nav>
- <div class="sidebar-note"><span class="note-symbol">✦</span><p>El progreso empieza<br>con un pequeño paso.</p><span>Haz espacio para lo que importa.</span></div>
+ <div class="sidebar-note"><img class="custom-note-icon" src="${pageContext.request.contextPath}/assets/mi_icono_pomodora.png" alt="Pomora"><p>El progreso empieza<br>con un pequeño paso.</p><span>Haz espacio para lo que importa.</span></div>
  <details class="profile-menu"><summary class="profile" aria-label="Abrir opciones de mi perfil"><span class="avatar">E</span><span class="profile-copy"><strong class="profile-name"><c:out value="${sessionScope.nombreVisible}"/></strong><small>Mi espacio de estudio</small></span><span class="profile-chevron" aria-hidden="true">⌃</span></summary><div class="profile-dropdown"><span class="profile-dropdown-label">TU CUENTA</span><strong><c:out value="${sessionScope.nombreVisible}"/></strong><a href="${pageContext.request.contextPath}/historial">Ver mi historial <span>↗</span></a><form class="logout-form" action="${pageContext.request.contextPath}/salir" method="post"><input type="hidden" name="csrf" value="${csrf}"><button type="submit">Cerrar sesión <span>→</span></button></form></div></details>
 </aside>
 <main class="workspace">
