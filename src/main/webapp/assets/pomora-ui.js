@@ -36,18 +36,13 @@
   });
  }
  // Los navegadores requieren una interacción antes de reproducir audio.
- const initialGesture = event => { if (enabled && !event.target.closest?.(".sound-toggle,.sound-preview")) unlock(); };
+ const initialGesture = event => { if (enabled && !event.target.closest?.(".sound-toggle")) unlock(); };
  document.addEventListener("pointerdown", initialGesture, {once:true});
  document.addEventListener("keydown", initialGesture, {once:true});
  soundButtons.forEach(button => button.addEventListener("click", async () => {
   if (enabled && ready) { enabled = false; }
   else { enabled = true; if (!await unlock()) toast("El navegador no permitió activar el audio."); }
   write("pomora-sound", enabled ? "on" : "off"); soundLabels();
- }));
- document.querySelectorAll(".sound-preview").forEach(button => button.addEventListener("click", async () => {
-  enabled = true; write("pomora-sound", "on");
-  if (await unlock()) { chime(); toast("Así sonará el final de cada bloque."); }
-  else toast("El navegador no permitió activar el audio.");
  }));
  soundLabels();
  const played = new Set();
