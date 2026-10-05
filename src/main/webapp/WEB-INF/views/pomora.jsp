@@ -71,7 +71,7 @@
     <p class="timer-hint" id="timerHint">${estadoBloque == 'PAUSADO' ? 'Continúa cuando estés listo.' : 'Puedes hacer una pausa cuando lo necesites.'}</p>
     <c:if test="${hayActiva}"><div class="session-actions"><form method="post" action="${pageContext.request.contextPath}/pomodoro"><input type="hidden" name="csrf" value="${csrf}"><input type="hidden" name="sesionId" value="${sesionId}"><button name="accion" value="finalizar" class="text-button">Finalizar sesión</button></form><span>·</span><form method="post" action="${pageContext.request.contextPath}/pomodoro"><input type="hidden" name="csrf" value="${csrf}"><input type="hidden" name="sesionId" value="${sesionId}"><button name="accion" value="abandonar" class="text-button muted">Abandonar</button></form></div></c:if>
     <noscript><p class="connection-message">Activa JavaScript para ver la cuenta regresiva y completar los bloques automáticamente.</p></noscript>
-    <div class="sound-controls"><button class="sound-toggle" type="button" aria-pressed="false">♪ Activar sonido</button><span aria-hidden="true">·</span><button class="sound-preview" type="button">Probar alarma</button></div>
+    <div class="sound-controls"><button class="sound-toggle" type="button" aria-pressed="false">♪ Activar sonido</button></div>
     <p class="connection-message" id="connectionMessage" role="status"></p>
    </section>
    <aside class="focus-aside"><section class="rhythm-card"><span class="card-symbol">✳</span><p class="eyebrow">ENCUENTRA TU RITMO</p><h2>Pequeños bloques.<br>Grandes avances.</h2><p>Concentrarte también significa darte tiempo para descansar.</p><div class="rhythm-step"><span class="step-dot focus-dot"></span><span>Concentración</span><strong>25 min</strong></div><div class="rhythm-step"><span class="step-dot short-dot"></span><span>Descanso corto</span><strong>5 min</strong></div><div class="rhythm-step"><span class="step-dot long-dot"></span><span>Descanso largo</span><strong>15 min</strong></div><small>Un descanso largo cada 4 concentraciones completadas.</small></section>
@@ -80,6 +80,6 @@
   <p class="bottom-note"><span>✦</span> No necesitas hacerlo todo ahora. Solo empieza con este bloque.</p>
  </c:otherwise>
  </c:choose>
- <footer class="page-footer"><span>pomora · un espacio para concentrarte</span><span>Un bloque a la vez.</span></footer>
+ <footer class="page-footer"><span>Pomora · un espacio para concentrarte</span><span>Un bloque a la vez.</span></footer>
 </main>
 </body></html>

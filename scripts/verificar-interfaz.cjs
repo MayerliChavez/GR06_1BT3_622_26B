@@ -4,7 +4,7 @@ const asset = file => fs.readFileSync(path.join(__dirname, '../src/main/webapp/a
 const node = () => ({dataset:{},style:{setProperty(){}},classList:{add(){},remove(){},toggle(){}},setAttribute(){},append(){},addEventListener(){},textContent:'',value:''});
 async function audioTest() {
  const handlers={}, buttons={}, storage=new Map(), notes=[], levels=[];
- const toggle=node(), preview=node(); toggle.addEventListener=(name,fn)=>buttons.toggle=fn; preview.addEventListener=(name,fn)=>buttons.preview=fn;
+ const toggle=node(); toggle.addEventListener=(name,fn)=>buttons.toggle=fn;
  class Audio {
   constructor(){this.state='suspended';this.currentTime=0;this.destination={};}
   async resume(){this.state='running';}
@@ -12,13 +12,13 @@ async function audioTest() {
   createGain(){return {gain:{setValueAtTime(){},linearRampToValueAtTime(value){levels.push(value);},exponentialRampToValueAtTime(){}},connect(){},disconnect(){}};}
  }
  const context={window:{AudioContext:Audio},matchMedia:()=>({matches:true}),localStorage:{getItem:key=>storage.get(key)??null,setItem:(k,v)=>storage.set(k,v)},setTimeout(){},clearTimeout(){},
-  document:{body:{append(){}},createElement:node,addEventListener:(n,f)=>handlers[n]=f,querySelectorAll:selector=>selector==='.sound-toggle'?[toggle]:selector==='.sound-preview'?[preview]:[]}};
+  document:{body:{append(){}},createElement:node,addEventListener:(n,f)=>handlers[n]=f,querySelectorAll:selector=>selector==='.sound-toggle'?[toggle]:[]}};
  vm.runInNewContext(asset('pomora-ui.js'),context);
- await buttons.preview(); assert.equal(notes.length,3); assert.equal(toggle.textContent,'♪ Sonido activo');
- context.window.PomoraUI.blockEnded({key:'individual:1',type:'CONCENTRACION'}); assert.equal(notes.length,6);
- context.window.PomoraUI.blockEnded({key:'individual:1',type:'CONCENTRACION'}); assert.equal(notes.length,6);
- context.window.PomoraUI.blockEnded({key:'compartida:2',type:'DESCANSO_CORTO'}); assert.equal(notes.length,9);
- await buttons.toggle(); context.window.PomoraUI.blockEnded({key:'compartida:3',type:'DESCANSO_LARGO'}); assert.equal(notes.length,9);
+ await buttons.toggle(); assert.equal(notes.length,0); assert.equal(toggle.textContent,'♪ Sonido activo');
+ context.window.PomoraUI.blockEnded({key:'individual:1',type:'CONCENTRACION'}); assert.equal(notes.length,3);
+ context.window.PomoraUI.blockEnded({key:'individual:1',type:'CONCENTRACION'}); assert.equal(notes.length,3);
+ context.window.PomoraUI.blockEnded({key:'compartida:2',type:'DESCANSO_CORTO'}); assert.equal(notes.length,6);
+ await buttons.toggle(); context.window.PomoraUI.blockEnded({key:'compartida:3',type:'DESCANSO_LARGO'}); assert.equal(notes.length,6);
  assert.ok(levels.every(level=>level<=.06));
  console.log('OK: alarma de tres notas, concentración y descanso, volumen suave, silencio y ausencia de duplicados');
 }
