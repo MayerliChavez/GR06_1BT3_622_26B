@@ -57,15 +57,17 @@ public class SesionCompartida {
     }
 
     public void registrarSalida(UUID estudianteId, MotivoSalida motivo, Instant ahora) {
-        var participante = participaciones.stream().filter(p -> p.getEstudiante().getId().equals(estudianteId))
-                .findFirst().orElseThrow(() -> new IllegalArgumentException("El estudiante no pertenece a esta sesión."));
+        var participante = participaciones.stream()
+                .filter(p -> p.getEstudiante().getId().equals(estudianteId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "El estudiante no pertenece a esta sesión."));
         if (!participante.estaPresente()) return;
         Objects.requireNonNull(motivo);
         avanzarSiCorresponde(ahora);
-        if (motivo == MotivoSalida.VOLUNTARIA) participante.getSesionEstudio().finalizar(ahora);
-        else participante.getSesionEstudio().abandonar(ahora);
         participante.registrarSalida(motivo, ahora);
-        if (participaciones.stream().noneMatch(ParticipacionCompartida::estaPresente)) finalizar(ahora);
+        if (participaciones.stream().noneMatch(ParticipacionCompartida::estaPresente))
+            finalizar(ahora);
     }
 
     public Optional<Duration> tiempoRestanteBloqueActual(Instant ahora) {

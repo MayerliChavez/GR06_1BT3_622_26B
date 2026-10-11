@@ -24,13 +24,22 @@ public class ParticipacionCompartida {
         this.fechaInicio = sesionEstudio.getFechaInicio();
     }
     public boolean estaPresente() { return fechaFin == null; }
+
     public void registrarSalida(MotivoSalida motivo, Instant ahora) {
-        Objects.requireNonNull(motivo); Objects.requireNonNull(ahora);
-        if (!estaPresente()) throw new IllegalStateException("La participación ya está cerrada.");
-        if (ahora.isBefore(fechaInicio)) throw new IllegalArgumentException("La fecha no puede retroceder.");
+        Objects.requireNonNull(motivo);
+        Objects.requireNonNull(ahora);
+        if (!estaPresente())
+            throw new IllegalStateException("La participación ya está cerrada.");
+        if (ahora.isBefore(fechaInicio))
+            throw new IllegalArgumentException("La fecha no puede retroceder.");
+        if (motivo == MotivoSalida.VOLUNTARIA)
+            sesionEstudio.finalizar(ahora);
+        else
+            sesionEstudio.abandonar(ahora);
         motivoSalida = motivo;
         fechaFin = ahora;
     }
+
     public UUID getId() { return id; }
     public Estudiante getEstudiante() { return estudiante; }
     public SesionEstudio getSesionEstudio() { return sesionEstudio; }

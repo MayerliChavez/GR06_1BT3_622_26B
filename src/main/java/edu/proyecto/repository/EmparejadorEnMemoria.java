@@ -6,13 +6,19 @@ import java.util.*;
 public class EmparejadorEnMemoria implements Emparejador {
     private final Set<UUID> esperando = new LinkedHashSet<>();
     private final SecureRandom azar = new SecureRandom();
+
     @Override public synchronized Optional<UUID> buscarOEsperar(UUID estudianteId) {
         Objects.requireNonNull(estudianteId);
-        // Repetir la solicitud conserva una única posición y no empareja al estudiante consigo mismo.
         esperando.remove(estudianteId);
         if (!esperando.isEmpty()) {
-            var candidatos = new ArrayList<>(esperando);
-            UUID elegido = candidatos.get(azar.nextInt(candidatos.size()));
+            UUID elegido = null;
+            int vistos = 0;
+            for (UUID candidato : esperando) {
+                vistos++;
+                if (azar.nextInt(vistos) == 0) {
+                    elegido = candidato;
+                }
+            }
             esperando.remove(elegido);
             return Optional.of(elegido);
         }
