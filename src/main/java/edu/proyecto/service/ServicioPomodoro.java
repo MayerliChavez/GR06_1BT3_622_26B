@@ -24,48 +24,53 @@ public class ServicioPomodoro {
     }
 
     public synchronized void pausarTemporizador(UUID sesionId, Instant ahora) {
-        var sesion = repositorioSesiones.buscarPorId(sesionId).orElseThrow(() -> new IllegalArgumentException("Sesión inexistente."));
+        var sesion = obtenerSesionOExigirExistencia(sesionId);
         sesion.pausar(ahora);
         repositorioSesiones.guardar(sesion);
     }
 
     public synchronized void reanudarTemporizador(UUID sesionId, Instant ahora) {
-        var sesion = repositorioSesiones.buscarPorId(sesionId).orElseThrow(() -> new IllegalArgumentException("Sesión inexistente."));
+        var sesion = obtenerSesionOExigirExistencia(sesionId);
         sesion.reanudar(ahora);
         repositorioSesiones.guardar(sesion);
     }
 
     public synchronized void completarBloqueActual(UUID sesionId, Instant ahora) {
-        var sesion = repositorioSesiones.buscarPorId(sesionId).orElseThrow(() -> new IllegalArgumentException("Sesión inexistente."));
+        var sesion = obtenerSesionOExigirExistencia(sesionId);
         sesion.completarBloqueActual(ahora);
         repositorioSesiones.guardar(sesion);
     }
 
     public synchronized BloquePomodoro iniciarSiguienteBloque(UUID sesionId, Instant ahora) {
-        var sesion = repositorioSesiones.buscarPorId(sesionId).orElseThrow(() -> new IllegalArgumentException("Sesión inexistente."));
+        var sesion = obtenerSesionOExigirExistencia(sesionId);
         var bloque = sesion.iniciarSiguienteBloque(ahora);
         repositorioSesiones.guardar(sesion);
         return bloque;
     }
 
     public synchronized Optional<Duration> consultarTiempoRestante(UUID sesionId, Instant ahora) {
-        var sesion = repositorioSesiones.buscarPorId(sesionId).orElseThrow(() -> new IllegalArgumentException("Sesión inexistente."));
+        var sesion = obtenerSesionOExigirExistencia(sesionId);
         return sesion.tiempoRestanteBloqueActual(ahora);
     }
 
     public synchronized void finalizarSesion(UUID sesionId, Instant ahora) {
-        var sesion = repositorioSesiones.buscarPorId(sesionId).orElseThrow(() -> new IllegalArgumentException("Sesión inexistente."));
+        var sesion = obtenerSesionOExigirExistencia(sesionId);
         sesion.finalizar(ahora);
         repositorioSesiones.guardar(sesion);
     }
 
     public synchronized void abandonarSesion(UUID sesionId, Instant ahora) {
-        var sesion = repositorioSesiones.buscarPorId(sesionId).orElseThrow(() -> new IllegalArgumentException("Sesión inexistente."));
+        var sesion = obtenerSesionOExigirExistencia(sesionId);
         sesion.abandonar(ahora);
         repositorioSesiones.guardar(sesion);
     }
 
     public synchronized List<SesionEstudio> consultarHistorial(UUID estudianteId) {
         return repositorioSesiones.buscarPorEstudiante(estudianteId);
+    }
+
+    private SesionEstudio obtenerSesionOExigirExistencia(UUID sesionId) {
+        return repositorioSesiones.buscarPorId(sesionId)
+                .orElseThrow(() -> new IllegalArgumentException("Sesión inexistente."));
     }
 }
