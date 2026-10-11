@@ -7,8 +7,7 @@ public class EmparejadorEnMemoria implements Emparejador {
     private final Set<UUID> esperando = new LinkedHashSet<>();
     private final SecureRandom azar = new SecureRandom();
 
-    @Override
-    public synchronized Optional<UUID> buscarOEsperar(UUID estudianteId) {
+    @Override public synchronized Optional<UUID> buscarOEsperar(UUID estudianteId) {
         Objects.requireNonNull(estudianteId);
         esperando.remove(estudianteId);
         if (!esperando.isEmpty()) {
@@ -26,6 +25,5 @@ public class EmparejadorEnMemoria implements Emparejador {
         esperando.add(estudianteId);
         return Optional.empty();
     }
-
     @Override public synchronized void cancelarEspera(UUID estudianteId) { esperando.remove(estudianteId); }
 }

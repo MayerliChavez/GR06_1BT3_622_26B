@@ -37,9 +37,7 @@ public class SesionEstudio {
             if (anterior.getEstado() != EstadoBloque.COMPLETADO)
                 throw new IllegalStateException("Primero debe completarse el bloque actual.");
             if (anterior.getTipo() == TipoBloque.CONCENTRACION) {
-                int completadas = (int) bloques.stream().filter(b -> b.getTipo() == TipoBloque.CONCENTRACION
-                        && b.getEstado() == EstadoBloque.COMPLETADO).count();
-                tipo = configuracion.tipoDescansoTras(completadas);
+                tipo = configuracion.tipoDescansoTras(contarConcentracionesCompletadas());
             }
         }
         BloquePomodoro bloque = new BloquePomodoro(bloques.size() + 1, tipo, configuracion.duracionPara(tipo), ahora);
@@ -87,6 +85,11 @@ public class SesionEstudio {
     public Duration tiempoEstudiado(Instant ahora) {
         return bloques.stream().filter(b -> b.getTipo() == TipoBloque.CONCENTRACION)
                 .map(b -> b.tiempoActivo(ahora)).reduce(Duration.ZERO, Duration::plus);
+    }
+
+    private int contarConcentracionesCompletadas() {
+        return (int) bloques.stream().filter(b -> b.getTipo() == TipoBloque.CONCENTRACION
+                && b.getEstado() == EstadoBloque.COMPLETADO).count();
     }
 
     private BloquePomodoro bloqueActual() {
