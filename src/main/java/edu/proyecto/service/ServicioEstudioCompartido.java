@@ -40,6 +40,7 @@ public class ServicioEstudioCompartido {
         repositorioCompartidas.guardar(compartida); // Una única transacción para la sesión y ambas composiciones.
         return Optional.of(compartida);
     }
+
     public synchronized void cancelarEspera(UUID estudianteId) { emparejador.cancelarEspera(estudianteId); }
     public synchronized void actualizarSesion(UUID compartidaId, Instant ahora) {
         var sesion = repositorioCompartidas.buscarPorId(compartidaId).orElseThrow(() -> new IllegalArgumentException("Sesión compartida inexistente."));
@@ -51,11 +52,13 @@ public class ServicioEstudioCompartido {
         sesion.registrarSalida(estudianteId, MotivoSalida.VOLUNTARIA, ahora);
         repositorioCompartidas.guardar(sesion);
     }
+
     public synchronized void registrarDesconexion(UUID compartidaId, UUID estudianteId, Instant ahora) {
         var sesion = repositorioCompartidas.buscarPorId(compartidaId).orElseThrow(() -> new IllegalArgumentException("Sesión compartida inexistente."));
         sesion.registrarSalida(estudianteId, MotivoSalida.DESCONEXION, ahora);
         repositorioCompartidas.guardar(sesion);
     }
+
     public synchronized Optional<Duration> consultarTiempoRestante(UUID compartidaId, Instant ahora) {
         var sesion = repositorioCompartidas.buscarPorId(compartidaId).orElseThrow(() -> new IllegalArgumentException("Sesión compartida inexistente."));
         return sesion.tiempoRestanteBloqueActual(ahora);
