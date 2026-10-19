@@ -87,9 +87,9 @@ El lanzador usa IPv4 y una ruta inexistente para activar la alternativa TCP inte
 - [Auditoría de métodos](docs/AUDITORIA-METODOS.md).
 - [Verificación](docs/VERIFICACION.md).
 - `docs/modelos`: diagramas originales; `docs/evidencias`: capturas reales de la aplicación.
-- `src/main/java/edu/proyecto`: model, service, repository, web y config.
+- `src/main/java/epn/edu/ec`: model, service, repository, web y config.
 - `src/main/resources/META-INF/persistence.xml`: ORM.
 - `src/main/webapp`: JSP, CSS y JavaScript.
-- `src/test/java/edu/proyecto` y `scripts`: pruebas reproducibles.
+- `src/test/java/epn/edu/ec` y `scripts`: pruebas reproducibles.
 
 Repositorio público: [MayerliChavez/GR06_1BT3_622_26B](https://github.com/MayerliChavez/GR06_1BT3_622_26B).
