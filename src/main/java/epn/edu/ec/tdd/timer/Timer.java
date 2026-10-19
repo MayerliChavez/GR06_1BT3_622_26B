@@ -14,6 +14,6 @@ public class Timer {
     }
 
     public int configurarDuracionDescansoLargo(int minutos) {
-        return minutos;}
-
+        return minutos;
+    }
 }
