@@ -12,6 +12,7 @@
   if (clock) clock.textContent = `${String(Math.floor(seconds / 60)).padStart(2,"0")}:${String(seconds % 60).padStart(2,"0")}`;
   const ring = document.getElementById("sharedRing");
   if (ring) ring.style.strokeDashoffset = String(860.8 * (1 - current / target));
+  if (current === 0 && connected && !busy) sync();
  }
  async function sync() {
   if (busy || (!id && !waiting)) return;

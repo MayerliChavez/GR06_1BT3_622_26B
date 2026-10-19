@@ -24,7 +24,7 @@ public class SesionEstudio {
     public SesionEstudio(Estudiante estudiante, ConfiguracionPomodoro configuracion, Instant ahora) {
         this.id = UUID.randomUUID();
         this.estudiante = Objects.requireNonNull(estudiante);
-        this.configuracion = Objects.requireNonNull(configuracion);
+        this.configuracion = Objects.requireNonNull(configuracion).copiar();
         this.fechaInicio = Objects.requireNonNull(ahora);
         this.estado = EstadoSesion.ACTIVA;
     }
@@ -104,6 +104,8 @@ public class SesionEstudio {
         if (ahora.isBefore(fechaInicio) || (ultimaFecha != null && ahora.isBefore(ultimaFecha)))
             throw new IllegalArgumentException("La fecha no puede retroceder.");
     }
+
+    public ConfiguracionPomodoro getConfiguracion() { return configuracion.copiar(); }
 
     public UUID getId() { return id; }
     public Instant getFechaInicio() { return fechaInicio; }

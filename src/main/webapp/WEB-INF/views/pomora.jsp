@@ -6,9 +6,9 @@
  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
  <meta name="theme-color" content="#29243b">
  <title>${esHistorial ? 'Historial' : 'Tu enfoque'} · Pomora</title>
- <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/pomora.css?v=vida1">
- <script src="${pageContext.request.contextPath}/assets/pomora.js?v=vida1" defer></script>
-<script src="${pageContext.request.contextPath}/assets/pomora-ui.js?v=vida1" defer></script></head>
+ <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/pomora.css?v=sonido2">
+ <script src="${pageContext.request.contextPath}/assets/pomora.js?v=sonido2" defer></script>
+<script src="${pageContext.request.contextPath}/assets/pomora-ui.js?v=sonido2" defer></script></head>
 <body>
 <aside class="sidebar">
  <a class="brand" href="${pageContext.request.contextPath}/pomodoro"><img class="brand-logo" width="160" src="${pageContext.request.contextPath}/assets/pomora-logo-menu.png" alt="Pomora"></a>
@@ -68,13 +68,29 @@
     <div class="clock-wrap"><svg class="clock-ring" viewBox="0 0 300 300" aria-hidden="true"><circle class="ring-track" cx="150" cy="150" r="137"/><circle class="ring-progress" id="ringProgress" cx="150" cy="150" r="137"/></svg><div class="clock-content"><span class="clock-eyebrow" id="clockType">${tipoBloque == 'CONCENTRACION' ? 'TIEMPO DE ENFOQUE' : 'TIEMPO DE DESCANSO'}</span><strong id="clock" role="timer" aria-label="Tiempo restante">${tiempoPantalla}</strong><span class="clock-caption" id="clockCaption">${estadoBloque == 'PAUSADO' ? 'Tu tiempo está a salvo.' : 'Dedica este momento a una sola tarea.'}</span></div></div>
     <p class="sr-only" id="statusAnnouncement" aria-live="polite"></p>
     <form id="timerForm" action="${pageContext.request.contextPath}/pomodoro" method="post"><input type="hidden" name="csrf" value="${csrf}"><input type="hidden" name="sesionId" value="${sesionId}" id="sessionInput"><input type="hidden" name="accion" id="actionInput" value="${estadoBloque == 'PAUSADO' ? 'reanudar' : (estadoBloque == 'EN_EJECUCION' ? 'pausar' : (estadoBloque == 'COMPLETADO' ? 'siguiente' : 'iniciar'))}"><button class="button primary timer-button" id="mainAction" type="submit"><span id="mainActionIcon" aria-hidden="true">${estadoBloque == 'EN_EJECUCION' ? 'Ⅱ' : '▶'}</span> <span id="mainActionLabel">${estadoBloque == 'PAUSADO' ? 'Reanudar temporizador' : (estadoBloque == 'EN_EJECUCION' ? 'Pausar temporizador' : (estadoBloque == 'COMPLETADO' ? 'Iniciar siguiente bloque' : 'Iniciar temporizador'))}</span></button></form>
-    <p class="timer-hint" id="timerHint">${estadoBloque == 'PAUSADO' ? 'Continúa cuando estés listo.' : 'Puedes hacer una pausa cuando lo necesites.'}</p>
-    <c:if test="${hayActiva}"><div class="session-actions"><form method="post" action="${pageContext.request.contextPath}/pomodoro"><input type="hidden" name="csrf" value="${csrf}"><input type="hidden" name="sesionId" value="${sesionId}"><button name="accion" value="finalizar" class="text-button">Finalizar sesión</button></form><span>·</span><form method="post" action="${pageContext.request.contextPath}/pomodoro"><input type="hidden" name="csrf" value="${csrf}"><input type="hidden" name="sesionId" value="${sesionId}"><button name="accion" value="abandonar" class="text-button muted">Abandonar</button></form></div></c:if>
+    <p class="timer-hint" id="timerHint">${estadoBloque == 'PAUSADO' ? 'Continúa cuando estés listo.' : 'El siguiente bloque comienza automáticamente. Puedes pausar cuando lo necesites.'}</p>
+    <div class="session-actions" id="sessionActions" ${hayActiva ? "" : "hidden"}><form method="post" action="${pageContext.request.contextPath}/pomodoro"><input type="hidden" name="csrf" value="${csrf}"><input type="hidden" name="sesionId" value="${sesionId}"><button name="accion" value="finalizar" class="text-button">Finalizar sesión</button></form><span>·</span><form method="post" action="${pageContext.request.contextPath}/pomodoro"><input type="hidden" name="csrf" value="${csrf}"><input type="hidden" name="sesionId" value="${sesionId}"><button name="accion" value="abandonar" class="text-button muted">Abandonar</button></form></div>
     <noscript><p class="connection-message">Activa JavaScript para ver la cuenta regresiva y completar los bloques automáticamente.</p></noscript>
     <div class="sound-controls"><button class="sound-toggle" type="button" aria-pressed="false">♪ Activar sonido</button></div>
     <p class="connection-message" id="connectionMessage" role="status"></p>
    </section>
-   <aside class="focus-aside"><section class="rhythm-card"><span class="card-symbol">✳</span><p class="eyebrow">ENCUENTRA TU RITMO</p><h2>Pequeños bloques.<br>Grandes avances.</h2><p>Concentrarte también significa darte tiempo para descansar.</p><div class="rhythm-step"><span class="step-dot focus-dot"></span><span>Concentración</span><strong>25 min</strong></div><div class="rhythm-step"><span class="step-dot short-dot"></span><span>Descanso corto</span><strong>5 min</strong></div><div class="rhythm-step"><span class="step-dot long-dot"></span><span>Descanso largo</span><strong>15 min</strong></div><small>Un descanso largo cada 4 concentraciones completadas.</small></section>
+   <aside class="focus-aside">
+   <section class="preferences-card" id="preferencias" aria-labelledby="preferencesTitle">
+    <p class="eyebrow">A TU RITMO</p><h2 id="preferencesTitle">Tu temporizador, a tu medida</h2>
+    <p>Elige cómo quieres estudiar. Guardaremos tu ritmo para la próxima sesión individual.</p>
+    <form action="${pageContext.request.contextPath}/pomodoro" method="post" class="preferences-form">
+     <input type="hidden" name="csrf" value="${csrf}"><input type="hidden" name="accion" value="guardarPreferencias">
+     <div class="preferences-grid">
+      <label>Concentración <span>minutos</span><input type="number" name="concentracion" min="1" max="2147483647" step="1" required value="${prefConcentracion}"></label>
+      <label>Descanso corto <span>minutos</span><input type="number" name="descansoCorto" min="1" max="2147483647" step="1" required value="${prefCorto}"></label>
+      <label>Descanso largo <span>minutos</span><input type="number" name="descansoLargo" min="1" max="2147483647" step="1" required value="${prefLargo}"></label>
+      <label>Bloques antes del descanso largo<input type="number" name="bloques" min="1" max="2147483647" step="1" required value="${prefBloques}"></label>
+     </div>
+     <button class="button primary" type="submit">Guardar mi ritmo <span>→</span></button>
+    </form>
+    <c:if test="${hayActiva}"><p class="preferences-active" role="status">Tu sesión actual conserva su ritmo. Los cambios se aplicarán cuando inicies una nueva.</p></c:if>
+   </section>
+   <section class="rhythm-card"><span class="card-symbol">✳</span><p class="eyebrow">${hayActiva ? "RITMO DE ESTA SESIÓN" : "TU RITMO GUARDADO"}</p><h2>Pequeños bloques.<br>Grandes avances.</h2><p>Concentrarte también significa darte tiempo para descansar.</p><div class="rhythm-step"><span class="step-dot focus-dot"></span><span>Concentración</span><strong>${ritmoConcentracion} min</strong></div><div class="rhythm-step"><span class="step-dot short-dot"></span><span>Descanso corto</span><strong>${ritmoCorto} min</strong></div><div class="rhythm-step"><span class="step-dot long-dot"></span><span>Descanso largo</span><strong>${ritmoLargo} min</strong></div><small>Un descanso largo cada ${ritmoBloques} concentraciones completadas.</small></section>
    <section class="progress-card"><div class="section-title"><h2>Tu recorrido</h2><span>↗</span></div><div class="mini-stat"><span>Tiempo de estudio</span><strong>${totalEstudiado}</strong></div><div class="mini-stat"><span>Bloques de enfoque completos</span><strong>${concentracionesCompletadas}</strong></div><a href="${pageContext.request.contextPath}/historial" class="history-link">Consultar historial <span>→</span></a></section></aside>
   </div>
   <p class="bottom-note"><span>✦</span> No necesitas hacerlo todo ahora. Solo empieza con este bloque.</p>

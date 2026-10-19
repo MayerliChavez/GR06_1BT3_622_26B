@@ -9,6 +9,7 @@
   <class>epn.edu.ec.model.ConfiguracionPomodoro</class>
   <class>epn.edu.ec.model.SesionCompartida</class>
   <class>epn.edu.ec.model.ParticipacionCompartida</class>
+  <class>epn.edu.ec.model.PreferenciasEstudiante</class>
   <exclude-unlisted-classes>true</exclude-unlisted-classes>
   <properties>
    <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>

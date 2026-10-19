@@ -28,6 +28,13 @@ public class ConfiguracionPomodoro {
         this.bloquesAntesDescansoLargo = bloquesAntesDescansoLargo;
     }
 
+    public int getBloquesAntesDescansoLargo() { return bloquesAntesDescansoLargo; }
+
+    public ConfiguracionPomodoro copiar() {
+        return new ConfiguracionPomodoro(duracionConcentracion, duracionDescansoCorto,
+                duracionDescansoLargo, bloquesAntesDescansoLargo);
+    }
+
     public Duration duracionPara(TipoBloque tipo) {
         return switch (Objects.requireNonNull(tipo)) {
             case CONCENTRACION -> duracionConcentracion;

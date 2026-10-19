@@ -10,6 +10,7 @@
         <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <pomora.host>127.0.0.1</pomora.host>
+        <pomora.port>8080</pomora.port>
     </properties>
 
     <dependencies>
@@ -119,7 +120,7 @@
                 <configuration>
                     <httpConnector>
                         <host>${pomora.host}</host>
-                        <port>8080</port>
+                        <port>${pomora.port}</port>
                     </httpConnector>
                     <webApp>
                         <contextPath>/</contextPath>

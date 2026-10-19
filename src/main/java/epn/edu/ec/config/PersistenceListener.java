@@ -13,12 +13,17 @@ import java.util.concurrent.*;
 @WebListener
 public class PersistenceListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent event) {
-        var factory = Persistence.createEntityManagerFactory("tarea3");
+        var jdbc = System.getProperty("pomora.jdbc.url");
+        var factory = jdbc == null ? Persistence.createEntityManagerFactory("tarea3")
+                : Persistence.createEntityManagerFactory("tarea3", java.util.Map.of("jakarta.persistence.jdbc.url", jdbc));
         event.getServletContext().setAttribute("emf", factory);
         event.getServletContext().setAttribute("servicioCuentas", new epn.edu.ec.service.ServicioCuentas(factory));
         var repositorio = new RepositorioSesionesJpa(factory);
         event.getServletContext().setAttribute("repositorioSesiones", repositorio);
         event.getServletContext().setAttribute("servicioPomodoro", new ServicioPomodoro(repositorio));
+        event.getServletContext().setAttribute("servicioPreferencias",
+                new epn.edu.ec.tdd.preferencias.ServicioPreferencias(new RepositorioPreferenciasJpa(factory),
+                        (ServicioPomodoro) event.getServletContext().getAttribute("servicioPomodoro")));
         var compartidas = new RepositorioSesionesCompartidasJpa(factory);
         var compartido = new ServicioEstudioCompartido(new EmparejadorEnMemoria(), repositorio, compartidas,
                 new ConfiguracionPomodoro(Duration.ofMinutes(25), Duration.ofMinutes(5), Duration.ofMinutes(15), 4));

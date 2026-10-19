@@ -5,4 +5,5 @@ import java.util.UUID;
 
 public interface RepositorioPreferencias {
     ConfiguracionPomodoro buscarPorEstudiante(UUID estudianteId);
+    void guardar(UUID estudianteId, ConfiguracionPomodoro configuracion);
 }

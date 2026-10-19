@@ -50,6 +50,13 @@ public class PomodoroServlet extends HttpServlet {
         var servicio = (ServicioPomodoro) getServletContext().getAttribute("servicioPomodoro");
         var repositorio = (RepositorioSesiones) getServletContext().getAttribute("repositorioSesiones");
         try {
+            if ("guardarPreferencias".equals(req.getParameter("accion"))) {
+                preferencias().guardar(estudianteId, entero(req, "concentracion"), entero(req, "descansoCorto"),
+                        entero(req, "descansoLargo"), entero(req, "bloques"));
+                req.getSession().setAttribute("mensaje", "Preferencias guardadas. Se aplicarán a tus nuevas sesiones individuales.");
+                resp.sendRedirect(req.getContextPath() + "/pomodoro#preferencias");
+                return;
+            }
             synchronized (getServletContext().getAttribute("servicioCompartido")) { synchronized (servicio) {
                 Instant ahora = Instant.now();
                 String accion = Objects.toString(req.getParameter("accion"), "");
@@ -60,8 +67,7 @@ public class PomodoroServlet extends HttpServlet {
                 ((PresenciaCompartida) getServletContext().getAttribute("presenciaCompartida")).olvidar(estudianteId);
                 req.getSession().setAttribute("esperando", false);
                 if (accion.equals("iniciar")) {
-                    servicio.iniciarSesion(estudianteId,
-                            new ConfiguracionPomodoro(Duration.ofMinutes(25), Duration.ofMinutes(5), Duration.ofMinutes(15), 4), ahora);
+                    preferencias().iniciarSesion(estudianteId, ahora);
                 } else {
                     UUID sesionId = UUID.fromString(Objects.toString(req.getParameter("sesionId"), ""));
                     var sesion = repositorio.buscarPorId(sesionId).orElseThrow(() -> new IllegalArgumentException("Sesión inexistente."));
@@ -72,7 +78,7 @@ public class PomodoroServlet extends HttpServlet {
                     switch (accion) {
                         case "pausar" -> servicio.pausarTemporizador(sesionId, ahora);
                         case "reanudar" -> servicio.reanudarTemporizador(sesionId, ahora);
-                        case "completar" -> servicio.completarBloqueActual(sesionId, ahora);
+                        case "completar" -> servicio.avanzarSiCorresponde(sesionId, entero(req, "orden"), ahora);
                         case "siguiente" -> servicio.iniciarSiguienteBloque(sesionId, ahora);
                         case "finalizar" -> servicio.finalizarSesion(sesionId, ahora);
                         case "abandonar" -> servicio.abandonarSesion(sesionId, ahora);
@@ -95,6 +101,17 @@ public class PomodoroServlet extends HttpServlet {
         } else resp.sendRedirect(req.getContextPath() + "/pomodoro");
     }
 
+    private epn.edu.ec.tdd.preferencias.ServicioPreferencias preferencias() {
+        return (epn.edu.ec.tdd.preferencias.ServicioPreferencias) getServletContext().getAttribute("servicioPreferencias");
+    }
+
+    private int entero(HttpServletRequest req, String nombre) {
+        try { return Integer.parseInt(Objects.toString(req.getParameter(nombre), "")); }
+        catch (NumberFormatException error) {
+            throw new IllegalArgumentException("Completa los cuatro campos con números enteros mayores que cero.");
+        }
+    }
+
     private UUID identificarEstudiante(HttpServletRequest req, HttpServletResponse resp) {
         return IdentidadWeb.estudiante(req, resp);
     }
@@ -111,19 +128,29 @@ public class PomodoroServlet extends HttpServlet {
         req.setAttribute("enSesionCompartida", compartidas.buscarAbiertaPorEstudiante(estudianteId).isPresent());
         var servicio = (ServicioPomodoro) getServletContext().getAttribute("servicioPomodoro");
         var repositorio = (RepositorioSesiones) getServletContext().getAttribute("repositorioSesiones");
+        var elegida = preferencias().consultar(estudianteId);
+        req.setAttribute("prefConcentracion", elegida.duracionPara(TipoBloque.CONCENTRACION).toMinutes());
+        req.setAttribute("prefCorto", elegida.duracionPara(TipoBloque.DESCANSO_CORTO).toMinutes());
+        req.setAttribute("prefLargo", elegida.duracionPara(TipoBloque.DESCANSO_LARGO).toMinutes());
+        req.setAttribute("prefBloques", elegida.getBloquesAntesDescansoLargo());
         synchronized (servicio) {
             Instant ahora = Instant.now();
             var activa = repositorio.buscarActivaPorEstudiante(estudianteId).orElse(null);
+            var vigente = activa == null ? elegida : activa.getConfiguracion();
+            req.setAttribute("ritmoConcentracion", vigente.duracionPara(TipoBloque.CONCENTRACION).toMinutes());
+            req.setAttribute("ritmoCorto", vigente.duracionPara(TipoBloque.DESCANSO_CORTO).toMinutes());
+            req.setAttribute("ritmoLargo", vigente.duracionPara(TipoBloque.DESCANSO_LARGO).toMinutes());
+            req.setAttribute("ritmoBloques", vigente.getBloquesAntesDescansoLargo());
             BloquePomodoro bloque = activa == null || activa.getBloques().isEmpty() ? null
                     : activa.getBloques().get(activa.getBloques().size() - 1);
-            long restante = activa == null ? Duration.ofMinutes(25).toMillis()
+            long restante = activa == null ? elegida.duracionPara(TipoBloque.CONCENTRACION).toMillis()
                     : servicio.consultarTiempoRestante(activa.getId(), ahora).orElse(Duration.ZERO).toMillis();
             req.setAttribute("sesionId", activa == null ? "" : activa.getId().toString());
             req.setAttribute("estadoBloque", bloque == null ? "LISTO" : bloque.getEstado().name());
             req.setAttribute("tipoBloque", bloque == null ? TipoBloque.CONCENTRACION.name() : bloque.getTipo().name());
             req.setAttribute("ordenBloque", bloque == null ? 1 : bloque.getOrden());
             req.setAttribute("restanteMillis", restante);
-            req.setAttribute("objetivoMillis", bloque == null ? Duration.ofMinutes(25).toMillis() : bloque.getDuracionObjetivo().toMillis());
+            req.setAttribute("objetivoMillis", bloque == null ? elegida.duracionPara(TipoBloque.CONCENTRACION).toMillis() : bloque.getDuracionObjetivo().toMillis());
             req.setAttribute("tiempoPantalla", formatearTiempo(Duration.ofMillis(restante)));
             req.setAttribute("hayActiva", activa != null);
             req.setAttribute("ahoraEpoch", ahora.toEpochMilli());

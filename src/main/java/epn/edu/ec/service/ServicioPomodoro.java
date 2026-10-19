@@ -41,6 +41,21 @@ public class ServicioPomodoro {
         repositorioSesiones.guardar(sesion);
     }
 
+    // El orden esperado evita duplicar una transicion solicitada desde varias pestanas.
+    public synchronized void avanzarSiCorresponde(UUID sesionId, int ordenEsperado, Instant ahora) {
+        var sesion = obtenerSesionOExigirExistencia(sesionId);
+        if (sesion.getEstado() != EstadoSesion.ACTIVA || sesion.getBloques().isEmpty()) return;
+        var actual = sesion.getBloques().get(sesion.getBloques().size() - 1);
+        if (actual.getOrden() != ordenEsperado) return;
+        if (actual.getEstado() == EstadoBloque.EN_EJECUCION && actual.tiempoRestante(ahora).isZero()) {
+            sesion.completarBloqueActual(ahora);
+        } else if (actual.getEstado() != EstadoBloque.COMPLETADO) {
+            return;
+        }
+        sesion.iniciarSiguienteBloque(ahora);
+        repositorioSesiones.guardar(sesion);
+    }
+
     public synchronized BloquePomodoro iniciarSiguienteBloque(UUID sesionId, Instant ahora) {
         var sesion = obtenerSesionOExigirExistencia(sesionId);
         var bloque = sesion.iniciarSiguienteBloque(ahora);
