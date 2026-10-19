@@ -29,5 +29,12 @@ public class TimerTest {
         System.out.println("Acepta Configuraciones Válidas de Descanso Corto");
     }
 
+    @Test
+    public void given_valid_long_break_duration_when_configured_then_ok() {
+        Timer timer = new Timer();
+        assertEquals(15, timer.configurarDuracionDescansoLargo(15));
+        System.out.println("Acepta Configuraciones Válidas de Descanso Largo");
+    }
+
 
 }
