@@ -22,4 +22,12 @@ public class TimerTest {
         System.out.println("Rechaza Configuraciones fuera de rango de Estudio");
     }
 
+    @Test
+    public void given_valid_short_break_duration_when_configured_then_ok() {
+        Timer timer = new Timer();
+        assertEquals(5, timer.configurarDuracionDescansoCorto(5));
+        System.out.println("Acepta Configuraciones Válidas de Descanso Corto");
+    }
+
+
 }
