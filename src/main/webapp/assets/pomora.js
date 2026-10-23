@@ -18,17 +18,21 @@
   clock.textContent = `${String(Math.floor(seconds / 60)).padStart(2,"0")}:${String(seconds % 60).padStart(2,"0")}`;
   document.title = `${clock.textContent} · Pomora`;
   document.getElementById("ringProgress").style.strokeDashoffset = String(860.8 * (1 - remaining / state.objetivoMillis));
-  if (state.estado === "EN_EJECUCION" && remaining === 0 && online && !busy) mutate("completar");
+  if ((state.estado === "EN_EJECUCION" && remaining === 0 || state.estado === "COMPLETADO") && online && !busy) mutate("completar");
  }
 
  function apply(next) {
-  if (next.sesionId === state.sesionId && next.orden === state.orden && next.estado === "COMPLETADO" && state.estado !== "COMPLETADO") {
+  if (next.sesionId === state.sesionId &&
+      (next.orden > state.orden || (next.orden === state.orden && next.estado === "COMPLETADO" && state.estado !== "COMPLETADO"))) {
    window.PomoraUI?.blockEnded({key:`${state.sesionId}:${state.orden}`, type:state.tipo});
   }
   const changed = next.estado !== state.estado || next.sesionId !== state.sesionId || next.orden !== state.orden;
-  // Una acción realizada en otra pestaña debe actualizar también los formularios de cierre.
-  if (next.sesionId !== state.sesionId) { window.location.reload(); return; }
+  // Mantener la pagina conserva el permiso de audio al iniciar el temporizador.
   state = next;
+  card.dataset.session = state.sesionId;
+  document.querySelectorAll('input[name="sesionId"]').forEach(input => { input.value = state.sesionId; });
+  const sessionActions = document.getElementById("sessionActions");
+  if (sessionActions) sessionActions.hidden = !state.sesionId;
   sampled = performance.now();
   online = true;
   card.dataset.state = state.estado;
@@ -41,7 +45,7 @@
   document.getElementById("blockLabel").textContent = `BLOQUE ${state.orden}`;
   document.getElementById("clockType").textContent = state.tipo === "CONCENTRACION" ? "TIEMPO DE ENFOQUE" : "TIEMPO DE DESCANSO";
   document.getElementById("clockCaption").textContent = paused ? "Tu tiempo está a salvo." : completed ? "Bien hecho. Tómate un respiro." : state.tipo === "CONCENTRACION" ? "Dedica este momento a una sola tarea." : "Descansa antes de volver a concentrarte.";
-  document.getElementById("timerHint").textContent = completed ? "Continúa con el siguiente bloque o finaliza tu sesión." : paused ? "Continúa cuando estés listo." : "Puedes hacer una pausa cuando lo necesites.";
+  document.getElementById("timerHint").textContent = completed ? "Continúa con el siguiente bloque o finaliza tu sesión." : paused ? "Continúa cuando estés listo." : "El siguiente bloque comienza automáticamente. Puedes pausar cuando lo necesites.";
   document.getElementById("phaseFocus").classList.toggle("active", state.tipo === "CONCENTRACION");
   document.getElementById("phaseShort").classList.toggle("active", state.tipo === "DESCANSO_CORTO");
   document.getElementById("phaseLong").classList.toggle("active", state.tipo === "DESCANSO_LARGO");
@@ -74,7 +78,7 @@
   busy = true; button.disabled = true;
   version++;
   try {
-   const data = new URLSearchParams({csrf:card.dataset.csrf,sesionId:state.sesionId,accion:command,formato:"json"});
+   const data = new URLSearchParams({csrf:card.dataset.csrf,sesionId:state.sesionId,accion:command,orden:String(state.orden),formato:"json"});
    const response = await fetch(card.dataset.url, {method:"POST",body:data,signal:AbortSignal.timeout(8000)});
    if (response.status === 403) { message.textContent = "Recarga la página para continuar con tu sesión."; return; }
    if (!response.ok && response.status !== 409) throw new Error("No se pudo guardar la acción.");

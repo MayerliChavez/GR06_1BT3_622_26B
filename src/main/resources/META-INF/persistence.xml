@@ -2,13 +2,14 @@
 <persistence xmlns="https://jakarta.ee/xml/ns/persistence" version="3.1">
  <persistence-unit name="tarea3" transaction-type="RESOURCE_LOCAL">
   <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-  <class>edu.proyecto.model.Estudiante</class>
-  <class>edu.proyecto.model.CuentaUsuario</class>
-  <class>edu.proyecto.model.SesionEstudio</class>
-  <class>edu.proyecto.model.BloquePomodoro</class>
-  <class>edu.proyecto.model.ConfiguracionPomodoro</class>
-  <class>edu.proyecto.model.SesionCompartida</class>
-  <class>edu.proyecto.model.ParticipacionCompartida</class>
+  <class>epn.edu.ec.model.Estudiante</class>
+  <class>epn.edu.ec.model.CuentaUsuario</class>
+  <class>epn.edu.ec.model.SesionEstudio</class>
+  <class>epn.edu.ec.model.BloquePomodoro</class>
+  <class>epn.edu.ec.model.ConfiguracionPomodoro</class>
+  <class>epn.edu.ec.model.SesionCompartida</class>
+  <class>epn.edu.ec.model.ParticipacionCompartida</class>
+  <class>epn.edu.ec.model.PreferenciasEstudiante</class>
   <exclude-unlisted-classes>true</exclude-unlisted-classes>
   <properties>
    <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>
