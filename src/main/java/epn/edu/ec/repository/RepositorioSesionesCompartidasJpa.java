@@ -15,7 +15,13 @@ public class RepositorioSesionesCompartidasJpa implements RepositorioSesionesCom
                     var cuenta = em.find(CuentaUsuario.class, individual.getEstudiante().getId());
                     if (cuenta != null) individual.getEstudiante().cambiarNombreVisible(cuenta.getEstudiante().getNombreVisible());
                 }
-                em.merge(sesion); tx.commit();
+                em.merge(sesion);
+                for (var individual : sesion.getSesiones().stream()
+                        .sorted(Comparator.comparing(s -> s.getEstudiante().getId())).toList()) {
+                    if (new epn.edu.ec.tdd.rachas.ControladorRacha().esSesionCompletada(individual))
+                        RepositorioRachasJpa.actualizar(em, individual.getEstudiante().getId());
+                }
+                tx.commit();
             }
             catch (RuntimeException e) { if (tx.isActive()) tx.rollback(); throw e; }
         }

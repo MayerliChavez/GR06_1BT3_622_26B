@@ -10,6 +10,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PomodoroPersistenciaTest {
+
     private EntityManagerFactory factory;
     private RepositorioSesionesJpa repo;
     private ServicioPomodoro servicio;
@@ -74,7 +75,7 @@ class PomodoroPersistenciaTest {
 
     @Test void entidadesRegistradasCoincidenConElDiagrama() {
         var tipos = factory.getMetamodel().getEntities().stream().map(e -> e.getJavaType().getSimpleName()).collect(java.util.stream.Collectors.toSet());
-        assertEquals(Set.of("Estudiante", "SesionEstudio", "BloquePomodoro", "SesionCompartida", "ParticipacionCompartida", "CuentaUsuario", "PreferenciasEstudiante", "MensajeChat"), tipos);
+        assertEquals(Set.of("Estudiante", "SesionEstudio", "BloquePomodoro", "SesionCompartida", "ParticipacionCompartida", "CuentaUsuario", "PreferenciasEstudiante", "MensajeChat", "RachaEstudio"), tipos);
         assertEquals(ConfiguracionPomodoro.class, factory.getMetamodel().embeddable(ConfiguracionPomodoro.class).getJavaType());
     }
 }

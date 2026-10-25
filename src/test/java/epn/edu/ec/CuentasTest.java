@@ -9,13 +9,17 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CuentasTest {
+
     private EntityManagerFactory factory;
     private ServicioCuentas cuentas;
+
     @BeforeEach void abrir() {
         factory=Persistence.createEntityManagerFactory("tarea3",Map.of("jakarta.persistence.jdbc.url","jdbc:h2:mem:cuentas"+UUID.randomUUID(),"hibernate.hbm2ddl.auto","create-drop","hibernate.show_sql","false"));
         cuentas=new ServicioCuentas(factory);
     }
+
     @AfterEach void cerrar() { factory.close(); }
+
     @Test void registraValidaNormalizaYAutenticaSinGuardarTextoPlano() {
         var cuenta=cuentas.registrar("  Ana  "," ANA@EJEMPLO.COM ","Clave-Prueba-123");
         assertEquals("Ana",cuenta.getEstudiante().getNombreVisible());
@@ -30,6 +34,7 @@ class CuentasTest {
         var segunda=cuentas.registrar("Luis","luis@ejemplo.com","Clave-Prueba-123");
         assertNotEquals(cuenta.getHashContrasena(),segunda.getHashContrasena());
     }
+
     @Test void primerEmparejamientoYPersistenciaConservanNombresDeAmbasCuentas() {
         var ana=cuentas.registrar("Ana Pérez","ana@ejemplo.com","Clave-Prueba-123");
         var luis=cuentas.registrar("Luis Gómez","luis@ejemplo.com","Clave-Prueba-456");

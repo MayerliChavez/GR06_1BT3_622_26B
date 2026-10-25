@@ -1,0 +1,24 @@
+<%@ page pageEncoding="UTF-8" %>
+<section class="study-calendar" id="studyCalendar" data-url="${pageContext.request.contextPath}/racha?formato=json" aria-label="Calendario de estudio">
+ <div class="study-calendar-summary">
+  <span class="study-calendar-mark" aria-hidden="true">✦</span>
+  <p class="eyebrow">UN DÍA A LA VEZ</p>
+  <h2><span id="rachaDias"><c:out value="${rachaDias}"/></span> <span id="rachaUnidad">${rachaDias == 1 ? 'día' : 'días'}</span><br> de racha</h2>
+  <p>Tu constancia deja huella. Completa un bloque de concentración, a tu ritmo o en compañía.</p>
+  <span class="study-calendar-status" id="calendarStatus" role="status">Cargando tus días de estudio…</span>
+ </div>
+ <div class="study-calendar-month">
+  <div class="study-calendar-toolbar">
+   <h3 id="calendarMonth">Tu calendario</h3>
+   <div class="study-calendar-controls">
+    <button type="button" id="calendarPrevious" aria-label="Mes anterior">‹</button>
+    <button type="button" id="calendarToday">Hoy</button>
+    <button type="button" id="calendarNext" aria-label="Mes siguiente">›</button>
+   </div>
+  </div>
+  <div class="study-calendar-week" aria-hidden="true"><span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+  <div class="study-calendar-days" id="calendarDays" role="group" aria-labelledby="calendarMonth"></div>
+  <div class="study-calendar-legend"><span><i class="studied-dot"></i> Concentración completada</span><span><i class="today-dot"></i> Hoy</span></div>
+  <p class="study-calendar-detail" id="calendarDetail" aria-live="polite">Cada día suma una sola vez, aunque completes varias sesiones.</p>
+ </div>
+</section>

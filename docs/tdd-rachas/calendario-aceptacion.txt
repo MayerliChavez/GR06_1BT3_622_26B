@@ -1,0 +1,6 @@
+OK: finalizar antes de tiempo no suma
+Esperando un Pomodoro real de 60 segundos...
+OK: completar Pomodoro y finalizar actualiza contador sin recarga
+OK: fecha real marcada, navegación entre meses y detalle del día
+OK: calendario oculto durante sesión compartida activa, vuelve al salir; endpoint protegido
+OK: contador persistente en temporizador, historial y compartido; móvil sin desbordamiento; sin errores JS

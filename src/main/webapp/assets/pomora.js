@@ -22,6 +22,11 @@
  }
 
  function apply(next) {
+  document.dispatchEvent(new Event("pomora:racha"));
+  if (Number.isInteger(next.rachaDias)) {
+   document.getElementById("rachaDias").textContent = next.rachaDias;
+   document.getElementById("rachaUnidad").textContent = next.rachaDias === 1 ? "día" : "días";
+  }
   if (next.sesionId === state.sesionId &&
       (next.orden > state.orden || (next.orden === state.orden && next.estado === "COMPLETADO" && state.estado !== "COMPLETADO"))) {
    window.PomoraUI?.blockEnded({key:`${state.sesionId}:${state.orden}`, type:state.tipo});

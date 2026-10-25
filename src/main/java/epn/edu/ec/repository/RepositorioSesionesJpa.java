@@ -16,7 +16,10 @@ public class RepositorioSesionesJpa implements RepositorioSesiones {
                 tx.begin();
                 var cuenta = em.find(CuentaUsuario.class, sesion.getEstudiante().getId());
                 if (cuenta != null) sesion.getEstudiante().cambiarNombreVisible(cuenta.getEstudiante().getNombreVisible());
-                em.merge(sesion); tx.commit();
+                em.merge(sesion);
+                if (new epn.edu.ec.tdd.rachas.ControladorRacha().esSesionCompletada(sesion))
+                    RepositorioRachasJpa.actualizar(em, sesion.getEstudiante().getId());
+                tx.commit();
             }
             catch (RuntimeException e) { if (tx.isActive()) tx.rollback(); throw e; }
         }

@@ -1,0 +1,124 @@
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::staticFieldBase has been called by com.google.inject.internal.aop.HiddenClassDefiner (file:/C:/Users/MY%20HP/OneDrive/Escritorio/Tarea3/.tools/apache-maven-3.9.11/lib/guice-5.1.0-classes.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.inject.internal.aop.HiddenClassDefiner
+WARNING: sun.misc.Unsafe::staticFieldBase will be removed in a future release
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------< epn.edu.ec:GR06_1BT3_622_26B >--------------------
+[INFO] Building GR06_1BT3_622_26B 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ war ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ GR06_1BT3_622_26B ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.14.0:compile (default-compile) @ GR06_1BT3_622_26B ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 42 source files with javac [debug release 21] to target\classes
+[INFO] /C:/Users/MY HP/OneDrive/Escritorio/GR06_1BT3_622_26B/src/main/java/epn/edu/ec/web/PomodoroServlet.java: C:\Users\MY HP\OneDrive\Escritorio\GR06_1BT3_622_26B\src\main\java\epn\edu\ec\web\PomodoroServlet.java uses or overrides a deprecated API.
+[INFO] /C:/Users/MY HP/OneDrive/Escritorio/GR06_1BT3_622_26B/src/main/java/epn/edu/ec/web/PomodoroServlet.java: Recompile with -Xlint:deprecation for details.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ GR06_1BT3_622_26B ---
+[INFO] skip non existing resourceDirectory C:\Users\MY HP\OneDrive\Escritorio\GR06_1BT3_622_26B\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.14.0:testCompile (default-testCompile) @ GR06_1BT3_622_26B ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 12 source files with javac [debug release 21] to target\test-classes
+[INFO] 
+[INFO] --- surefire:3.5.3:test (default-test) @ GR06_1BT3_622_26B ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running epn.edu.ec.tdd.rachas.ControladorRachaTest
+[ERROR] Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.090 s <<< FAILURE! -- in epn.edu.ec.tdd.rachas.ControladorRachaTest
+[ERROR] epn.edu.ec.tdd.rachas.ControladorRachaTest.given_incomplete_session_when_updating_streak_then_keep_current_days -- Time elapsed: 0.074 s <<< FAILURE!
+java.lang.AssertionError: Una sesion no completada debe conservar los dias de la racha expected:<3> but was:<0>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at epn.edu.ec.tdd.rachas.ControladorRachaTest.given_incomplete_session_when_updating_streak_then_keep_current_days(ControladorRachaTest.java:31)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+
+[INFO] Running epn.edu.ec.tdd.rachas.EvaluadorRachasParametersTest
+[ERROR] Tests run: 6, Failures: 6, Errors: 0, Skipped: 0, Time elapsed: 0.033 s <<< FAILURE! -- in epn.edu.ec.tdd.rachas.EvaluadorRachasParametersTest
+[ERROR] epn.edu.ec.tdd.rachas.EvaluadorRachasParametersTest.given_study_dates_when_calculating_streak_then_expected_days[0: 2.1 - Iniciar sin racha previa] -- Time elapsed: 0.012 s <<< FAILURE!
+java.lang.AssertionError: 2.1 - Iniciar sin racha previa expected:<1> but was:<0>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at epn.edu.ec.tdd.rachas.EvaluadorRachasParametersTest.given_study_dates_when_calculating_streak_then_expected_days(EvaluadorRachasParametersTest.java:54)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+
+[ERROR] epn.edu.ec.tdd.rachas.EvaluadorRachasParametersTest.given_study_dates_when_calculating_streak_then_expected_days[1: 2.2 - Incrementar en el dia siguiente] -- Time elapsed: 0.001 s <<< FAILURE!
+java.lang.AssertionError: 2.2 - Incrementar en el dia siguiente expected:<4> but was:<0>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at epn.edu.ec.tdd.rachas.EvaluadorRachasParametersTest.given_study_dates_when_calculating_streak_then_expected_days(EvaluadorRachasParametersTest.java:54)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+
+[ERROR] epn.edu.ec.tdd.rachas.EvaluadorRachasParametersTest.given_study_dates_when_calculating_streak_then_expected_days[2: 2.3 - Mantener al repetir el mismo dia] -- Time elapsed: 0.002 s <<< FAILURE!
+java.lang.AssertionError: 2.3 - Mantener al repetir el mismo dia expected:<4> but was:<0>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at epn.edu.ec.tdd.rachas.EvaluadorRachasParametersTest.given_study_dates_when_calculating_streak_then_expected_days(EvaluadorRachasParametersTest.java:54)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+
+[ERROR] epn.edu.ec.tdd.rachas.EvaluadorRachasParametersTest.given_study_dates_when_calculating_streak_then_expected_days[3: 2.4 - Reiniciar despues de un dia sin estudiar] -- Time elapsed: 0.002 s <<< FAILURE!
+java.lang.AssertionError: 2.4 - Reiniciar despues de un dia sin estudiar expected:<1> but was:<0>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at epn.edu.ec.tdd.rachas.EvaluadorRachasParametersTest.given_study_dates_when_calculating_streak_then_expected_days(EvaluadorRachasParametersTest.java:54)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+
+[ERROR] epn.edu.ec.tdd.rachas.EvaluadorRachasParametersTest.given_study_dates_when_calculating_streak_then_expected_days[4: 2.2 - Continuidad entre meses] -- Time elapsed: 0.001 s <<< FAILURE!
+java.lang.AssertionError: 2.2 - Continuidad entre meses expected:<3> but was:<0>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at epn.edu.ec.tdd.rachas.EvaluadorRachasParametersTest.given_study_dates_when_calculating_streak_then_expected_days(EvaluadorRachasParametersTest.java:54)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+
+[ERROR] epn.edu.ec.tdd.rachas.EvaluadorRachasParametersTest.given_study_dates_when_calculating_streak_then_expected_days[5: 2.2 - Continuidad entre anios] -- Time elapsed: 0.001 s <<< FAILURE!
+java.lang.AssertionError: 2.2 - Continuidad entre anios expected:<7> but was:<0>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at epn.edu.ec.tdd.rachas.EvaluadorRachasParametersTest.given_study_dates_when_calculating_streak_then_expected_days(EvaluadorRachasParametersTest.java:54)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Failures: 
+[ERROR]   ControladorRachaTest.given_incomplete_session_when_updating_streak_then_keep_current_days:31 Una sesion no completada debe conservar los dias de la racha expected:<3> but was:<0>
+[ERROR]   EvaluadorRachasParametersTest.given_study_dates_when_calculating_streak_then_expected_days:54 2.1 - Iniciar sin racha previa expected:<1> but was:<0>
+[ERROR]   EvaluadorRachasParametersTest.given_study_dates_when_calculating_streak_then_expected_days:54 2.2 - Incrementar en el dia siguiente expected:<4> but was:<0>
+[ERROR]   EvaluadorRachasParametersTest.given_study_dates_when_calculating_streak_then_expected_days:54 2.3 - Mantener al repetir el mismo dia expected:<4> but was:<0>
+[ERROR]   EvaluadorRachasParametersTest.given_study_dates_when_calculating_streak_then_expected_days:54 2.4 - Reiniciar despues de un dia sin estudiar expected:<1> but was:<0>
+[ERROR]   EvaluadorRachasParametersTest.given_study_dates_when_calculating_streak_then_expected_days:54 2.2 - Continuidad entre meses expected:<3> but was:<0>
+[ERROR]   EvaluadorRachasParametersTest.given_study_dates_when_calculating_streak_then_expected_days:54 2.2 - Continuidad entre anios expected:<7> but was:<0>
+[INFO] 
+[ERROR] Tests run: 7, Failures: 7, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.477 s
+[INFO] Finished at: 2026-10-25T09:07:22-05:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.3:test (default-test) on project GR06_1BT3_622_26B: There are test failures.
+[ERROR] 
+[ERROR] See C:\Users\MY HP\OneDrive\Escritorio\GR06_1BT3_622_26B\target\surefire-reports for the individual test results.
+[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

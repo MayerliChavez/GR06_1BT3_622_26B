@@ -1,0 +1,4 @@
+OK: finalizar antes de tiempo no suma
+Esperando un Pomodoro real de 60 segundos...
+OK: completar Pomodoro y finalizar actualiza contador sin recarga
+OK: contador persistente en temporizador, historial y compartido; móvil sin desbordamiento; sin errores JS
