@@ -27,9 +27,9 @@
    document.getElementById("rachaDias").textContent = next.rachaDias;
    document.getElementById("rachaUnidad").textContent = next.rachaDias === 1 ? "día" : "días";
   }
-  if (next.sesionId === state.sesionId &&
-      (next.orden > state.orden || (next.orden === state.orden && next.estado === "COMPLETADO" && state.estado !== "COMPLETADO"))) {
-   window.PomoraUI?.blockEnded({key:`${state.sesionId}:${state.orden}`, type:state.tipo});
+  if (next.sesionId && next.estado === "EN_EJECUCION" &&
+      ((next.sesionId === state.sesionId && next.orden > state.orden) || (!state.sesionId && next.orden === 1))) {
+   window.PomoraUI?.blockStarted({notification:next.notificacion});
   }
   const changed = next.estado !== state.estado || next.sesionId !== state.sesionId || next.orden !== state.orden;
   // Mantener la pagina conserva el permiso de audio al iniciar el temporizador.

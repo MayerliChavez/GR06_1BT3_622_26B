@@ -52,3 +52,25 @@ html{scroll-behavior:smooth}body{-webkit-font-smoothing:antialiased;background:r
 @media(min-width:1450px){.study-calendar{grid-template-columns:1fr 1fr;gap:60px}}
 @media(max-width:800px){.study-calendar{grid-template-columns:1fr;gap:22px;padding:22px}.study-calendar-summary h2 br{display:none}.study-calendar-mark{float:right}.study-calendar-summary p:not(.eyebrow){max-width:none}.study-calendar-summary h2{font-size:25px}.calendar-day,.calendar-empty{height:35px}}
 @media(prefers-reduced-motion:reduce){.study-calendar *{animation:none!important;transition:none!important}}
+
+/* HU3: tarjeta centrada sin bloquear la aplicacion */
+.completion-toast{top:50%;bottom:auto;right:auto;left:50%;transform:translate(-50%,-45%);width:390px;max-width:calc(100vw - 32px);padding:0;border:1px solid #ddd4e7;border-left:1px solid #ddd4e7;border-radius:16px;background:#fff;box-shadow:0 20px 65px #30213c38;pointer-events:none;overflow:hidden;line-height:1.6;z-index:100}
+.completion-toast.visible{transform:translate(-50%,-50%)}
+.completion-title{margin:0;padding:17px 22px;background:#44344f;color:#fff;font-size:19px;font-weight:600;line-height:1.4;text-align:center}
+.completion-body{padding:19px 24px 21px;text-align:center}.completion-body p{margin:0;color:#5c5067;font-size:15px;line-height:1.6}.completion-body .completion-duration{margin-top:10px;color:#877493;font-size:14px}
+.completion-progress{display:block;height:3px;background:#9472c3;transform-origin:left;animation:notice-progress linear forwards}
+.completion-toast[data-type="DESCANSO_CORTO"] .completion-title{background:#4c5860}.completion-toast[data-type="DESCANSO_CORTO"] .completion-progress{background:#83a897}
+.completion-toast[data-type="DESCANSO_LARGO"] .completion-title{background:#45566b}.completion-toast[data-type="DESCANSO_LARGO"] .completion-progress{background:#86a4c1}
+@keyframes notice-progress{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+@media(max-width:650px){.completion-toast{width:350px}.completion-title{font-size:17px;padding:15px 18px}.completion-body{padding:17px 20px}.completion-body p{font-size:13px}}
+@media(prefers-reduced-motion:reduce){.completion-progress{animation:none}.completion-toast{transition:opacity .1s}}
+
+/* Ilustraciones originales del usuario y oscurecimiento de toda la aplicacion. */
+.completion-backdrop{position:fixed;inset:0;background:rgba(25,18,37,.48);opacity:0;pointer-events:none;transition:opacity .25s ease;z-index:99}
+.completion-backdrop.visible{opacity:1}
+.completion-toast{overflow:visible;background:transparent;border:0;border-left:0;box-shadow:none}
+.completion-card{position:relative;overflow:hidden;background:#fff;border:1px solid #ddd4e7;border-radius:16px;box-shadow:0 20px 65px #12091b55}
+.completion-art{position:relative;display:block;width:195px;height:195px;object-fit:contain;margin:0 auto -10px;filter:drop-shadow(0 9px 12px #140b2433);z-index:1}
+.completion-card .completion-title{position:relative;z-index:2}
+@media(max-width:650px),(max-height:620px){.completion-art{width:150px;height:150px;margin-bottom:-8px}}
+@media(prefers-reduced-motion:reduce){.completion-backdrop{transition:none}}

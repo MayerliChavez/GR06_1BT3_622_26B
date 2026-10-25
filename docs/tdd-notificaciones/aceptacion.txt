@@ -1,0 +1,8 @@
+OK: dos participantes compartidos y una sesión individual reales iniciados
+OK individual: 3.2 descanso, 3.3 foco y temporizador continúan, 3.4 ocultación a 6.5 segundos, esquina derecha
+OK compartido-luis-movil: 3.2 descanso, 3.3 foco y temporizador continúan, 3.4 ocultación a 6.5 segundos, esquina derecha
+OK compartido-ana: 3.2 descanso, 3.3 foco y temporizador continúan, 3.4 ocultación a 6.5 segundos, esquina derecha
+OK compartido-ana: 3.1 concentración y sin duplicados durante sincronización
+OK compartido-luis-movil: 3.1 concentración y sin duplicados durante sincronización
+OK individual: 3.1 concentración y sin duplicados durante sincronización
+OK: sin aviso de sesión cerrada, recarga sin repetir y sin errores JavaScript

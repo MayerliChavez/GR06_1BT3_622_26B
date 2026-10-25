@@ -6,9 +6,9 @@
  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
  <meta name="theme-color" content="#29243b">
  <title>${esHistorial ? 'Historial' : 'Tu enfoque'} · Pomora</title>
- <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/pomora.css?v=calendario1">
- <script src="${pageContext.request.contextPath}/assets/pomora.js?v=calendario1" defer></script>
-<script src="${pageContext.request.contextPath}/assets/pomora-ui.js?v=sonido2" defer></script><script src="${pageContext.request.contextPath}/assets/racha.js?v=calendario1" defer></script></head>
+ <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/pomora.css?v=aviso125">
+ <script src="${pageContext.request.contextPath}/assets/pomora.js?v=aviso125" defer></script>
+<script src="${pageContext.request.contextPath}/assets/pomora-ui.js?v=aviso125" defer></script><script src="${pageContext.request.contextPath}/assets/racha.js?v=calendario1" defer></script></head>
 <body>
 <aside class="sidebar">
  <a class="brand" href="${pageContext.request.contextPath}/pomodoro"><img class="brand-logo" width="160" src="${pageContext.request.contextPath}/assets/pomora-logo-menu.png" alt="Pomora"></a>

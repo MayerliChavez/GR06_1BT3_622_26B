@@ -93,6 +93,7 @@ public class CompartidoServlet extends HttpServlet {
             req.setAttribute("compartidaId", s == null ? "" : s.getId().toString());
             req.setAttribute("esperando", s == null && Boolean.TRUE.equals(req.getSession().getAttribute("esperando")));
             req.setAttribute("hayCompartida", s != null);
+            VistaNotificacion.preparar(req, actual == null ? null : actual.getSesionEstudio(), id);
             req.setAttribute("bloqueado", s == null && individuales.buscarActivaPorEstudiante(id).isPresent());
             req.setAttribute("restanteMillis", restante);
             req.setAttribute("objetivoMillis", b == null ? 1500000 : b.getDuracionObjetivo().toMillis());
@@ -107,8 +108,8 @@ public class CompartidoServlet extends HttpServlet {
     private void escribirEstado(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json;charset=UTF-8");
         resp.getWriter().printf(Locale.ROOT,
-                "{\"compartidaId\":\"%s\",\"esperando\":%s,\"presente\":%s,\"motivo\":\"%s\",\"tipo\":\"%s\",\"orden\":%s,\"restanteMillis\":%s,\"objetivoMillis\":%s,\"rachaDias\":%s}",
+                "{\"compartidaId\":\"%s\",\"esperando\":%s,\"presente\":%s,\"motivo\":\"%s\",\"tipo\":\"%s\",\"orden\":%s,\"restanteMillis\":%s,\"objetivoMillis\":%s,\"rachaDias\":%s,\"notificacion\":%s}",
                 req.getAttribute("compartidaId"), req.getAttribute("esperando"), req.getAttribute("companeroPresente"), req.getAttribute("companeroMotivo"),
-                req.getAttribute("tipoBloque"), req.getAttribute("ordenBloque"), req.getAttribute("restanteMillis"), req.getAttribute("objetivoMillis"), req.getAttribute("rachaDias"));
+                req.getAttribute("tipoBloque"), req.getAttribute("ordenBloque"), req.getAttribute("restanteMillis"), req.getAttribute("objetivoMillis"), req.getAttribute("rachaDias"), req.getAttribute("notificacionJson"));
     }
 }
