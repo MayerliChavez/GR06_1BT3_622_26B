@@ -14,7 +14,7 @@ pipeline {
 
         stage('Compilar y probar') {
             steps {
-                bat 'mvn -B clean verify'
+                sh 'mvn -B clean verify'
             }
         }
 

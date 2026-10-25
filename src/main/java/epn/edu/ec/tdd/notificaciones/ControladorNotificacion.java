@@ -4,6 +4,7 @@ import epn.edu.ec.model.*;
 import java.util.*;
 
 public class ControladorNotificacion {
+
     private final FormateadorNotificacion formateador;
 
     public ControladorNotificacion(FormateadorNotificacion formateador) {
@@ -15,11 +16,12 @@ public class ControladorNotificacion {
         return formateador.formatear(bloqueActual(sesion).getTipo());
     }
 
+    // Maneja el tiempo en el que se presenta la notificación.
     public Optional<NotificacionFlotante> crearNotificacion(SesionEstudio sesion, UUID estudianteId) {
         String mensaje = generarNotificacion(sesion, estudianteId);
         if (mensaje.isEmpty()) return Optional.empty();
         return Optional.of(new NotificacionFlotante(sesion.getId() + ":" + bloqueActual(sesion).getOrden(),
-                estudianteId, mensaje, "CENTRO_APLICACION", 12500,
+                estudianteId, mensaje, "CENTRO_APLICACION", 10500,
                 bloqueActual(sesion).getTipo(), bloqueActual(sesion).getDuracionObjetivo().toMillis()));
     }
 
@@ -33,4 +35,5 @@ public class ControladorNotificacion {
         var bloques = sesion.getBloques();
         return bloques.get(bloques.size() - 1);
     }
+    
 }

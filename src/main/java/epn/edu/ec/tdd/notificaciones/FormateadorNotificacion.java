@@ -13,4 +13,5 @@ public class FormateadorNotificacion {
         }
         return MENSAJE_DESCANSO;
     }
+
 }

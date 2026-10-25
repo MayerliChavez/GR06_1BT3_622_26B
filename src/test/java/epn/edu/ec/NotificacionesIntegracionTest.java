@@ -36,7 +36,7 @@ class NotificacionesIntegracionTest {
         var actual = sesion.getBloques().get(sesion.getBloques().size() - 1);
         assertEquals(actual.getTipo(), aviso.tipoBloque());
         assertEquals(actual.getDuracionObjetivo().toMillis(), aviso.duracionBloqueMillis());
-        assertEquals(12500, aviso.duracionMillis());
+        assertEquals(10500, aviso.duracionMillis());
         return aviso;
     }
 
