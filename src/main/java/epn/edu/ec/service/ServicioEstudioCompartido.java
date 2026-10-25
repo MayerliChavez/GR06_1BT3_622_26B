@@ -43,24 +43,29 @@ public class ServicioEstudioCompartido {
 
     public synchronized void cancelarEspera(UUID estudianteId) { emparejador.cancelarEspera(estudianteId); }
     public synchronized void actualizarSesion(UUID compartidaId, Instant ahora) {
-        var sesion = repositorioCompartidas.buscarPorId(compartidaId).orElseThrow(() -> new IllegalArgumentException("Sesión compartida inexistente."));
+        var sesion = obtenerSesion(compartidaId);
         sesion.avanzarSiCorresponde(ahora);
         repositorioCompartidas.guardar(sesion);
     }
     public synchronized void salir(UUID compartidaId, UUID estudianteId, Instant ahora) {
-        var sesion = repositorioCompartidas.buscarPorId(compartidaId).orElseThrow(() -> new IllegalArgumentException("Sesión compartida inexistente."));
+        var sesion = obtenerSesion(compartidaId);
         sesion.registrarSalida(estudianteId, MotivoSalida.VOLUNTARIA, ahora);
         repositorioCompartidas.guardar(sesion);
     }
 
     public synchronized void registrarDesconexion(UUID compartidaId, UUID estudianteId, Instant ahora) {
-        var sesion = repositorioCompartidas.buscarPorId(compartidaId).orElseThrow(() -> new IllegalArgumentException("Sesión compartida inexistente."));
+        var sesion = obtenerSesion(compartidaId);
         sesion.registrarSalida(estudianteId, MotivoSalida.DESCONEXION, ahora);
         repositorioCompartidas.guardar(sesion);
     }
 
     public synchronized Optional<Duration> consultarTiempoRestante(UUID compartidaId, Instant ahora) {
-        var sesion = repositorioCompartidas.buscarPorId(compartidaId).orElseThrow(() -> new IllegalArgumentException("Sesión compartida inexistente."));
+        var sesion = obtenerSesion(compartidaId);
         return sesion.tiempoRestanteBloqueActual(ahora);
+    }
+
+    private SesionCompartida obtenerSesion(UUID compartidaId) {
+        return repositorioCompartidas.buscarPorId(compartidaId)
+                .orElseThrow(() -> new IllegalArgumentException("Sesión compartida inexistente."));
     }
 }
