@@ -23,6 +23,7 @@ public class TransicionAutomaticaTest {
         when(repositorio.buscarPorId(sesion.getId())).thenReturn(Optional.of(sesion));
         servicio = new ServicioPomodoro(repositorio);
     }
+
     @Test public void alternaConcentracionDescansoCortoYDescansoLargoSinClic() {
         servicio.avanzarSiCorresponde(sesion.getId(), 1, inicio.plusSeconds(10));
         assertEquals(TipoBloque.DESCANSO_CORTO, sesion.getBloques().get(1).getTipo());
@@ -34,12 +35,14 @@ public class TransicionAutomaticaTest {
         assertEquals(TipoBloque.CONCENTRACION, sesion.getBloques().get(4).getTipo());
         assertEquals(EstadoBloque.EN_EJECUCION, sesion.getBloques().get(4).getEstado());
     }
+
     @Test public void dosPestanasNoDuplicanLaTransicion() {
         servicio.avanzarSiCorresponde(sesion.getId(), 1, inicio.plusSeconds(10));
         servicio.avanzarSiCorresponde(sesion.getId(), 1, inicio.plusSeconds(100));
         assertEquals(2, sesion.getBloques().size());
         verify(repositorio, times(1)).guardar(sesion);
     }
+
     @Test public void noAvanzaAntesDeTiempoNiDurantePausa() {
         servicio.avanzarSiCorresponde(sesion.getId(), 1, inicio.plusSeconds(9));
         sesion.pausar(inicio.plusSeconds(9));

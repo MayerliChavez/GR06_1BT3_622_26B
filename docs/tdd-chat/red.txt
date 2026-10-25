@@ -1,0 +1,73 @@
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::staticFieldBase has been called by com.google.inject.internal.aop.HiddenClassDefiner (file:/C:/Users/MY%20HP/OneDrive/Escritorio/Tarea3/.tools/apache-maven-3.9.11/lib/guice-5.1.0-classes.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.inject.internal.aop.HiddenClassDefiner
+WARNING: sun.misc.Unsafe::staticFieldBase will be removed in a future release
+[INFO] Scanning for projects...
+[INFO]
+[INFO] --------------------< epn.edu.ec:GR06_1BT3_622_26B >--------------------
+[INFO] Building GR06_1BT3_622_26B 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ war ]---------------------------------
+[INFO]
+[INFO] --- resources:3.3.1:resources (default-resources) @ GR06_1BT3_622_26B ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO]
+[INFO] --- compiler:3.14.0:compile (default-compile) @ GR06_1BT3_622_26B ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO]
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ GR06_1BT3_622_26B ---
+[INFO] skip non existing resourceDirectory C:\Users\MY HP\OneDrive\Escritorio\GR06_1BT3_622_26B\src\test\resources
+[INFO]
+[INFO] --- compiler:3.14.0:testCompile (default-testCompile) @ GR06_1BT3_622_26B ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 10 source files with javac [debug target 25] to target\test-classes
+[INFO]
+[INFO] --- surefire:3.5.3:test (default-test) @ GR06_1BT3_622_26B ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO]
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running epn.edu.ec.tdd.chat.ChatTest
+[ERROR] Tests run: 2, Failures: 2, Errors: 0, Skipped: 0, Time elapsed: 0.030 s <<< FAILURE! -- in epn.edu.ec.tdd.chat.ChatTest
+[ERROR] epn.edu.ec.tdd.chat.ChatTest.given_empty_or_spaces_message_when_validated_then_rejected -- Time elapsed: 0.012 s <<< FAILURE!
+java.lang.AssertionError: expected java.lang.IllegalArgumentException to be thrown, but nothing was thrown
+	at org.junit.Assert.assertThrows(Assert.java:1028)
+	at org.junit.Assert.assertThrows(Assert.java:981)
+	at epn.edu.ec.tdd.chat.ChatTest.given_empty_or_spaces_message_when_validated_then_rejected(ChatTest.java:31)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+
+[ERROR] epn.edu.ec.tdd.chat.ChatTest.given_valid_message_when_created_then_preserve_text_author_and_session -- Time elapsed: 0.003 s <<< FAILURE!
+java.lang.AssertionError: Debe crearse el mensaje con su autor y sesion
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at org.junit.Assert.assertNotNull(Assert.java:713)
+	at epn.edu.ec.tdd.chat.ChatTest.given_valid_message_when_created_then_preserve_text_author_and_session(ChatTest.java:19)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+
+[INFO]
+[INFO] Results:
+[INFO]
+[ERROR] Failures:
+[ERROR]   ChatTest.given_empty_or_spaces_message_when_validated_then_rejected:31 expected java.lang.IllegalArgumentException to be thrown, but nothing was thrown
+[ERROR]   ChatTest.given_valid_message_when_created_then_preserve_text_author_and_session:19 Debe crearse el mensaje con su autor y sesion
+[INFO]
+[ERROR] Tests run: 2, Failures: 2, Errors: 0, Skipped: 0
+[INFO]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.907 s
+[INFO] Finished at: 2026-10-24T22:29:43-05:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.3:test (default-test) on project GR06_1BT3_622_26B: There are test failures.
+[ERROR]
+[ERROR] See C:\Users\MY HP\OneDrive\Escritorio\GR06_1BT3_622_26B\target\surefire-reports for the individual test results.
+[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR]
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR]
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

@@ -1,0 +1,10 @@
+Cuatro estudiantes conectados por WebSocket en dos sesiones diferentes
+1.1 y 1.2: mensaje con autor en ambos chats, caja limpia y receptor sin recarga
+1.3: vacio y espacios rechazados por interfaz y servidor, sin mensajes en ninguno de los chats
+1.4: aislamiento bidireccional entre las dos parejas
+Texto con HTML, comillas, acentos y saltos de linea mostrado como texto seguro
+Mensajes registrados en base de datos y recuperados al recargar
+Acceso directo a una sesion ajena rechazado
+Conexion sin token CSRF valido rechazada
+Un participante que salio no puede seguir publicando con un WebSocket previo
+Interfaz adaptable a movil sin desbordamiento horizontal
