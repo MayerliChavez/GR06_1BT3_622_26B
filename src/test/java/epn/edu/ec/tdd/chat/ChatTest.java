@@ -26,7 +26,7 @@ public class ChatTest {
 
         Mensaje mensaje = controlador.crearMensaje(texto, autorId, sesionId);
 
-        assertNotNull("Debe crearse el mensaje con su autor y sesion", mensaje);
+        assertNotNull("Debe crearse el mensaje con su autor y sesión", mensaje);
         assertEquals(texto, mensaje.texto());
         assertEquals(autorId, mensaje.autorId());
         assertEquals(sesionId, mensaje.sesionId());
