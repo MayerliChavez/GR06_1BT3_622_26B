@@ -31,3 +31,24 @@ html{scroll-behavior:smooth}body{-webkit-font-smoothing:antialiased;background:r
 .preferences-grid input{font-family:inherit;font-size:17px;font-weight:600;}
 
 .session-actions[hidden]{display:none}
+
+.streak-card{display:flex;align-items:center;gap:18px;padding:20px 24px;margin:0 0 24px;border:1px solid #e5dcef;border-radius:20px;background:#f3eef9}.streak-card h2{margin:4px 0 8px;color:#6550a2;font-size:24px}.streak-card p{margin:0;line-height:1.5}.streak-card .eyebrow{font-size:11px}.streak-symbol{font-size:36px;color:#7862b8}@media(max-width:600px){.streak-card{padding:16px;gap:12px}.streak-card h2{font-size:21px}.streak-card p{font-size:13px}}
+
+/* Calendario de constancia */
+.study-calendar{display:grid;grid-template-columns:minmax(210px,.8fr) minmax(300px,1.3fr);gap:40px;margin:0 0 30px;padding:28px 32px;background:#fff;border:1px solid #e8e1f0;border-radius:24px;color:var(--ink);box-shadow:0 10px 30px #34244404}
+.study-calendar-summary{padding:5px 0}.study-calendar-mark{display:block;color:#8a70bc;font-size:30px;margin-bottom:12px}
+.study-calendar-summary h2{font-size:30px;line-height:1.15;font-weight:500;margin:10px 0 14px;color:#57427f}
+.study-calendar-summary p:not(.eyebrow){max-width:320px;font-size:13px;line-height:1.7;color:var(--muted)}
+.study-calendar-status{display:inline-block;margin-top:10px;padding:8px 12px;border-radius:10px;background:#f2edf8;color:#72559b;font-size:11px;line-height:1.5}
+.study-calendar-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px}.study-calendar-toolbar h3{font-size:15px;font-weight:600;margin:0;text-transform:capitalize}
+.study-calendar-controls{display:flex;gap:5px}.study-calendar-controls button{border:1px solid #ece6f3;background:#fff;border-radius:8px;height:29px;min-width:29px;padding:0 7px;color:#75618c;font:inherit;font-size:12px;cursor:pointer}.study-calendar-controls button:disabled{opacity:.35;cursor:default}
+.study-calendar-week,.study-calendar-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.study-calendar-week{margin-bottom:7px;text-align:center;font-size:10px;color:#9b91a7}
+.calendar-day,.calendar-empty{height:32px;min-width:0}.calendar-day{border:1px solid transparent;border-radius:9px;background:#f8f6fa;font:inherit;font-size:11px;color:#7b7087;cursor:pointer;position:relative}
+.calendar-day.studied{background:#8266ad;color:#fff;font-weight:600}.calendar-day.is-today{border:1.5px solid #8266ad}.calendar-day.future{background:transparent;color:#c5becd;cursor:default}.calendar-day.is-selected{outline:2px solid #c9b7df;outline-offset:1px}.calendar-day:hover:not(:disabled){filter:brightness(.96)}
+.study-calendar button:focus-visible{outline:2px solid #6550a2;outline-offset:2px}
+.study-calendar-legend{display:flex;gap:15px;flex-wrap:wrap;margin-top:12px;font-size:10px;color:#8e839a}.study-calendar-legend span{display:flex;align-items:center;gap:5px}.study-calendar-legend i{display:inline-block;width:8px;height:8px;border-radius:3px}.studied-dot{background:#8266ad}.today-dot{border:1px solid #8266ad}
+.study-calendar-detail{font-size:11px;color:#968b9f;margin:10px 0 0;line-height:1.5;min-height:32px}
+@media(min-width:1450px){.study-calendar{grid-template-columns:1fr 1fr;gap:60px}}
+@media(max-width:800px){.study-calendar{grid-template-columns:1fr;gap:22px;padding:22px}.study-calendar-summary h2 br{display:none}.study-calendar-mark{float:right}.study-calendar-summary p:not(.eyebrow){max-width:none}.study-calendar-summary h2{font-size:25px}.calendar-day,.calendar-empty{height:35px}}
+@media(prefers-reduced-motion:reduce){.study-calendar *{animation:none!important;transition:none!important}}

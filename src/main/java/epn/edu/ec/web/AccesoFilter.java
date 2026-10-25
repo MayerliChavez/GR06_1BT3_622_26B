@@ -4,7 +4,7 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 
-@WebFilter(urlPatterns={"/pomodoro","/historial","/estado","/compartido"})
+@WebFilter(urlPatterns={"/pomodoro","/historial","/estado","/compartido","/racha"})
 public class AccesoFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         var req=(HttpServletRequest)request; var resp=(HttpServletResponse)response;

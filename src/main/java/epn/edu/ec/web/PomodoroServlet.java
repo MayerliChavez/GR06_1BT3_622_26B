@@ -124,6 +124,7 @@ public class PomodoroServlet extends HttpServlet {
     }
 
     private void prepararVista(HttpServletRequest req, UUID estudianteId) {
+        VistaRacha.preparar(req, estudianteId);
         var compartidas = (RepositorioSesionesCompartidas) getServletContext().getAttribute("repositorioCompartidas");
         req.setAttribute("enSesionCompartida", compartidas.buscarAbiertaPorEstudiante(estudianteId).isPresent());
         var servicio = (ServicioPomodoro) getServletContext().getAttribute("servicioPomodoro");
@@ -187,9 +188,9 @@ public class PomodoroServlet extends HttpServlet {
         resp.setContentType("application/json;charset=UTF-8");
         // Solo UUID, enumeraciones y números generados por el servidor.
         resp.getWriter().printf(Locale.ROOT,
-                "{\"sesionId\":\"%s\",\"estado\":\"%s\",\"tipo\":\"%s\",\"orden\":%s,\"restanteMillis\":%s,\"objetivoMillis\":%s,\"ahoraEpoch\":%s}",
+                "{\"sesionId\":\"%s\",\"estado\":\"%s\",\"tipo\":\"%s\",\"orden\":%s,\"restanteMillis\":%s,\"objetivoMillis\":%s,\"ahoraEpoch\":%s,\"rachaDias\":%s}",
                 req.getAttribute("sesionId"), req.getAttribute("estadoBloque"), req.getAttribute("tipoBloque"),
-                req.getAttribute("ordenBloque"), req.getAttribute("restanteMillis"), req.getAttribute("objetivoMillis"), req.getAttribute("ahoraEpoch"));
+                req.getAttribute("ordenBloque"), req.getAttribute("restanteMillis"), req.getAttribute("objetivoMillis"), req.getAttribute("ahoraEpoch"), req.getAttribute("rachaDias"));
     }
 
     private String formatearTiempo(Duration tiempo) {

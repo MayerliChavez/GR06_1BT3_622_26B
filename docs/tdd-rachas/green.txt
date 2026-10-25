@@ -1,0 +1,48 @@
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::staticFieldBase has been called by com.google.inject.internal.aop.HiddenClassDefiner (file:/C:/Users/MY%20HP/OneDrive/Escritorio/Tarea3/.tools/apache-maven-3.9.11/lib/guice-5.1.0-classes.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.inject.internal.aop.HiddenClassDefiner
+WARNING: sun.misc.Unsafe::staticFieldBase will be removed in a future release
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------< epn.edu.ec:GR06_1BT3_622_26B >--------------------
+[INFO] Building GR06_1BT3_622_26B 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ war ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ GR06_1BT3_622_26B ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.14.0:compile (default-compile) @ GR06_1BT3_622_26B ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 42 source files with javac [debug release 21] to target\classes
+[INFO] /C:/Users/MY HP/OneDrive/Escritorio/GR06_1BT3_622_26B/src/main/java/epn/edu/ec/web/PomodoroServlet.java: C:\Users\MY HP\OneDrive\Escritorio\GR06_1BT3_622_26B\src\main\java\epn\edu\ec\web\PomodoroServlet.java uses or overrides a deprecated API.
+[INFO] /C:/Users/MY HP/OneDrive/Escritorio/GR06_1BT3_622_26B/src/main/java/epn/edu/ec/web/PomodoroServlet.java: Recompile with -Xlint:deprecation for details.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ GR06_1BT3_622_26B ---
+[INFO] skip non existing resourceDirectory C:\Users\MY HP\OneDrive\Escritorio\GR06_1BT3_622_26B\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.14.0:testCompile (default-testCompile) @ GR06_1BT3_622_26B ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 12 source files with javac [debug release 21] to target\test-classes
+[INFO] 
+[INFO] --- surefire:3.5.3:test (default-test) @ GR06_1BT3_622_26B ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running epn.edu.ec.tdd.rachas.ControladorRachaTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.096 s -- in epn.edu.ec.tdd.rachas.ControladorRachaTest
+[INFO] Running epn.edu.ec.tdd.rachas.EvaluadorRachasParametersTest
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.027 s -- in epn.edu.ec.tdd.rachas.EvaluadorRachasParametersTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  9.014 s
+[INFO] Finished at: 2026-10-25T09:15:41-05:00
+[INFO] ------------------------------------------------------------------------

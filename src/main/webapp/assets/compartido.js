@@ -21,6 +21,7 @@
    const response = await fetch(card.dataset.url, {method:"POST",body:new URLSearchParams({accion:"actualizar",csrf:card.dataset.csrf,formato:"json"}),signal:AbortSignal.timeout(8000)});
    if (!response.ok) throw new Error("No se pudo sincronizar la sesión.");
    const next = await response.json();
+   document.dispatchEvent(new Event("pomora:racha"));
    if (next.compartidaId !== id || next.esperando !== waiting) { location.reload(); return; }
    if (id && next.orden > order) window.PomoraUI?.blockEnded({key:`${id}:${order}`, type});
    order = next.orden; type = next.tipo; card.dataset.type = type;

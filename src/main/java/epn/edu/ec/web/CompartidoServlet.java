@@ -78,6 +78,7 @@ public class CompartidoServlet extends HttpServlet {
         else resp.sendRedirect(req.getContextPath() + "/compartido");
     }
     private void prepararVista(HttpServletRequest req, UUID id) {
+        VistaRacha.preparar(req, id);
         var servicio = (ServicioEstudioCompartido) getServletContext().getAttribute("servicioCompartido");
         var repo = (RepositorioSesionesCompartidas) getServletContext().getAttribute("repositorioCompartidas");
         var individuales = (RepositorioSesiones) getServletContext().getAttribute("repositorioSesiones");
@@ -106,8 +107,8 @@ public class CompartidoServlet extends HttpServlet {
     private void escribirEstado(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json;charset=UTF-8");
         resp.getWriter().printf(Locale.ROOT,
-                "{\"compartidaId\":\"%s\",\"esperando\":%s,\"presente\":%s,\"motivo\":\"%s\",\"tipo\":\"%s\",\"orden\":%s,\"restanteMillis\":%s,\"objetivoMillis\":%s}",
+                "{\"compartidaId\":\"%s\",\"esperando\":%s,\"presente\":%s,\"motivo\":\"%s\",\"tipo\":\"%s\",\"orden\":%s,\"restanteMillis\":%s,\"objetivoMillis\":%s,\"rachaDias\":%s}",
                 req.getAttribute("compartidaId"), req.getAttribute("esperando"), req.getAttribute("companeroPresente"), req.getAttribute("companeroMotivo"),
-                req.getAttribute("tipoBloque"), req.getAttribute("ordenBloque"), req.getAttribute("restanteMillis"), req.getAttribute("objetivoMillis"));
+                req.getAttribute("tipoBloque"), req.getAttribute("ordenBloque"), req.getAttribute("restanteMillis"), req.getAttribute("objetivoMillis"), req.getAttribute("rachaDias"));
     }
 }

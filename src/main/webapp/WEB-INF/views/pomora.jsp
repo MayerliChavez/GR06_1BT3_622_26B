@@ -6,9 +6,9 @@
  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
  <meta name="theme-color" content="#29243b">
  <title>${esHistorial ? 'Historial' : 'Tu enfoque'} · Pomora</title>
- <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/pomora.css?v=sonido2">
- <script src="${pageContext.request.contextPath}/assets/pomora.js?v=sonido2" defer></script>
-<script src="${pageContext.request.contextPath}/assets/pomora-ui.js?v=sonido2" defer></script></head>
+ <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/pomora.css?v=calendario1">
+ <script src="${pageContext.request.contextPath}/assets/pomora.js?v=calendario1" defer></script>
+<script src="${pageContext.request.contextPath}/assets/pomora-ui.js?v=sonido2" defer></script><script src="${pageContext.request.contextPath}/assets/racha.js?v=calendario1" defer></script></head>
 <body>
 <aside class="sidebar">
  <a class="brand" href="${pageContext.request.contextPath}/pomodoro"><img class="brand-logo" width="160" src="${pageContext.request.contextPath}/assets/pomora-logo-menu.png" alt="Pomora"></a>
@@ -22,7 +22,8 @@
  <details class="profile-menu"><summary class="profile" aria-label="Abrir opciones de mi perfil"><span class="avatar">E</span><span class="profile-copy"><strong class="profile-name"><c:out value="${sessionScope.nombreVisible}"/></strong><small>Mi espacio de estudio</small></span><span class="profile-chevron" aria-hidden="true">⌃</span></summary><div class="profile-dropdown"><span class="profile-dropdown-label">TU CUENTA</span><strong><c:out value="${sessionScope.nombreVisible}"/></strong><a href="${pageContext.request.contextPath}/historial">Ver mi historial <span>↗</span></a><form class="logout-form" action="${pageContext.request.contextPath}/salir" method="post"><input type="hidden" name="csrf" value="${csrf}"><button type="submit">Cerrar sesión <span>→</span></button></form></div></details>
 </aside>
 <main class="workspace">
- <header class="topbar"><span>${enSesionCompartida && !esHistorial ? 'SESIÓN COMPARTIDA ACTIVA' : 'POMODORO INDIVIDUAL'}</span><span id="fechaHoy"></span></header>
+
+ <header class="topbar"><span>${enSesionCompartida && !esHistorial ? 'SESIÓN COMPARTIDA ACTIVA' : 'POMODORO INDIVIDUAL'}</span><span id="fechaHoy"></span></header><%@ include file="racha.jspf" %>
  <c:if test="${not empty mensaje}"><div class="notice" role="alert"><c:out value="${mensaje}"/></div></c:if>
  <c:choose>
  <c:when test="${esHistorial}">
