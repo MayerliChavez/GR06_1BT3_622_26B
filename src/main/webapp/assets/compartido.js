@@ -23,7 +23,8 @@
    const next = await response.json();
    document.dispatchEvent(new Event("pomora:racha"));
    if (next.compartidaId !== id || next.esperando !== waiting) { location.reload(); return; }
-   if (id && next.orden > order) window.PomoraUI?.blockStarted({notification:next.notificacion});
+   // El componente comun deduplica por sesion/bloque y conserva el aviso inicial tras el emparejamiento.
+   if (id && next.notificacion) window.PomoraUI?.blockStarted({notification:next.notificacion});
    order = next.orden; type = next.tipo; card.dataset.type = type;
    remaining = next.restanteMillis; target = next.objetivoMillis; sampled = performance.now(); connected = true;
    if (id) {

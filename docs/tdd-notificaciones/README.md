@@ -29,7 +29,7 @@ y duración de visualización, tipo y duración real del bloque. CompartidoServl
 Sesión nula/cerrada, receptor ajeno, bloque vacío, pausado o completado producen null.
 El navegador solo avisa después de confirmar un nuevo bloque; no muestra otro aviso por
 pausar/reanudar, consultar el mismo estado o finalizar. El inicio individual también avisa.
-Al cargar una sala compartida ya iniciada no se reproduce un aviso histórico.
+Al entrar por primera vez en una sala compartida se muestra el aviso del bloque actual. El mismo identificador no vuelve a mostrarse al recargar o sondear el estado.
 
 El identificador es estable para cada sesión y orden de bloque. El cliente guarda los
 identificadores consumidos en sessionStorage para evitar duplicados por sondeo y recarga,
@@ -125,3 +125,16 @@ ya que no cambia lógica de backend). ilustraciones-aceptacion.txt registra la v
 con navegador de los tres PNG, posición, dimensiones de la capa, ocultación, foco, reloj y móvil.
 Las capturas ilustracion-*.png muestran el resultado final. Los descansos se ejercitan aquí
 como componente visual; las transiciones de los servicios ya se comprobaron en la integración.
+## Corrección del aviso inicial compartido
+El cliente compartido solo invocaba blockStarted si aumentaba el orden del bloque. Como la
+página entraba ya con orden 1, se perdía la tarjeta inicial que sí se veía en la individual.
+Ahora entrega cada notificación confirmada al componente común: este decide si ya consumió
+ese identificador. Así aparecen la tarjeta inicial y las de los nuevos bloques, sin duplicados,
+y se reintenta en el siguiente sondeo si el componente aún no estaba cargado.
+Se cambió la versión del script compartido para evitar conservar el archivo anterior en caché.
+
+scripts/verificar-compartido-avisos.cjs reproduce el defecto con MODE=before y verifica la
+corrección con dos contextos, uno móvil: imagen, fondo, texto de duración, no repetición por
+sondeo/recarga y transición real a descanso. La fixture usa 90/25 segundos para la prueba;
+los tiempos compartidos de producción siguen en 25/5/15 minutos.
+Evidencias: compartido-antes.txt, compartido-corregido.txt y compartido-inicio-*.png.
