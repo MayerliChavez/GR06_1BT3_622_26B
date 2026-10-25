@@ -10,6 +10,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PomodoroPersistenciaTest {
+
     private EntityManagerFactory factory;
     private RepositorioSesionesJpa repo;
     private ServicioPomodoro servicio;

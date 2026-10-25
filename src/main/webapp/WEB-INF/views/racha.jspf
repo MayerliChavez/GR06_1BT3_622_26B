@@ -10,7 +10,11 @@
  <div class="study-calendar-month">
   <div class="study-calendar-toolbar">
    <h3 id="calendarMonth">Tu calendario</h3>
-   <div class="study-calendar-controls"><button type="button" id="calendarPrevious" aria-label="Mes anterior">‹</button><button type="button" id="calendarToday">Hoy</button><button type="button" id="calendarNext" aria-label="Mes siguiente">›</button></div>
+   <div class="study-calendar-controls">
+    <button type="button" id="calendarPrevious" aria-label="Mes anterior">‹</button>
+    <button type="button" id="calendarToday">Hoy</button>
+    <button type="button" id="calendarNext" aria-label="Mes siguiente">›</button>
+   </div>
   </div>
   <div class="study-calendar-week" aria-hidden="true"><span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
   <div class="study-calendar-days" id="calendarDays" role="group" aria-labelledby="calendarMonth"></div>

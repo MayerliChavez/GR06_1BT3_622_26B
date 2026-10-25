@@ -11,10 +11,12 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class TransicionAutomaticaTest {
+
     private final Instant inicio = Instant.parse("2026-10-18T15:00:00Z");
     private SesionEstudio sesion;
     private ServicioPomodoro servicio;
     private RepositorioSesiones repositorio;
+
     @Before public void setUp() {
         sesion = new SesionEstudio(new Estudiante(UUID.randomUUID(), "Estudiante"),
                 new ConfiguracionPomodoro(Duration.ofSeconds(10), Duration.ofSeconds(2), Duration.ofSeconds(5), 2), inicio);

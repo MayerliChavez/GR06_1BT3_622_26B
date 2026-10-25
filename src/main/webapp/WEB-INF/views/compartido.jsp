@@ -12,7 +12,7 @@
 <aside class="focus-aside">
 <c:if test="${hayCompartida}">
 <section class="chat-card" id="studyChat" data-url="${pageContext.request.contextPath}/chat/${compartidaId}" data-csrf="${csrf}" data-user="${sessionScope.estudianteId}">
- <header class="chat-head"><div><h2>Chat de estudio</h2><p class="chat-status" role="status">Conectando…</p></div><span aria-hidden="true">✨</span></header><c:if test="${!hayCompartida}"><%@ include file="racha.jspf" %></c:if>
+ <header class="chat-head"><div><h2>Chat de estudio</h2><p class="chat-status" role="status">Conectando…</p></div><span aria-hidden="true">🫐</span></header><c:if test="${!hayCompartida}"><%@ include file="racha.jspf" %></c:if>
  <div class="chat-log" role="log" aria-label="Mensajes de la sesión de estudio" aria-live="polite" aria-relevant="additions"></div>
  <form class="chat-form"><label class="sr-only" for="chatText">Mensaje para tu compañero</label><textarea id="chatText" rows="2" maxlength="2000" placeholder="Comparte una duda o una idea…"></textarea><button type="submit" disabled>Enviar →</button></form>
  <p class="chat-error" role="alert"></p><p class="chat-hint">Enter para enviar · Mayús + Enter para otra línea.</p>
