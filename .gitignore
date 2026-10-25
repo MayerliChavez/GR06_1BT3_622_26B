@@ -5,3 +5,7 @@ data/
 .idea/
 .vscode/
 *.iml
+
+# Variables de entorno locales
+.env
+

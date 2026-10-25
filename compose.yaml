@@ -1,0 +1,13 @@
+services:
+  pomora:
+    build: .
+    image: pomora-web:1.0
+    container_name: pomora
+    ports:
+      - "${POMORA_PORT:-8080}:8080"
+    volumes:
+      - pomora-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  pomora-data:
