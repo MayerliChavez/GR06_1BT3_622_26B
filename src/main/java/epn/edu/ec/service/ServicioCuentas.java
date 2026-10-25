@@ -10,17 +10,20 @@ public final class ServicioCuentas {
     public ServicioCuentas(EntityManagerFactory factory) { this.factory=Objects.requireNonNull(factory); }
 
     public synchronized CuentaUsuario registrar(String nombre, String correo, String contrasena) {
-        nombre=Objects.toString(nombre, "").strip(); correo=normalizar(correo);
-        if (nombre.isEmpty() || nombre.length()>80) throw new IllegalArgumentException("Ingresa un nombre de hasta 80 caracteres.");
-        if (correo.length()>254 || !correo.matches("[^\\s@]+@[^\\s@]+\\.[^\\s@]+")) throw new
+        final String nombreNormalizado = Objects.toString(nombre, "").strip();
+        final String correoNormalizado = normalizar(correo);
+        if (nombreNormalizado.isEmpty() || nombreNormalizado.length()>80)
+            throw new IllegalArgumentException("Ingresa un nombre de hasta 80 caracteres.");
+        if (correoNormalizado.length()>254 || !correoNormalizado.matches("[^\\s@]+@[^\\s@]+\\.[^\\s@]+")) throw new
                 IllegalArgumentException("Ingresa un correo válido.");
         if (contrasena==null || contrasena.length()<8 || contrasena.length()>128) throw new
                 IllegalArgumentException("La contraseña debe tener entre 8 y 128 caracteres.");
         try (var em=factory.createEntityManager()) {
-            if (!em.createQuery("select c from CuentaUsuario c where c.correo=:correo", CuentaUsuario.class).setParameter("correo",correo).getResultList().isEmpty())
+            if (!em.createQuery("select c from CuentaUsuario c where c.correo=:correo",
+                    CuentaUsuario.class).setParameter("correo",correoNormalizado).getResultList().isEmpty())
                 throw new IllegalArgumentException("Este correo ya está registrado.");
             String hash = procesadorContrasenas.generarHash(contrasena);
-            var cuenta=new CuentaUsuario(new Estudiante(UUID.randomUUID(),nombre),correo,hash);
+            var cuenta=new CuentaUsuario(new Estudiante(UUID.randomUUID(),nombreNormalizado),correoNormalizado,hash);
             var tx=em.getTransaction();
             try { tx.begin(); em.persist(cuenta); tx.commit(); return cuenta; }
             catch (RuntimeException e) { if(tx.isActive())tx.rollback(); throw e; }

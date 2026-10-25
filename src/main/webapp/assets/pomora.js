@@ -12,13 +12,23 @@
  let sampled = performance.now(), busy = false, syncing = false, online = true, version = 0;
 
  function render() {
-  const elapsed = state.estado === "EN_EJECUCION" && online ? performance.now() - sampled : 0;
-  const remaining = Math.max(0, state.restanteMillis - elapsed);
+  const estaEnEjecucion = state.estado === "EN_EJECUCION";
+  const estaCompletado = state.estado === "COMPLETADO";
+  const tiempoTranscurrido = (estaEnEjecucion && online) ? (performance.now() - sampled) : 0;
+  const remaining = Math.max(0, state.restanteMillis - tiempoTranscurrido);
   const seconds = Math.ceil(remaining / 1000);
-  clock.textContent = `${String(Math.floor(seconds / 60)).padStart(2,"0")}:${String(seconds % 60).padStart(2,"0")}`;
+
+  clock.textContent = `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
   document.title = `${clock.textContent} · Pomora`;
-  document.getElementById("ringProgress").style.strokeDashoffset = String(860.8 * (1 - remaining / state.objetivoMillis));
-  if ((state.estado === "EN_EJECUCION" && remaining === 0 || state.estado === "COMPLETADO") && online && !busy) mutate("completar");
+  const proporcionRestante = state.objetivoMillis > 0 ? (remaining / state.objetivoMillis) : 0;
+  document.getElementById("ringProgress").style.strokeDashoffset = String(860.8 * (1 - proporcionRestante));
+  const elTiempoTermino = remaining === 0;
+  const debeCompletarPorTiempo = estaEnEjecucion && elTiempoTermino;
+  const debeCompletarSesion = (debeCompletarPorTiempo || estaCompletado) && online && !busy;
+
+  if (debeCompletarSesion) {
+   mutate("completar");
+  }
  }
 
  function apply(next) {
