@@ -55,6 +55,7 @@
   } catch(_) { status.textContent="No se pudo actualizar el calendario. Reintentando…"; }
   finally { busy=false; }
  }
+ // Clase  que se encarga de las rachas del sistema
  document.getElementById("calendarPrevious").addEventListener("click",()=>{if(!month)return;month.setUTCMonth(month.getUTCMonth()-1);render();});
  document.getElementById("calendarNext").addEventListener("click",()=>{if(!month)return;month.setUTCMonth(month.getUTCMonth()+1);render();});
  document.getElementById("calendarToday").addEventListener("click",()=>{if(!today)return;const current=fromIso(today);month=new Date(Date.UTC(current.getUTCFullYear(),current.getUTCMonth(),1,12));render();});
