@@ -15,7 +15,7 @@ public class ControladorNotificacion {
         return formateador.formatear(bloqueActual(sesion).getTipo());
     }
 
-    //Maneja el tiempo en el que se presenta la notificacion
+    // Maneja el tiempo en el que se presenta la notificación.
     public Optional<NotificacionFlotante> crearNotificacion(SesionEstudio sesion, UUID estudianteId) {
         String mensaje = generarNotificacion(sesion, estudianteId);
         if (mensaje.isEmpty()) return Optional.empty();
