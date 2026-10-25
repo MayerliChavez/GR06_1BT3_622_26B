@@ -1,0 +1,1 @@
+OK: tarjeta 390px, imagen 195px; visible después de 7,5 s y oculta a los 12,5 s junto al fondo.

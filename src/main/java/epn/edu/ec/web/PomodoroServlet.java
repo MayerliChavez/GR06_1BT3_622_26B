@@ -154,6 +154,7 @@ public class PomodoroServlet extends HttpServlet {
             req.setAttribute("objetivoMillis", bloque == null ? elegida.duracionPara(TipoBloque.CONCENTRACION).toMillis() : bloque.getDuracionObjetivo().toMillis());
             req.setAttribute("tiempoPantalla", formatearTiempo(Duration.ofMillis(restante)));
             req.setAttribute("hayActiva", activa != null);
+            VistaNotificacion.preparar(req, activa, estudianteId);
             req.setAttribute("ahoraEpoch", ahora.toEpochMilli());
             List<Map<String, Object>> filas = new ArrayList<>();
             Duration total = Duration.ZERO;
@@ -188,9 +189,9 @@ public class PomodoroServlet extends HttpServlet {
         resp.setContentType("application/json;charset=UTF-8");
         // Solo UUID, enumeraciones y números generados por el servidor.
         resp.getWriter().printf(Locale.ROOT,
-                "{\"sesionId\":\"%s\",\"estado\":\"%s\",\"tipo\":\"%s\",\"orden\":%s,\"restanteMillis\":%s,\"objetivoMillis\":%s,\"ahoraEpoch\":%s,\"rachaDias\":%s}",
+                "{\"sesionId\":\"%s\",\"estado\":\"%s\",\"tipo\":\"%s\",\"orden\":%s,\"restanteMillis\":%s,\"objetivoMillis\":%s,\"ahoraEpoch\":%s,\"rachaDias\":%s,\"notificacion\":%s}",
                 req.getAttribute("sesionId"), req.getAttribute("estadoBloque"), req.getAttribute("tipoBloque"),
-                req.getAttribute("ordenBloque"), req.getAttribute("restanteMillis"), req.getAttribute("objetivoMillis"), req.getAttribute("ahoraEpoch"), req.getAttribute("rachaDias"));
+                req.getAttribute("ordenBloque"), req.getAttribute("restanteMillis"), req.getAttribute("objetivoMillis"), req.getAttribute("ahoraEpoch"), req.getAttribute("rachaDias"), req.getAttribute("notificacionJson"));
     }
 
     private String formatearTiempo(Duration tiempo) {

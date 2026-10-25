@@ -1,0 +1,5 @@
+OK participante 1: tarjeta inicial con imagen, oscurecimiento y duración real.
+OK participante 0: tarjeta inicial con imagen, oscurecimiento y duración real.
+OK: mismo bloque no se repite por sondeo ni al recargar.
+OK participante 1: nueva tarjeta al cambiar realmente a descanso.
+OK participante 0: nueva tarjeta al cambiar realmente a descanso.

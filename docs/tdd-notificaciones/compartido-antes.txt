@@ -1,0 +1,1 @@
+REPRODUCIDO: servidor envía el aviso del bloque inicial pero ninguno de los dos participantes muestra la tarjeta.

@@ -1,0 +1,5 @@
+OK: CONCENTRACION imagen correcta encima de tarjeta, aplicación oscurecida y sin botones
+OK: DESCANSO_CORTO imagen correcta encima de tarjeta, aplicación oscurecida y sin botones
+OK: DESCANSO_LARGO imagen correcta encima de tarjeta, aplicación oscurecida y sin botones
+OK: DESCANSO_CORTO imagen correcta encima de tarjeta, aplicación oscurecida y sin botones
+OK: fondo desaparece automáticamente, escritura y reloj continúan, móvil sin desbordamiento y sin errores JS

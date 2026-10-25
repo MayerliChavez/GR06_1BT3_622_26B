@@ -1,0 +1,81 @@
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::staticFieldBase has been called by com.google.inject.internal.aop.HiddenClassDefiner (file:/C:/Users/MY%20HP/OneDrive/Escritorio/Tarea3/.tools/apache-maven-3.9.11/lib/guice-5.1.0-classes.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.inject.internal.aop.HiddenClassDefiner
+WARNING: sun.misc.Unsafe::staticFieldBase will be removed in a future release
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------< epn.edu.ec:GR06_1BT3_622_26B >--------------------
+[INFO] Building GR06_1BT3_622_26B 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ war ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ GR06_1BT3_622_26B ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.14.0:compile (default-compile) @ GR06_1BT3_622_26B ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 48 source files with javac [debug release 21] to target\classes
+[INFO] /C:/Users/MY HP/OneDrive/Escritorio/GR06_1BT3_622_26B/src/main/java/epn/edu/ec/web/PomodoroServlet.java: C:\Users\MY HP\OneDrive\Escritorio\GR06_1BT3_622_26B\src\main\java\epn\edu\ec\web\PomodoroServlet.java uses or overrides a deprecated API.
+[INFO] /C:/Users/MY HP/OneDrive/Escritorio/GR06_1BT3_622_26B/src/main/java/epn/edu/ec/web/PomodoroServlet.java: Recompile with -Xlint:deprecation for details.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ GR06_1BT3_622_26B ---
+[INFO] skip non existing resourceDirectory C:\Users\MY HP\OneDrive\Escritorio\GR06_1BT3_622_26B\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.14.0:testCompile (default-testCompile) @ GR06_1BT3_622_26B ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 15 source files with javac [debug release 21] to target\test-classes
+[INFO] 
+[INFO] --- surefire:3.5.3:test (default-test) @ GR06_1BT3_622_26B ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running epn.edu.ec.tdd.notificaciones.ControladorNotificacionMockTest
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by net.bytebuddy.dynamic.loading.ClassInjector$UsingUnsafe$Dispatcher$CreationAction (file:/C:/Users/MY%20HP/OneDrive/Escritorio/Tarea3/.tools/repository/net/bytebuddy/byte-buddy/1.17.8/byte-buddy-1.17.8.jar)
+WARNING: Please consider reporting this to the maintainers of class net.bytebuddy.dynamic.loading.ClassInjector$UsingUnsafe$Dispatcher$CreationAction
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+[ERROR] Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.842 s <<< FAILURE! -- in epn.edu.ec.tdd.notificaciones.ControladorNotificacionMockTest
+[ERROR] epn.edu.ec.tdd.notificaciones.ControladorNotificacionMockTest.given_active_session_when_notifying_current_block_then_use_formatter_message -- Time elapsed: 0.826 s <<< FAILURE!
+org.junit.ComparisonFailure: expected:<[�El descanso ha comenzado! Disfruta tu tiempo]> but was:<[]>
+	at org.junit.Assert.assertEquals(Assert.java:117)
+	at org.junit.Assert.assertEquals(Assert.java:146)
+	at epn.edu.ec.tdd.notificaciones.ControladorNotificacionMockTest.given_active_session_when_notifying_current_block_then_use_formatter_message(ControladorNotificacionMockTest.java:32)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+
+[INFO] Running epn.edu.ec.tdd.notificaciones.FormateadorNotificacionTest
+[ERROR] Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.003 s <<< FAILURE! -- in epn.edu.ec.tdd.notificaciones.FormateadorNotificacionTest
+[ERROR] epn.edu.ec.tdd.notificaciones.FormateadorNotificacionTest.given_block_types_when_formatting_notification_then_expected_messages -- Time elapsed: 0.001 s <<< FAILURE!
+org.junit.ComparisonFailure: expected:<[Es hora de concentrarse. �Mucho �xito!]> but was:<[]>
+	at org.junit.Assert.assertEquals(Assert.java:117)
+	at org.junit.Assert.assertEquals(Assert.java:146)
+	at epn.edu.ec.tdd.notificaciones.FormateadorNotificacionTest.given_block_types_when_formatting_notification_then_expected_messages(FormateadorNotificacionTest.java:20)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Failures: 
+[ERROR]   ControladorNotificacionMockTest.given_active_session_when_notifying_current_block_then_use_formatter_message:32 expected:<[�El descanso ha comenzado! Disfruta tu tiempo]> but was:<[]>
+[ERROR]   FormateadorNotificacionTest.given_block_types_when_formatting_notification_then_expected_messages:20 expected:<[Es hora de concentrarse. �Mucho �xito!]> but was:<[]>
+[INFO] 
+[ERROR] Tests run: 2, Failures: 2, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  7.034 s
+[INFO] Finished at: 2026-10-25T10:14:47-05:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.3:test (default-test) on project GR06_1BT3_622_26B: There are test failures.
+[ERROR] 
+[ERROR] See C:\Users\MY HP\OneDrive\Escritorio\GR06_1BT3_622_26B\target\surefire-reports for the individual test results.
+[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

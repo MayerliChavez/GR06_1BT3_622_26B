@@ -5,17 +5,63 @@
  const write = (key, value) => { try { localStorage.setItem(key, value); } catch (_) {} };
  let enabled = read("pomora-sound", "on") === "on", audio = null, ready = false;
  const soundButtons = [...document.querySelectorAll(".sound-toggle")];
+  const artBase = new URL("notificaciones/", document.currentScript.src);
+ const noticeArtwork = {
+  CONCENTRACION: new URL("concentracion.png", artBase).href,
+  DESCANSO_CORTO: new URL("descanso-corto.png", artBase).href,
+  DESCANSO_LARGO: new URL("descanso-largo.png", artBase).href
+ };
+ if (document.querySelector(".timer-card")) Object.values(noticeArtwork).forEach(src => { const image = new Image(); image.src = src; });
+ const backdrop = document.createElement("div"); backdrop.className = "completion-backdrop"; backdrop.setAttribute("aria-hidden", "true"); document.body.append(backdrop);
  const live = document.createElement("div"); live.className = "completion-toast"; live.setAttribute("role", "status");
  live.setAttribute("aria-live", "polite"); document.body.append(live);
  let toastTimeout;
  const pendingBells = new Map();
  let flushing = false;
- function toast(text) { live.textContent = text; live.classList.add("visible"); clearTimeout(toastTimeout); toastTimeout = setTimeout(() => live.classList.remove("visible"), 6500); }
+ function formatBlockTime(millis) {
+  const seconds = Math.max(1, Math.round(millis / 1000)), minutes = Math.floor(seconds / 60), remainder = seconds % 60;
+  const parts = [];
+  if (minutes) parts.push(`${minutes} ${minutes === 1 ? "minuto" : "minutos"}`);
+  if (remainder) parts.push(`${remainder} ${remainder === 1 ? "segundo" : "segundos"}`);
+  return parts.join(" y ");
+ }
+ function positionNotice() {
+  const workspace = document.querySelector(".workspace");
+  const rect = workspace?.getBoundingClientRect();
+  live.style.left = rect ? `${(Math.max(0, rect.left) + Math.min(innerWidth, rect.right)) / 2}px` : "50%";
+ }
+ function toast(text, duration = 12500, notification = null) {
+  live.replaceChildren();
+  const type = notification?.tipoBloque;
+  live.dataset.type = type || "INFO";
+  const heading = document.createElement("h2"); heading.className = "completion-title";
+  heading.textContent = type === "CONCENTRACION" ? "¡Tiempo de concentrarse!" : type === "DESCANSO_LARGO" ? "¡Tiempo de descanso largo!" : type === "DESCANSO_CORTO" ? "¡Tiempo de descanso!" : "Pomora";
+  const body = document.createElement("div"); body.className = "completion-body";
+  const message = document.createElement("p"); message.className = "completion-message"; message.textContent = text;
+  body.append(message);
+  if (notification && Number.isFinite(notification.duracionBloqueMillis) && notification.duracionBloqueMillis > 0) {
+   const detail = document.createElement("p"); detail.className = "completion-duration";
+   const blockTime = formatBlockTime(notification.duracionBloqueMillis);
+   detail.textContent = type === "CONCENTRACION" ? `Dedica ${blockTime} a tu estudio. Tú puedes.` : `Buen trabajo. Tómate ${blockTime} para recargar energías.`;
+   body.append(detail);
+  }
+  const progress = document.createElement("span"); progress.className = "completion-progress"; progress.setAttribute("aria-hidden","true"); progress.style.animationDuration = `${duration}ms`;
+  const card = document.createElement("div"); card.className = "completion-card"; card.append(heading, body, progress);
+  if (noticeArtwork[type]) {
+   const image = document.createElement("img"); image.className = "completion-art"; image.src = noticeArtwork[type];
+   image.alt = ""; image.setAttribute("aria-hidden", "true"); image.width = 195; image.height = 195; image.decoding = "async";
+   live.append(image);
+  }
+  live.append(card); positionNotice(); live.classList.add("visible"); backdrop.classList.toggle("visible", Boolean(notification));
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => { live.classList.remove("visible"); backdrop.classList.remove("visible"); live.replaceChildren(); }, duration);
+ }
+ window.addEventListener("resize", positionNotice);
  function soundLabels() {
   soundButtons.forEach(button => {
    button.textContent = !enabled ? "♪ Sonido apagado" : ready ? "♪ Sonido activo" : "♪ Activar sonido";
    button.setAttribute("aria-pressed", String(enabled && ready));
-   button.title = "Alarma suave al finalizar concentración o descanso";
+   button.title = "Tonos diferentes para concentración, descanso corto y descanso largo";
   });
  }
  async function unlock() {
@@ -24,21 +70,27 @@
   try { audio ||= new Context(); await audio.resume(); ready = audio.state === "running"; soundLabels(); if (ready) flushBells(); return ready; }
   catch (_) { return false; }
  }
- async function chime() {
+ async function chime(type) {
   if (!enabled || !audio) return false;
   if (audio.state === "suspended") {
    try { await audio.resume(); } catch (_) { return false; }
   }
   ready = audio.state === "running"; soundLabels();
   if (!ready) return false;
+  const tones = {
+   CONCENTRACION: {notes:[659.25,783.99,987.77],wave:"sine",gap:.23,length:.65},
+   DESCANSO_CORTO: {notes:[783.99,659.25],wave:"triangle",gap:.34,length:.9},
+   DESCANSO_LARGO: {notes:[523.25,440,349.23],wave:"sine",gap:.48,length:1.3}
+  };
+  const profile = tones[type] || tones.CONCENTRACION;
   const now = audio.currentTime;
-  [523.25, 659.25, 783.99].forEach((frequency, i) => {
+  profile.notes.forEach((frequency, i) => {
    const oscillator = audio.createOscillator(), volume = audio.createGain();
-   oscillator.type = "sine"; oscillator.frequency.value = frequency;
-   const start = now + i * .32;
+   oscillator.type = profile.wave; oscillator.frequency.value = frequency;
+   const start = now + i * profile.gap;
    volume.gain.setValueAtTime(0, start); volume.gain.linearRampToValueAtTime(.055, start + .045);
-   volume.gain.exponentialRampToValueAtTime(.001, start + 1.55);
-   oscillator.connect(volume); volume.connect(audio.destination); oscillator.start(start); oscillator.stop(start + 1.65);
+   volume.gain.exponentialRampToValueAtTime(.001, start + profile.length);
+   oscillator.connect(volume); volume.connect(audio.destination); oscillator.start(start); oscillator.stop(start + profile.length + .1);
    oscillator.onended = () => { oscillator.disconnect(); volume.disconnect(); };
   });
   return true;
@@ -47,13 +99,13 @@
   if (flushing || !enabled) return;
   flushing = true;
   try {
-   for (const [key, when] of pendingBells) {
-    if (Date.now() - when > 20000) { pendingBells.delete(key); continue; }
+   for (const [key, pending] of pendingBells) {
+    if (Date.now() - pending.when > 20000) { pendingBells.delete(key); continue; }
     let previous; try { previous = JSON.parse(read("pomora-last-bells", "[]")); } catch (_) { previous = []; }
     if (!Array.isArray(previous)) previous = [];
     if (previous.includes(key)) { pendingBells.delete(key); continue; }
     // Registrar el aviso solo cuando el navegador pudo programar el sonido.
-    if (!await chime()) break;
+    if (!await chime(pending.type)) break;
     write("pomora-last-bells", JSON.stringify([...previous.slice(-19), key]));
     pendingBells.delete(key);
    }
@@ -69,17 +121,25 @@
   write("pomora-sound", enabled ? "on" : "off"); soundLabels();
  }));
  soundLabels();
- const played = new Set();
+ let savedNotices;
+ try { savedNotices = JSON.parse(sessionStorage.getItem("pomora-notices") || "[]"); } catch (_) { savedNotices = []; }
+ const played = new Set(Array.isArray(savedNotices) ? savedNotices : []);
  window.PomoraUI = {
-  blockEnded({key, type}) {
-   if (played.has(key)) return; played.add(key);
-   const focus = type === "CONCENTRACION";
-   toast(focus ? "Concentración terminada. Tu descanso ya comenzó." : "Descanso terminado. Tu siguiente bloque de concentración ya comenzó.");
+  blockStarted({notification}) {
+   if (!notification || typeof notification.id !== "string" || typeof notification.mensaje !== "string"
+       || notification.posicion !== "CENTRO_APLICACION" || played.has(notification.id)) return;
+   const key = notification.id;
+   played.add(key);
+   if (played.size > 100) played.delete(played.values().next().value);
+   try { sessionStorage.setItem("pomora-notices", JSON.stringify([...played])); } catch (_) {}
+   const duration = Number.isFinite(notification.duracionMillis) ? Math.min(15000, Math.max(1000, notification.duracionMillis)) : 12500;
+   toast(notification.mensaje, duration, notification);
+
    document.querySelectorAll(".timer-card").forEach(card => {
     card.classList.remove("block-finished"); void card.offsetWidth; card.classList.add("block-finished");
     setTimeout(() => card.classList.remove("block-finished"), 2400);
    });
-   pendingBells.set(key, Date.now());
+   pendingBells.set(key, {when:Date.now(),type:notification.tipoBloque});
    flushBells();
   }
  };

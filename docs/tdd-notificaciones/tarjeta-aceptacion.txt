@@ -1,0 +1,9 @@
+OK: dos participantes compartidos y una sesión individual reales iniciados
+OK compartido-ana: 3.2 descanso, 3.3 foco y temporizador continúan, 3.4 ocultación a 6.5 segundos, tarjeta centrada, duración real y sin botones
+OK compartido-luis-movil: 3.2 descanso, 3.3 foco y temporizador continúan, 3.4 ocultación a 6.5 segundos, tarjeta centrada, duración real y sin botones
+OK individual: 3.2 descanso, 3.3 foco y temporizador continúan, 3.4 ocultación a 6.5 segundos, tarjeta centrada, duración real y sin botones
+OK compartido-ana: 3.1 concentración y sin duplicados durante sincronización
+OK compartido-luis-movil: 3.1 concentración y sin duplicados durante sincronización
+OK individual: 3.1 concentración y sin duplicados durante sincronización
+OK: tres perfiles de sonido distintos programados en Web Audio; descanso corto muestra 5 minutos
+OK: sin aviso de sesión cerrada, recarga sin repetir y sin errores JavaScript
