@@ -4,6 +4,7 @@ import epn.edu.ec.model.*;
 import java.util.*;
 
 public class ControladorNotificacion {
+
     private final FormateadorNotificacion formateador;
 
     public ControladorNotificacion(FormateadorNotificacion formateador) {
@@ -34,4 +35,5 @@ public class ControladorNotificacion {
         var bloques = sesion.getBloques();
         return bloques.get(bloques.size() - 1);
     }
+    
 }
