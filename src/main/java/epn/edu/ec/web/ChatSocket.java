@@ -17,7 +17,7 @@ public class ChatSocket {
     private UUID estudianteId;
     private ServicioChat servicio;
     private Object bloqueo;
-    private Map<String, ChatSocket> conexiones;
+    private Map<String, ChatSocket> conexiones; //este es un comentario
 
     public static class Autenticacion extends ServerEndpointConfig.Configurator {
         @Override public void modifyHandshake(ServerEndpointConfig config, HandshakeRequest request,
