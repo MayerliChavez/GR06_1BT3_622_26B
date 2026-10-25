@@ -9,12 +9,14 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class EstudioCompartidoTest {
+
     private EntityManagerFactory factory;
     private RepositorioSesionesJpa individuales;
     private RepositorioSesionesCompartidasJpa compartidas;
     private ServicioEstudioCompartido servicio;
     private final Instant inicio = Instant.parse("2026-10-04T00:00:00Z");
     private final ConfiguracionPomodoro config = new ConfiguracionPomodoro(Duration.ofSeconds(10), Duration.ofSeconds(2), Duration.ofSeconds(5), 4);
+
     @BeforeEach void abrir() {
         factory = Persistence.createEntityManagerFactory("tarea3", Map.of("jakarta.persistence.jdbc.url", "jdbc:h2:mem:shared" + UUID.randomUUID(),
                 "hibernate.hbm2ddl.auto", "create-drop", "hibernate.show_sql", "false"));
@@ -22,6 +24,7 @@ class EstudioCompartidoTest {
         compartidas = new RepositorioSesionesCompartidasJpa(factory);
         servicio = new ServicioEstudioCompartido(new EmparejadorEnMemoria(), individuales, compartidas, config);
     }
+
     @AfterEach void cerrar() { if (factory != null) factory.close(); }
 
     @Test void venceSoloLaParticipacionSinSenalesYConservaAlCompanero() {
@@ -53,6 +56,7 @@ class EstudioCompartidoTest {
         cola.cancelarEspera(a);
         assertTrue(cola.buscarOEsperar(b).isEmpty());
     }
+
     @Test void persisteDosSesionesConUnMismoInicioYBloquesSincronizados() {
         UUID a = UUID.randomUUID(), b = UUID.randomUUID();
         assertTrue(servicio.solicitarEmparejamiento(a, inicio).isEmpty());
@@ -74,6 +78,7 @@ class EstudioCompartidoTest {
         servicio.actualizarSesion(s.getId(), inicio.plusSeconds(13));
         assertEquals(TipoBloque.CONCENTRACION, compartidas.buscarPorId(s.getId()).orElseThrow().getSesiones().get(0).getBloques().get(2).getTipo());
     }
+
     @Test void salidaYDesconexionConservanHistorialYPermitenContinuarAlOtro() {
         UUID a = UUID.randomUUID(), b = UUID.randomUUID();
         servicio.solicitarEmparejamiento(a, inicio);
@@ -89,6 +94,7 @@ class EstudioCompartidoTest {
         assertEquals(EstadoSesion.ABANDONADA, individuales.buscarPorEstudiante(b).get(0).getEstado());
         assertTrue(servicio.consultarTiempoRestante(s.getId(), inicio.plusSeconds(10)).isEmpty());
     }
+
     @Test void ambasDesconexionesAbandonanLaCompartida() {
         UUID a = UUID.randomUUID(), b = UUID.randomUUID();
         servicio.solicitarEmparejamiento(a, inicio);
@@ -97,6 +103,7 @@ class EstudioCompartidoTest {
         servicio.registrarDesconexion(s.getId(), b, inicio.plusSeconds(3));
         assertEquals(EstadoSesionCompartida.ABANDONADA, compartidas.buscarPorId(s.getId()).orElseThrow().getEstado());
     }
+
     @Test void rechazaSesionesIndividualesActivasYParticipantesAjenos() {
         UUID a = UUID.randomUUID(), b = UUID.randomUUID();
         new ServicioPomodoro(individuales).iniciarSesion(a, config, inicio);

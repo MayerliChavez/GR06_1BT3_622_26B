@@ -10,6 +10,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RachasIntegracionTest {
+
     private EntityManagerFactory factory;
     private ServicioPomodoro pomodoro;
     private RepositorioRachasJpa rachas;
