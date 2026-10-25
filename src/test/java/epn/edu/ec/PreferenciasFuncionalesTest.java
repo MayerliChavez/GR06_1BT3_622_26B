@@ -11,6 +11,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PreferenciasFuncionalesTest {
+
     private EntityManagerFactory factory;
     private ServicioPreferencias servicio;
     private RepositorioSesionesJpa sesiones;

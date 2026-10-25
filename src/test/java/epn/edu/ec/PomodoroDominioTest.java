@@ -7,6 +7,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PomodoroDominioTest {
+
     private final Instant inicio = Instant.parse("2026-10-04T00:00:00Z");
 
     @Test void pausaConservaTiempoYReanudarNoCuentaLaPausa() {
