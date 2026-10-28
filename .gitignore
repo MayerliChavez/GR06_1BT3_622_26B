@@ -8,4 +8,6 @@ data/
 
 # Variables de entorno locales
 .env
+# Respaldo local de Jenkins
+docker-jenkins/jenkins_home_final.tar.gz
 

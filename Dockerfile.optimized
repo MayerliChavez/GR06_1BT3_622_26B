@@ -1,0 +1,33 @@
+
+# Etapa 1: compilar Pomora
+FROM maven:3.9.11-eclipse-temurin-21 AS builder
+
+WORKDIR /app
+
+COPY pom.xml ./
+COPY src ./src
+
+RUN mvn -B -DskipTests package
+
+# Etapa 2: ejecutar con Jetty, sin Maven
+FROM jetty:12.0.35-jdk21-eclipse-temurin
+
+USER root
+
+# Habilitar los módulos necesarios para Jakarta EE 10
+RUN java -jar "$JETTY_HOME/start.jar" \
+    --add-modules=ee10-deploy,ee10-jsp,ee10-jstl,ee10-websocket-jakarta
+
+# Copiar la aplicación como raíz del sitio
+COPY --from=builder /app/target/GR06_1BT3_622_26B.war \
+    /var/lib/jetty/webapps/ROOT.war
+
+# Preparar el directorio para la base de datos H2
+RUN mkdir -p /var/lib/jetty/data \
+    && chown -R jetty:jetty /var/lib/jetty/data /var/lib/jetty/webapps
+
+ENV JAVA_OPTIONS="-Duser.timezone=America/Guayaquil"
+
+EXPOSE 8080
+
+USER jetty
