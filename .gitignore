@@ -10,4 +10,4 @@ data/
 .env
 # Respaldo local de Jenkins
 docker-jenkins/jenkins_home_final.tar.gz
-
+/jenkins_home_backup.tar.gz
