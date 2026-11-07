@@ -1,0 +1,21 @@
+{
+  "passed": 16,
+  "checks": [
+    "Salas exige autenticación",
+    "Registro de Ana Salas",
+    "Autenticación de Ana Salas",
+    "La JSP permite crear una sala",
+    "Crear exige CSRF válido",
+    "Crear redirige a la sala persistida",
+    "Código alfanumérico y rol Responsable",
+    "Botón Copiar código disponible",
+    "Recargar conserva el código",
+    "Otra creación conserva la sala existente",
+    "Sala abierta bloquea inicio individual",
+    "Registro de Luis Salas",
+    "Autenticación de Luis Salas",
+    "Otro usuario no ve la sala de Ana",
+    "Sesión individual bloquea creación de sala",
+    "La creación bloqueada no produce una sala"
+  ]
+}

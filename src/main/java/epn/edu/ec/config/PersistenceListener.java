@@ -19,14 +19,19 @@ public class PersistenceListener implements ServletContextListener {
         event.getServletContext().setAttribute("emf", factory);
         event.getServletContext().setAttribute("servicioCuentas", new epn.edu.ec.service.ServicioCuentas(factory));
         var repositorio = new RepositorioSesionesJpa(factory);
+        var salas = new RepositorioSalasPrivadasJpa(factory);
+        event.getServletContext().setAttribute("repositorioSalasPrivadas", salas);
         event.getServletContext().setAttribute("repositorioSesiones", repositorio);
-        event.getServletContext().setAttribute("servicioPomodoro", new ServicioPomodoro(repositorio));
+        event.getServletContext().setAttribute("servicioPomodoro", new ServicioPomodoro(repositorio, salas));
         event.getServletContext().setAttribute("servicioPreferencias",
                 new epn.edu.ec.tdd.preferencias.ServicioPreferencias(new RepositorioPreferenciasJpa(factory),
                         (ServicioPomodoro) event.getServletContext().getAttribute("servicioPomodoro")));
         var compartidas = new RepositorioSesionesCompartidasJpa(factory);
         var compartido = new ServicioEstudioCompartido(new EmparejadorEnMemoria(), repositorio, compartidas,
-                new ConfiguracionPomodoro(Duration.ofMinutes(25), Duration.ofMinutes(5), Duration.ofMinutes(15), 4));
+                new ConfiguracionPomodoro(Duration.ofMinutes(25), Duration.ofMinutes(5), Duration.ofMinutes(15), 4), salas);
+        event.getServletContext().setAttribute("servicioSalasPrivadas",
+                new epn.edu.ec.service.ServicioSalasPrivadas(salas, repositorio, compartidas,
+                        new epn.edu.ec.service.GeneradorCodigoSalaAleatorio()));
         event.getServletContext().setAttribute("servicioChat", new epn.edu.ec.service.ServicioChat(factory, compartidas));
         event.getServletContext().setAttribute("conexionesChat", new java.util.concurrent.ConcurrentHashMap<String, epn.edu.ec.web.ChatSocket>());
         var presencia = new PresenciaCompartida(compartido, Duration.ofSeconds(90));

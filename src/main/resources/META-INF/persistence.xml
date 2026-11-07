@@ -12,6 +12,8 @@
   <class>epn.edu.ec.model.PreferenciasEstudiante</class>
   <class>epn.edu.ec.model.MensajeChat</class>
   <class>epn.edu.ec.model.RachaEstudio</class>
+  <class>epn.edu.ec.model.SalaPrivada</class>
+  <class>epn.edu.ec.model.ParticipacionSalaPrivada</class>
   <exclude-unlisted-classes>true</exclude-unlisted-classes>
   <properties>
    <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>

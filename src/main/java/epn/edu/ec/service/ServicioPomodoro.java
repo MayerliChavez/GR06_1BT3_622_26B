@@ -7,20 +7,30 @@ import java.util.*;
 
 public class ServicioPomodoro {
     private final RepositorioSesiones repositorioSesiones;
+    private final epn.edu.ec.repository.RepositorioSalasPrivadas salasPrivadas;
     public ServicioPomodoro(RepositorioSesiones repositorioSesiones) {
+        this(repositorioSesiones, null);
+    }
+    public ServicioPomodoro(RepositorioSesiones repositorioSesiones,
+            epn.edu.ec.repository.RepositorioSalasPrivadas salasPrivadas) {
         this.repositorioSesiones = Objects.requireNonNull(repositorioSesiones);
+        this.salasPrivadas = salasPrivadas;
     }
 
     // Serializa las operaciones en esta aplicación local y evita dobles inicios entre pestañas.
     public synchronized SesionEstudio iniciarSesion(UUID estudianteId, ConfiguracionPomodoro configuracion, Instant ahora) {
-        if (repositorioSesiones.buscarActivaPorEstudiante(estudianteId).isPresent())
-            throw new IllegalStateException("Ya tienes una sesión activa.");
-        var historial = repositorioSesiones.buscarPorEstudiante(estudianteId);
-        var estudiante = historial.isEmpty() ? new Estudiante(estudianteId, "Estudiante") : historial.get(0).getEstudiante();
-        var sesion = new SesionEstudio(estudiante, configuracion, ahora);
-        sesion.iniciarSiguienteBloque(ahora);
-        repositorioSesiones.guardar(sesion);
-        return sesion;
+        synchronized (repositorioSesiones) {
+            if (salasPrivadas != null && salasPrivadas.buscarAbiertaPorEstudiante(estudianteId).isPresent())
+                throw new IllegalStateException("Ya participas en una sala privada. Vuelve a tu sala actual.");
+            if (repositorioSesiones.buscarActivaPorEstudiante(estudianteId).isPresent())
+                throw new IllegalStateException("Ya tienes una sesión activa.");
+            var historial = repositorioSesiones.buscarPorEstudiante(estudianteId);
+            var estudiante = historial.isEmpty() ? new Estudiante(estudianteId, "Estudiante") : historial.get(0).getEstudiante();
+            var sesion = new SesionEstudio(estudiante, configuracion, ahora);
+            sesion.iniciarSiguienteBloque(ahora);
+            repositorioSesiones.guardar(sesion);
+            return sesion;
+        }
     }
 
     public synchronized void pausarTemporizador(UUID sesionId, Instant ahora) {
