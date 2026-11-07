@@ -9,36 +9,50 @@ public class ServicioEstudioCompartido {
     private final RepositorioSesiones repositorioSesiones;
     private final RepositorioSesionesCompartidas repositorioCompartidas;
     private final ConfiguracionPomodoro configuracionFija;
+    private final RepositorioSalasPrivadas salasPrivadas;
 
     public ServicioEstudioCompartido(Emparejador emparejador, RepositorioSesiones repositorioSesiones,
             RepositorioSesionesCompartidas repositorioCompartidas, ConfiguracionPomodoro configuracionFija) {
+        this(emparejador, repositorioSesiones, repositorioCompartidas, configuracionFija, null);
+    }
+    public ServicioEstudioCompartido(Emparejador emparejador, RepositorioSesiones repositorioSesiones,
+            RepositorioSesionesCompartidas repositorioCompartidas, ConfiguracionPomodoro configuracionFija,
+            RepositorioSalasPrivadas salasPrivadas) {
         this.emparejador = Objects.requireNonNull(emparejador);
         this.repositorioSesiones = Objects.requireNonNull(repositorioSesiones);
         this.repositorioCompartidas = Objects.requireNonNull(repositorioCompartidas);
         this.configuracionFija = Objects.requireNonNull(configuracionFija);
+        this.salasPrivadas = salasPrivadas;
     }
     public synchronized Optional<SesionCompartida> solicitarEmparejamiento(UUID estudianteId, Instant ahora) {
-        var existente = repositorioCompartidas.buscarAbiertaPorEstudiante(estudianteId);
-        if (existente.isPresent()) return existente;
-        if (repositorioSesiones.buscarActivaPorEstudiante(estudianteId).isPresent()) {
-            emparejador.cancelarEspera(estudianteId);
-            throw new IllegalStateException("Finaliza tu sesión individual antes de buscar compañero.");
+        synchronized (repositorioSesiones) {
+            if (salasPrivadas != null && salasPrivadas.buscarAbiertaPorEstudiante(estudianteId).isPresent()) {
+                emparejador.cancelarEspera(estudianteId);
+                throw new IllegalStateException("Ya participas en una sala privada. Vuelve a tu sala actual.");
+            }
+            var existente = repositorioCompartidas.buscarAbiertaPorEstudiante(estudianteId);
+            if (existente.isPresent()) return existente;
+            if (repositorioSesiones.buscarActivaPorEstudiante(estudianteId).isPresent()) {
+                emparejador.cancelarEspera(estudianteId);
+                throw new IllegalStateException("Finaliza tu sesión individual antes de buscar compañero.");
+            }
+            Optional<UUID> candidato;
+            do {
+                candidato = emparejador.buscarOEsperar(estudianteId);
+                if (candidato.isEmpty()) return Optional.empty();
+            } while (repositorioSesiones.buscarActivaPorEstudiante(candidato.get()).isPresent()
+                    || repositorioCompartidas.buscarAbiertaPorEstudiante(candidato.get()).isPresent()
+                    || (salasPrivadas != null && salasPrivadas.buscarAbiertaPorEstudiante(candidato.get()).isPresent()));
+            UUID companeroId = candidato.orElseThrow();
+            var historialA = repositorioSesiones.buscarPorEstudiante(estudianteId);
+            var historialB = repositorioSesiones.buscarPorEstudiante(companeroId);
+            var a = historialA.isEmpty() ? new Estudiante(estudianteId, "Estudiante") : historialA.get(0).getEstudiante();
+            var b = historialB.isEmpty() ? new Estudiante(companeroId, "Estudiante") : historialB.get(0).getEstudiante();
+            var compartida = new SesionCompartida(new SesionEstudio(a, configuracionFija, ahora), new SesionEstudio(b, configuracionFija, ahora));
+            compartida.iniciar(ahora);
+            repositorioCompartidas.guardar(compartida); // Una única transacción para la sesión y ambas composiciones.
+            return Optional.of(compartida);
         }
-        Optional<UUID> candidato;
-        do {
-            candidato = emparejador.buscarOEsperar(estudianteId);
-            if (candidato.isEmpty()) return Optional.empty();
-        } while (repositorioSesiones.buscarActivaPorEstudiante(candidato.get()).isPresent()
-                || repositorioCompartidas.buscarAbiertaPorEstudiante(candidato.get()).isPresent());
-        UUID companeroId = candidato.orElseThrow();
-        var historialA = repositorioSesiones.buscarPorEstudiante(estudianteId);
-        var historialB = repositorioSesiones.buscarPorEstudiante(companeroId);
-        var a = historialA.isEmpty() ? new Estudiante(estudianteId, "Estudiante") : historialA.get(0).getEstudiante();
-        var b = historialB.isEmpty() ? new Estudiante(companeroId, "Estudiante") : historialB.get(0).getEstudiante();
-        var compartida = new SesionCompartida(new SesionEstudio(a, configuracionFija, ahora), new SesionEstudio(b, configuracionFija, ahora));
-        compartida.iniciar(ahora);
-        repositorioCompartidas.guardar(compartida); // Una única transacción para la sesión y ambas composiciones.
-        return Optional.of(compartida);
     }
 
     public synchronized void cancelarEspera(UUID estudianteId) { emparejador.cancelarEspera(estudianteId); }

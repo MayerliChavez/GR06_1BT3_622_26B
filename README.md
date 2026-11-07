@@ -2,6 +2,19 @@
 
 Pomora: aplicación Java Web del grupo 06, con JSP, Servlet y Hibernate/JPA. Implementa Pomodoro individual y estudio compartido a partir de los diagramas entregados, con asistencia de Codex.
 
+## Iteración 1 de salas privadas en desarrollo
+
+El menú **Salas privadas** (`/salas`) permite crear una sala con responsable y
+código alfanumérico de seis caracteres, copiarlo y recuperar la misma sala al
+recargar. Se guarda en H2 y se impide combinar una sala abierta con una sesión
+individual o emparejada. Ingreso por solicitudes, ciclo privado y cierre siguen
+pendientes; el chat existente corresponde al estudio emparejado.
+
+La evidencia del aporte 5 está en
+[docs/iteracion1/evidencias/ariel/commit5](docs/iteracion1/evidencias/ariel/commit5/README.md).
+Con el servidor iniciado, `scripts/verificar-salas.ps1` comprueba el flujo HTTP y
+crea dos cuentas sintéticas; usarlo sobre una base de pruebas.
+
 ## Preparación e inicio
 
 Requiere Windows, JDK 17 o superior y conexión para descargar Maven y dependencias. En este equipo se verificó con JDK 25. Desde la carpeta del proyecto:

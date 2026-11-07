@@ -1,0 +1,106 @@
+Access is denied.
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------< epn.edu.ec:GR06_1BT3_622_26B >--------------------
+[INFO] Building GR06_1BT3_622_26B 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ war ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ GR06_1BT3_622_26B ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.14.0:compile (default-compile) @ GR06_1BT3_622_26B ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 56 source files with javac [debug release 21] to target\classes
+[INFO] /C:/Users/MY HP/OneDrive/Escritorio/Tarea3/pomora-iteracion1/src/main/java/epn/edu/ec/web/PomodoroServlet.java: C:\Users\MY HP\OneDrive\Escritorio\Tarea3\pomora-iteracion1\src\main\java\epn\edu\ec\web\PomodoroServlet.java uses or overrides a deprecated API.
+[INFO] /C:/Users/MY HP/OneDrive/Escritorio/Tarea3/pomora-iteracion1/src/main/java/epn/edu/ec/web/PomodoroServlet.java: Recompile with -Xlint:deprecation for details.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ GR06_1BT3_622_26B ---
+[INFO] skip non existing resourceDirectory C:\Users\MY HP\OneDrive\Escritorio\Tarea3\pomora-iteracion1\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.14.0:testCompile (default-testCompile) @ GR06_1BT3_622_26B ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 22 source files with javac [debug release 21] to target\test-classes
+[INFO] 
+[INFO] --- surefire:3.5.3:test (default-test) @ GR06_1BT3_622_26B ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running epn.edu.ec.salas.CreacionSalaMockTest
+[ERROR] Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 1.081 s <<< FAILURE! -- in epn.edu.ec.salas.CreacionSalaMockTest
+[ERROR] epn.edu.ec.salas.CreacionSalaMockTest.unaColisionReintentaYGuardaSoloElCodigoLibre -- Time elapsed: 1.059 s <<< ERROR!
+java.lang.UnsupportedOperationException: Creaci�n pendiente.
+	at epn.edu.ec.service.ServicioSalasPrivadas.crear(ServicioSalasPrivadas.java:13)
+	at epn.edu.ec.salas.CreacionSalaMockTest.unaColisionReintentaYGuardaSoloElCodigoLibre(CreacionSalaMockTest.java:28)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+
+[INFO] Running epn.edu.ec.salas.ServicioSalasPrivadasTest
+[ERROR] Tests run: 4, Failures: 2, Errors: 2, Skipped: 0, Time elapsed: 0.048 s <<< FAILURE! -- in epn.edu.ec.salas.ServicioSalasPrivadasTest
+[ERROR] epn.edu.ec.salas.ServicioSalasPrivadasTest.sesionEmparejadaImpideCrearOtraSala -- Time elapsed: 0.033 s <<< FAILURE!
+java.lang.AssertionError: unexpected exception type thrown; expected:<java.lang.IllegalStateException> but was:<java.lang.UnsupportedOperationException>
+	at org.junit.Assert.assertThrows(Assert.java:1020)
+	at org.junit.Assert.assertThrows(Assert.java:981)
+	at epn.edu.ec.salas.ServicioSalasPrivadasTest.sesionEmparejadaImpideCrearOtraSala(ServicioSalasPrivadasTest.java:75)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+Caused by: java.lang.UnsupportedOperationException: Creaci�n pendiente.
+	at epn.edu.ec.service.ServicioSalasPrivadas.crear(ServicioSalasPrivadas.java:13)
+	at epn.edu.ec.salas.ServicioSalasPrivadasTest.lambda$sesionEmparejadaImpideCrearOtraSala$3(ServicioSalasPrivadasTest.java:75)
+	at org.junit.Assert.assertThrows(Assert.java:1001)
+	... 3 more
+
+[ERROR] epn.edu.ec.salas.ServicioSalasPrivadasTest.sesionIndividualImpideCrearYSigueSinCambios -- Time elapsed: 0.005 s <<< FAILURE!
+java.lang.AssertionError: unexpected exception type thrown; expected:<java.lang.IllegalStateException> but was:<java.lang.UnsupportedOperationException>
+	at org.junit.Assert.assertThrows(Assert.java:1020)
+	at org.junit.Assert.assertThrows(Assert.java:981)
+	at epn.edu.ec.salas.ServicioSalasPrivadasTest.sesionIndividualImpideCrearYSigueSinCambios(ServicioSalasPrivadasTest.java:65)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+Caused by: java.lang.UnsupportedOperationException: Creaci�n pendiente.
+	at epn.edu.ec.service.ServicioSalasPrivadas.crear(ServicioSalasPrivadas.java:13)
+	at epn.edu.ec.salas.ServicioSalasPrivadasTest.lambda$sesionIndividualImpideCrearYSigueSinCambios$2(ServicioSalasPrivadasTest.java:65)
+	at org.junit.Assert.assertThrows(Assert.java:1001)
+	... 3 more
+
+[ERROR] epn.edu.ec.salas.ServicioSalasPrivadasTest.unaSegundaCreacionNoDuplicaLaSalaExistente -- Time elapsed: 0.002 s <<< ERROR!
+java.lang.UnsupportedOperationException: Creaci�n pendiente.
+	at epn.edu.ec.service.ServicioSalasPrivadas.crear(ServicioSalasPrivadas.java:13)
+	at epn.edu.ec.salas.ServicioSalasPrivadasTest.unaSegundaCreacionNoDuplicaLaSalaExistente(ServicioSalasPrivadasTest.java:55)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+
+[ERROR] epn.edu.ec.salas.ServicioSalasPrivadasTest.crearYConsultarConservaLaMismaSalaYCodigo -- Time elapsed: 0.002 s <<< ERROR!
+java.lang.UnsupportedOperationException: Creaci�n pendiente.
+	at epn.edu.ec.service.ServicioSalasPrivadas.crear(ServicioSalasPrivadas.java:13)
+	at epn.edu.ec.salas.ServicioSalasPrivadasTest.crearYConsultarConservaLaMismaSalaYCodigo(ServicioSalasPrivadasTest.java:45)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Failures: 
+[ERROR]   ServicioSalasPrivadasTest.sesionEmparejadaImpideCrearOtraSala:75 unexpected exception type thrown; expected:<java.lang.IllegalStateException> but was:<java.lang.UnsupportedOperationException>
+[ERROR]   ServicioSalasPrivadasTest.sesionIndividualImpideCrearYSigueSinCambios:65 unexpected exception type thrown; expected:<java.lang.IllegalStateException> but was:<java.lang.UnsupportedOperationException>
+[ERROR] Errors: 
+[ERROR]   CreacionSalaMockTest.unaColisionReintentaYGuardaSoloElCodigoLibre:28 � UnsupportedOperation Creaci�n pendiente.
+[ERROR]   ServicioSalasPrivadasTest.crearYConsultarConservaLaMismaSalaYCodigo:45 � UnsupportedOperation Creaci�n pendiente.
+[ERROR]   ServicioSalasPrivadasTest.unaSegundaCreacionNoDuplicaLaSalaExistente:55 � UnsupportedOperation Creaci�n pendiente.
+[INFO] 
+[ERROR] Tests run: 5, Failures: 2, Errors: 3, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  9.514 s
+[INFO] Finished at: 2026-11-07T17:19:52-05:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.3:test (default-test) on project GR06_1BT3_622_26B: There are test failures.
+[ERROR] 
+[ERROR] See C:\Users\MY HP\OneDrive\Escritorio\Tarea3\pomora-iteracion1\target\surefire-reports for the individual test results.
+[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
