@@ -26,7 +26,6 @@ public class ServicioChat {
     // Se invoca bajo el mismo bloqueo del servicio compartido que usa salir/desconectar.
     public MensajeChat registrar(UUID sesionId, UUID estudianteId, String texto) {
         validador.validar(texto);
-        if (texto.length() > 2000) throw new IllegalArgumentException("El mensaje admite hasta 2000 caracteres.");
         SesionCompartida sesion = exigirParticipante(sesionId, estudianteId);
         var autor = sesion.getParticipaciones().stream()
                 .map(ParticipacionCompartida::getEstudiante)
