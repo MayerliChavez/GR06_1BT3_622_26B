@@ -32,6 +32,15 @@ public class PersistenceListener implements ServletContextListener {
         event.getServletContext().setAttribute("servicioSalasPrivadas",
                 new epn.edu.ec.service.ServicioSalasPrivadas(salas, repositorio, compartidas,
                         new epn.edu.ec.service.GeneradorCodigoSalaAleatorio()));
+        event.getServletContext().setAttribute(
+                "servicioIngresoSala",
+                new epn.edu.ec.service.ServicioIngresoSala(
+                        new RepositorioSolicitudesSalaJpa(factory),
+                        salas,
+                        repositorio,
+                        compartidas
+                )
+        );
         event.getServletContext().setAttribute("servicioChat", new epn.edu.ec.service.ServicioChat(factory, compartidas));
         event.getServletContext().setAttribute("conexionesChat", new java.util.concurrent.ConcurrentHashMap<String, epn.edu.ec.web.ChatSocket>());
         var presencia = new PresenciaCompartida(compartido, Duration.ofSeconds(90));
