@@ -1,0 +1,50 @@
+{
+  "passed": 16,
+  "checks": [
+    "Salas exige autenticación",
+    "Registro de Ana Salas",
+    "Autenticación de Ana Salas",
+    "La JSP permite crear una sala",
+    "Crear exige CSRF válido",
+    "Crear redirige a la sala persistida",
+    "Código alfanumérico y rol Responsable",
+    "Botón Copiar código disponible",
+    "Recargar conserva el código",
+    "Otra creación conserva la sala existente",
+    "Sala abierta bloquea inicio individual",
+    "Registro de Luis Salas",
+    "Autenticación de Luis Salas",
+    "Otro usuario no ve la sala de Ana",
+    "Sesión individual bloquea creación de sala",
+    "La creación bloqueada no produce una sala"
+  ]
+}
+{
+  "passed": 24,
+  "checks": [
+    "Registro de Ana Decisiones",
+    "Autenticación de Ana Decisiones",
+    "Registro de Luis Decisiones",
+    "Autenticación de Luis Decisiones",
+    "Registro de Pedro Decisiones",
+    "Autenticación de Pedro Decisiones",
+    "Responsable ve ambas decisiones",
+    "Aceptar exige CSRF válido",
+    "Otro estudiante no puede aceptar una solicitud ajena",
+    "Otro estudiante no puede rechazar una solicitud ajena",
+    "Intentos ajenos conservan la solicitud pendiente",
+    "Responsable acepta solicitud válida",
+    "Consulta de espera detecta la aceptación",
+    "Aceptado recupera su sala con rol Participante",
+    "Invitado no ve controles de responsable",
+    "Ocupación actualizada y solicitud retirada",
+    "Doble envío no duplica participantes",
+    "Responsable rechaza solicitud pendiente",
+    "Consulta de espera detecta el rechazo",
+    "Solicitante recibe el aviso exigido por HU02",
+    "El rechazo puede recuperarse al volver",
+    "Rechazo retira solicitud sin incorporar al estudiante",
+    "Una solicitud nueva no hereda el rechazo anterior",
+    "Cancelar conserva el comportamiento anterior"
+  ]
+}

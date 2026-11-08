@@ -77,7 +77,7 @@ public class ServicioIngresoSala {
                                     + "a ninguna sala abierta."
                     ));
 
-            if (solicitudes.contarParticipantes(sala.getId()) >= 4) {
+            if (solicitudes.contarParticipantes(sala.getId()) >= PoliticaAdmisionSala.MAX_PARTICIPANTES) {
                 throw new IllegalStateException(
                         "La sala está llena. No es posible enviar la solicitud."
                 );
@@ -102,14 +102,24 @@ public class ServicioIngresoSala {
 
     public void cancelar(UUID estudianteId) {
         synchronized (sesiones) {
-            var solicitud = consultarPendiente(estudianteId)
-                    .orElseThrow(() -> new IllegalStateException(
-                            "No tienes una solicitud pendiente."
-                    ));
-
-            solicitud.cancelar(estudianteId);
-            solicitudes.guardar(solicitud);
+            solicitudes.cancelarPendiente(Objects.requireNonNull(estudianteId));
         }
+    }
+
+    public void aceptar(UUID responsableId, UUID solicitudId) {
+        synchronized (sesiones) {
+            solicitudes.decidir(Objects.requireNonNull(responsableId), Objects.requireNonNull(solicitudId), true);
+        }
+    }
+
+    public void rechazar(UUID responsableId, UUID solicitudId) {
+        synchronized (sesiones) {
+            solicitudes.decidir(Objects.requireNonNull(responsableId), Objects.requireNonNull(solicitudId), false);
+        }
+    }
+
+    public Optional<SolicitudIngresoSala> consultarUltima(UUID estudianteId) {
+        return solicitudes.buscarUltimaPorEstudiante(Objects.requireNonNull(estudianteId));
     }
 
     public List<SolicitudIngresoSala> pendientesParaResponsable(
@@ -128,6 +138,12 @@ public class ServicioIngresoSala {
             );
         }
 
+        return solicitudes.pendientesDeSala(sala.getId());
+    }
+
+    public List<SolicitudIngresoSala> pendientesParaParticipante(UUID estudianteId) {
+        var sala = salas.buscarAbiertaPorEstudiante(Objects.requireNonNull(estudianteId))
+                .orElseThrow(() -> new SecurityException("No participas en una sala abierta."));
         return solicitudes.pendientesDeSala(sala.getId());
     }
 }

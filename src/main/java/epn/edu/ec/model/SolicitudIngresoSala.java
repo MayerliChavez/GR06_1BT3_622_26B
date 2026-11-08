@@ -64,6 +64,16 @@ public class SolicitudIngresoSala {
         estado = Estado.CANCELADA;
     }
 
+    public void aceptar(UUID responsableId) {
+        if (!sala.getResponsableId().equals(responsableId)) {
+            throw new SecurityException("Solo el responsable puede aceptar solicitudes.");
+        }
+        if (estado != Estado.PENDIENTE) {
+            throw new IllegalStateException("La solicitud ya fue atendida.");
+        }
+        estado = Estado.ACEPTADA;
+    }
+
     public void rechazar(UUID responsableId) {
         if (!sala.getResponsableId().equals(responsableId)) {
             throw new SecurityException(

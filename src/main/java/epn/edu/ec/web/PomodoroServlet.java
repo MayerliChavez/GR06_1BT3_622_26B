@@ -1,6 +1,7 @@
 package epn.edu.ec.web;
 
 import epn.edu.ec.model.*;
+import epn.edu.ec.repository.RepositorioSalasPrivadas;
 import epn.edu.ec.repository.RepositorioSesiones;
 import epn.edu.ec.repository.RepositorioSesionesCompartidas;
 import epn.edu.ec.service.ServicioPomodoro;
@@ -89,6 +90,7 @@ public class PomodoroServlet extends HttpServlet {
         } catch (IllegalStateException | IllegalArgumentException e) {
             if ("json".equals(req.getParameter("formato"))) {
                 resp.setStatus(HttpServletResponse.SC_CONFLICT);
+                req.setAttribute("mensajeError", e.getMessage());
                 prepararVista(req, estudianteId);
                 escribirEstado(req, resp);
                 return;
@@ -127,6 +129,9 @@ public class PomodoroServlet extends HttpServlet {
         VistaRacha.preparar(req, estudianteId);
         var compartidas = (RepositorioSesionesCompartidas) getServletContext().getAttribute("repositorioCompartidas");
         req.setAttribute("enSesionCompartida", compartidas.buscarAbiertaPorEstudiante(estudianteId).isPresent());
+        var salas = (RepositorioSalasPrivadas) getServletContext().getAttribute("repositorioSalasPrivadas");
+        boolean enSalaPrivada = salas.buscarAbiertaPorEstudiante(estudianteId).isPresent();
+        req.setAttribute("enSalaPrivada", enSalaPrivada);
         var servicio = (ServicioPomodoro) getServletContext().getAttribute("servicioPomodoro");
         var repositorio = (RepositorioSesiones) getServletContext().getAttribute("repositorioSesiones");
         var elegida = preferencias().consultar(estudianteId);
@@ -136,7 +141,8 @@ public class PomodoroServlet extends HttpServlet {
         req.setAttribute("prefBloques", elegida.getBloquesAntesDescansoLargo());
         synchronized (servicio) {
             Instant ahora = Instant.now();
-            var activa = repositorio.buscarActivaPorEstudiante(estudianteId).orElse(null);
+            // La sesión personal de una sala privada la gestiona el ciclo común, no el temporizador individual.
+            var activa = enSalaPrivada ? null : repositorio.buscarActivaPorEstudiante(estudianteId).orElse(null);
             var vigente = activa == null ? elegida : activa.getConfiguracion();
             req.setAttribute("ritmoConcentracion", vigente.duracionPara(TipoBloque.CONCENTRACION).toMinutes());
             req.setAttribute("ritmoCorto", vigente.duracionPara(TipoBloque.DESCANSO_CORTO).toMinutes());
@@ -187,11 +193,23 @@ public class PomodoroServlet extends HttpServlet {
 
     private void escribirEstado(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json;charset=UTF-8");
-        // Solo UUID, enumeraciones y números generados por el servidor.
+        // Solo UUID, enumeraciones, números y mensajes generados por el servidor.
         resp.getWriter().printf(Locale.ROOT,
-                "{\"sesionId\":\"%s\",\"estado\":\"%s\",\"tipo\":\"%s\",\"orden\":%s,\"restanteMillis\":%s,\"objetivoMillis\":%s,\"ahoraEpoch\":%s,\"rachaDias\":%s,\"notificacion\":%s}",
+                "{\"sesionId\":\"%s\",\"estado\":\"%s\",\"tipo\":\"%s\",\"orden\":%s,\"restanteMillis\":%s,\"objetivoMillis\":%s,\"ahoraEpoch\":%s,\"rachaDias\":%s,\"notificacion\":%s,\"mensaje\":%s}",
                 req.getAttribute("sesionId"), req.getAttribute("estadoBloque"), req.getAttribute("tipoBloque"),
-                req.getAttribute("ordenBloque"), req.getAttribute("restanteMillis"), req.getAttribute("objetivoMillis"), req.getAttribute("ahoraEpoch"), req.getAttribute("rachaDias"), req.getAttribute("notificacionJson"));
+                req.getAttribute("ordenBloque"), req.getAttribute("restanteMillis"), req.getAttribute("objetivoMillis"), req.getAttribute("ahoraEpoch"), req.getAttribute("rachaDias"), req.getAttribute("notificacionJson"),
+                textoJson((String) req.getAttribute("mensajeError")));
+    }
+
+    private String textoJson(String texto) {
+        if (texto == null) return "null";
+        var json = new StringBuilder("\"");
+        for (char c : texto.toCharArray()) {
+            if (c == '"' || c == '\\') json.append('\\').append(c);
+            else if (c < 0x20) json.append(String.format(Locale.ROOT, "\\u%04x", (int) c));
+            else json.append(c);
+        }
+        return json.append('"').toString();
     }
 
     private String formatearTiempo(Duration tiempo) {

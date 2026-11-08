@@ -71,3 +71,46 @@ if (esperaSala) {
 
     setInterval(actualizarEspera, 3000);
 }
+
+const estadoSolicitudSala = document.getElementById("estadoSolicitudSala");
+if (estadoSolicitudSala) {
+    let consultandoSolicitud = false;
+    const actualizarSolicitud = async () => {
+        if (consultandoSolicitud || document.hidden) return;
+        consultandoSolicitud = true;
+        try {
+            const respuesta = await fetch(estadoSolicitudSala.dataset.url, {
+                cache: "no-store", credentials: "same-origin", redirect: "error"
+            });
+            if (!respuesta.ok) throw new Error("No se pudo consultar la solicitud");
+            const resultado = await respuesta.json();
+            if (resultado.estado !== "PENDIENTE") {
+                window.location.assign(estadoSolicitudSala.dataset.destino);
+                return;
+            }
+            document.getElementById("conexionSolicitud").textContent = "";
+        } catch (error) {
+            document.getElementById("conexionSolicitud").textContent =
+                    "No se pudo actualizar tu solicitud. Reintentando…";
+        } finally {
+            consultandoSolicitud = false;
+        }
+    };
+    setInterval(actualizarSolicitud, 3000);
+}
+
+(() => {
+    const abrir = document.getElementById("abrirCierreSala");
+    const dialogo = document.getElementById("confirmarCierreSala");
+    const cancelar = document.getElementById("cancelarCierreSala");
+
+    if (!abrir || !dialogo || !cancelar) return;
+
+    abrir.addEventListener("click", () => {
+        dialogo.showModal();
+    });
+
+    cancelar.addEventListener("click", () => {
+        dialogo.close();
+    });
+})();

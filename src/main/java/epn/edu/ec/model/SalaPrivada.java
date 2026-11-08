@@ -1,6 +1,8 @@
 package epn.edu.ec.model;
 
 import jakarta.persistence.*;
+import java.time.Instant;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -25,8 +27,16 @@ public class SalaPrivada {
     @Column(nullable = false)
     private Estado estado;
 
+    @Enumerated(EnumType.STRING)
+    private TipoBloque bloqueActual;
+
+    @Embedded
+    private CicloSalaPrivada ciclo = new CicloSalaPrivada();
+
+    @Column(name = "fecha_cierre")
+    private Instant fechaCierre;
+
     protected SalaPrivada() {
-        // Requerido por JPA.
     }
 
     public SalaPrivada(UUID responsableId, String codigo) {
@@ -48,6 +58,44 @@ public class SalaPrivada {
         this.estado = Estado.ABIERTA;
     }
 
+    public void exigirAbierta() {
+        if (estado != Estado.ABIERTA) {
+            throw new IllegalStateException("La sala está cerrada.");
+        }
+    }
+
+    public void cerrar(UUID responsableId, Instant ahora) {
+        if (!this.responsableId.equals(responsableId)) {
+            throw new SecurityException(
+                    "Solo el responsable puede cerrar la sala."
+            );
+        }
+
+        exigirAbierta();
+        fechaCierre = Objects.requireNonNull(ahora);
+        estado = Estado.CERRADA;
+    }
+
+    public void actualizarBloqueActual(TipoBloque bloque) {
+        exigirAbierta();
+
+        if (getCiclo().isIniciado()
+                && bloque != getCiclo().getTipo()) {
+            throw new IllegalStateException(
+                    "El bloque debe coincidir con el ciclo común."
+            );
+        }
+
+        bloqueActual = bloque;
+    }
+
+    public CicloSalaPrivada getCiclo() {
+        if (ciclo == null) {
+            ciclo = new CicloSalaPrivada();
+        }
+        return ciclo;
+    }
+
     public UUID getId() {
         return id;
     }
@@ -62,5 +110,13 @@ public class SalaPrivada {
 
     public Estado getEstado() {
         return estado;
+    }
+
+    public TipoBloque getBloqueActual() {
+        return bloqueActual;
+    }
+
+    public Instant getFechaCierre() {
+        return fechaCierre;
     }
 }

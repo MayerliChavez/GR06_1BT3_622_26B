@@ -1,6 +1,8 @@
 package epn.edu.ec.web;
 
 import epn.edu.ec.model.Estudiante;
+import epn.edu.ec.model.SolicitudIngresoSala;
+import epn.edu.ec.service.PoliticaAdmisionSala;
 import epn.edu.ec.service.ServicioIngresoSala;
 import epn.edu.ec.service.ServicioSalasPrivadas;
 
@@ -45,22 +47,50 @@ public class SalasPrivadasServlet extends HttpServlet {
                 .consultarActual(estudianteId)
                 .orElse(null);
 
+        boolean cicloIniciado = false;
+
+        if (sala != null) {
+            cicloIniciado = ciclo().consultar(
+                    estudianteId,
+                    Instant.now()
+            ).iniciado();
+
+            // Recupera también el bloque actualizado para la admisión.
+            sala = salas()
+                    .consultarActual(estudianteId)
+                    .orElse(null);
+        }
+
+        req.setAttribute("cicloIniciado", cicloIniciado);
+
         boolean esResponsable =
                 sala != null
                         && sala.getResponsableId().equals(estudianteId);
 
+        var pendiente = ingreso().consultarPendiente(estudianteId).orElse(null);
+        var ultima = ingreso().consultarUltima(estudianteId).orElse(null);
+        if ("estadoSolicitud".equals(req.getParameter("formato"))) {
+            String estado = sala != null ? "ACEPTADA" : pendiente != null ? "PENDIENTE"
+                    : ultima != null && ultima.getEstado() == SolicitudIngresoSala.Estado.RECHAZADA
+                            ? "RECHAZADA" : "SIN_SOLICITUD";
+            resp.setContentType("application/json;charset=UTF-8");
+            resp.getWriter().write("{\"estado\":\"" + estado + "\"}");
+            return;
+        }
+
         req.setAttribute("csrf", IdentidadWeb.csrf(req));
         req.setAttribute("sala", sala);
         req.setAttribute("esResponsable", esResponsable);
+        req.setAttribute("maxParticipantes", PoliticaAdmisionSala.MAX_PARTICIPANTES);
 
         req.setAttribute(
                 "pendiente",
-                ingreso().consultarPendiente(estudianteId).orElse(null)
+                pendiente
         );
 
-        if (esResponsable) {
+        if (sala != null) {
             var solicitudes =
-                    ingreso().pendientesParaResponsable(estudianteId);
+                    ingreso().pendientesParaParticipante(estudianteId);
 
             var nombresSolicitantes = new HashMap<UUID, String>();
 
@@ -105,7 +135,7 @@ public class SalasPrivadasServlet extends HttpServlet {
         }
 
         if ("espera".equals(req.getParameter("formato"))) {
-            if (!esResponsable) {
+            if (sala == null) {
                 resp.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return;
             }
@@ -123,6 +153,10 @@ public class SalasPrivadasServlet extends HttpServlet {
         );
 
         req.getSession().removeAttribute("mensajeSala");
+        if (req.getAttribute("mensaje") == null && sala == null && pendiente == null && ultima != null
+                && ultima.getEstado() == SolicitudIngresoSala.Estado.RECHAZADA) {
+            req.setAttribute("mensaje", "Tu solicitud de ingreso no fue aceptada.");
+        }
 
         req.getRequestDispatcher(
                 "/WEB-INF/views/salas.jsp"
@@ -194,11 +228,58 @@ public class SalasPrivadasServlet extends HttpServlet {
                     ingreso().cancelar(estudianteId);
                 }
 
+                case "aceptarSolicitud" -> {
+                    ingreso().aceptar(estudianteId, UUID.fromString(req.getParameter("solicitudId")));
+                    req.getSession().setAttribute("mensajeSala", "Solicitud aceptada.");
+                }
+
+                case "rechazarSolicitud" -> {
+                    ingreso().rechazar(estudianteId, UUID.fromString(req.getParameter("solicitudId")));
+                    req.getSession().setAttribute("mensajeSala", "Solicitud rechazada.");
+                }
+
+                case "iniciarEstudio" -> {
+                    ciclo().iniciar(
+                            estudianteId,
+                            Instant.now()
+                    );
+
+                    req.getSession().setAttribute(
+                            "mensajeSala",
+                            "El estudio compartido comenzó."
+                    );
+                }
+
+                case "cerrarSala" -> {
+                    var cierre =
+                            (epn.edu.ec.service.ServicioCierreSalaPrivada)
+                                    getServletContext().getAttribute(
+                                            "servicioCierreSalaPrivada"
+                                    );
+
+                    boolean cerrado = cierre.cerrar(
+                            estudianteId,
+                            UUID.fromString(req.getParameter("salaId")),
+                            "true".equals(req.getParameter("confirmado")),
+                            Instant.now()
+                    );
+
+                    if (cerrado) {
+                        resp.sendRedirect(
+                                req.getContextPath() + "/pomodoro"
+                        );
+                        return;
+                    }
+                }
+
                 default -> {
                     resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
                     return;
                 }
             }
+        } catch (SecurityException error) {
+            resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
         } catch (IllegalArgumentException | IllegalStateException error) {
             req.getSession().setAttribute(
                     "mensajeSala",
@@ -207,5 +288,12 @@ public class SalasPrivadasServlet extends HttpServlet {
         }
 
         resp.sendRedirect(req.getContextPath() + "/salas");
+    }
+
+    private epn.edu.ec.service.ServicioCicloSalaPrivada ciclo() {
+        return (epn.edu.ec.service.ServicioCicloSalaPrivada)
+                getServletContext().getAttribute(
+                        "servicioCicloSalaPrivada"
+                );
     }
 }

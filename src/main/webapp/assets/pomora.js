@@ -97,8 +97,9 @@
    const response = await fetch(card.dataset.url, {method:"POST",body:data,signal:AbortSignal.timeout(8000)});
    if (response.status === 403) { message.textContent = "Recarga la página para continuar con tu sesión."; return; }
    if (!response.ok && response.status !== 409) throw new Error("No se pudo guardar la acción.");
-   apply(await response.json());
-   if (response.status === 409) message.textContent = "El estado cambió. El temporizador ya está actualizado.";
+   const next = await response.json();
+   apply(next);
+   if (response.status === 409) message.textContent = next.mensaje || "El estado cambió. El temporizador ya está actualizado.";
   } catch (_) { message.textContent = "No se pudo confirmar la acción. Verificando la sesión…"; }
   finally { busy = false; button.disabled = false; }
  }

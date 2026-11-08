@@ -27,6 +27,7 @@
    if (id && next.notificacion) window.PomoraUI?.blockStarted({notification:next.notificacion});
    order = next.orden; type = next.tipo; card.dataset.type = type;
    remaining = next.restanteMillis; target = next.objetivoMillis; sampled = performance.now(); connected = true;
+   card.dispatchEvent(new CustomEvent("compartido:estado", {detail: {tipo: type, conectado: true}}));
    if (id) {
     document.getElementById("sharedOrder").textContent = `BLOQUE ${next.orden}`;
     document.getElementById("sharedType").textContent = next.tipo === "CONCENTRACION" ? "CONCENTRACIÓN COMPARTIDA" : "DESCANSO COMPARTIDO";
@@ -36,6 +37,7 @@
   } catch (_) {
    if (connected) remaining = Math.max(0,remaining - (id ? performance.now() - sampled : 0));
    connected = false; message.textContent = "Sin conexión con el servidor. Verificando el estudio compartido…";
+   card.dispatchEvent(new CustomEvent("compartido:estado", {detail: {tipo: type, conectado: false}}));
   } finally { busy = false; }
  }
  setInterval(render,200); setInterval(sync,3000); sync();

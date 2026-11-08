@@ -113,4 +113,26 @@ public class SesionEstudio {
     public EstadoSesion getEstado() { return estado; }
     public Estudiante getEstudiante() { return estudiante; }
     public List<BloquePomodoro> getBloques() { return Collections.unmodifiableList(bloques); }
+
+    public void iniciarBloqueCompartido(
+            TipoBloque tipo,
+            Duration duracion,
+            Instant ahora
+    ) {
+        exigirActiva(ahora);
+
+        if (!bloques.isEmpty()
+                && bloqueActual().getEstado() != EstadoBloque.COMPLETADO) {
+            throw new IllegalStateException(
+                    "El bloque anterior debe estar completado."
+            );
+        }
+
+        bloques.add(new BloquePomodoro(
+                bloques.size() + 1,
+                tipo,
+                duracion,
+                ahora
+        ));
+    }
 }

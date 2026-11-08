@@ -36,7 +36,7 @@ function Check([bool]$Condition, [string]$Name) {
 }
 
 function Token([string]$Html) {
-    $match = [regex]::Match($Html, 'name="csrf" value="([^"]+)"')
+    $match = [regex]::Match($Html, 'name="csrf"\s+value="([^"]+)"')
     if (-not $match.Success) { throw 'No se encontró el token CSRF.' }
     return $match.Groups[1].Value
 }

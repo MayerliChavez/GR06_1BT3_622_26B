@@ -17,6 +17,7 @@ public class PersistenceListener implements ServletContextListener {
         var factory = jdbc == null ? Persistence.createEntityManagerFactory("tarea3")
                 : Persistence.createEntityManagerFactory("tarea3", java.util.Map.of("jakarta.persistence.jdbc.url", jdbc));
         event.getServletContext().setAttribute("emf", factory);
+        event.getServletContext().setAttribute("servicioCierreSalaPrivada", new epn.edu.ec.service.ServicioCierreSalaPrivada(factory));
         event.getServletContext().setAttribute("servicioCuentas", new epn.edu.ec.service.ServicioCuentas(factory));
         var repositorio = new RepositorioSesionesJpa(factory);
         var salas = new RepositorioSalasPrivadasJpa(factory);
@@ -42,6 +43,7 @@ public class PersistenceListener implements ServletContextListener {
                 )
         );
         event.getServletContext().setAttribute("servicioChat", new epn.edu.ec.service.ServicioChat(factory, compartidas));
+        event.getServletContext().setAttribute("servicioChatSalaPrivada",new epn.edu.ec.service.ServicioChatSalaPrivada(factory));
         event.getServletContext().setAttribute("conexionesChat", new java.util.concurrent.ConcurrentHashMap<String, epn.edu.ec.web.ChatSocket>());
         var presencia = new PresenciaCompartida(compartido, Duration.ofSeconds(90));
         // Tras un reinicio, las participaciones abiertas disponen de una nueva ventana de reconexión.
@@ -64,14 +66,61 @@ public class PersistenceListener implements ServletContextListener {
             catch (RuntimeException error) { event.getServletContext().log("No se pudo verificar la presencia compartida.", error); }
         }, 10, 10, TimeUnit.SECONDS);
         event.getServletContext().setAttribute("monitorPresencia", monitor);
+        var cicloPrivado =
+                new epn.edu.ec.service.ServicioCicloSalaPrivada(factory);
+
+        event.getServletContext().setAttribute(
+                "servicioCicloSalaPrivada",
+                cicloPrivado
+        );
+
+        var monitorCiclo =
+                Executors.newSingleThreadScheduledExecutor(r -> {
+                    var hilo = new Thread(r, "pomora-ciclo-privado");
+                    hilo.setDaemon(true);
+                    return hilo;
+                });
+
+        monitorCiclo.scheduleWithFixedDelay(() -> {
+            try {
+                cicloPrivado.avanzarAbiertas(Instant.now());
+                epn.edu.ec.web.CicloSalaSocket.publicarEstados();
+            } catch (RuntimeException error) {
+                event.getServletContext().log(
+                        "No se pudo revisar el ciclo privado.",
+                        error
+                );
+            }
+        }, 1, 1, TimeUnit.SECONDS);
+
+        event.getServletContext().setAttribute(
+                "monitorCicloSalaPrivada",
+                monitorCiclo
+        );
     }
     public void contextDestroyed(ServletContextEvent event) {
+        var monitorCiclo =
+                (ScheduledExecutorService) event.getServletContext()
+                        .getAttribute("monitorCicloSalaPrivada");
+
+        if (monitorCiclo != null) {
+            monitorCiclo.shutdownNow();
+
+            try {
+                monitorCiclo.awaitTermination(10, TimeUnit.SECONDS);
+            } catch (InterruptedException error) {
+                Thread.currentThread().interrupt();
+            }
+        }
         var monitor = (ScheduledExecutorService) event.getServletContext().getAttribute("monitorPresencia");
         if (monitor != null) {
             monitor.shutdownNow();
             try { monitor.awaitTermination(10, TimeUnit.SECONDS); }
             catch (InterruptedException e) { Thread.currentThread().interrupt(); }
         }
+
+        epn.edu.ec.web.CicloSalaSocket.cerrarTodas();
+
         var factory = (EntityManagerFactory) event.getServletContext().getAttribute("emf");
         if (factory != null && factory.isOpen()) factory.close();
     }

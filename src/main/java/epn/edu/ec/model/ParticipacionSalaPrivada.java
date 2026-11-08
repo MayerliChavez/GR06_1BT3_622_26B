@@ -16,6 +16,10 @@ public class ParticipacionSalaPrivada {
     @Column(name = "codigo_reservado", length = 6, unique = true)
     private String codigoReservado;
 
+    @OneToOne
+    @JoinColumn(name = "sesion_estudio_id", unique = true)
+    private SesionEstudio sesionPersonal;
+
     protected ParticipacionSalaPrivada() {}
 
     public ParticipacionSalaPrivada(UUID estudianteId, SalaPrivada sala) {
@@ -26,4 +30,28 @@ public class ParticipacionSalaPrivada {
 
     public UUID getEstudianteId() { return estudianteId; }
     public SalaPrivada getSala() { return sala; }
+
+    public SesionEstudio getSesionPersonal() {
+        return sesionPersonal;
+    }
+
+    public void asociarSesion(SesionEstudio sesion) {
+        if (sesionPersonal != null) {
+            throw new IllegalStateException(
+                    "La participación ya tiene una sesión."
+            );
+        }
+
+        if (!estudianteId.equals(
+                Objects.requireNonNull(sesion)
+                        .getEstudiante()
+                        .getId()
+        )) {
+            throw new IllegalArgumentException(
+                    "La sesión pertenece a otro estudiante."
+            );
+        }
+
+        sesionPersonal = sesion;
+    }
 }

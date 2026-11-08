@@ -27,6 +27,15 @@ public class ServicioChat {
     public MensajeChat registrar(UUID sesionId, UUID estudianteId, String texto) {
         validador.validar(texto);
         SesionCompartida sesion = exigirParticipante(sesionId, estudianteId);
+        // Calcula la fase vigente aunque el siguiente sondeo del temporizador no haya llegado.
+        sesion.avanzarSiCorresponde(java.time.Instant.now());
+        var individual = sesion.getParticipaciones().stream()
+                .filter(p -> p.getEstudiante().getId().equals(estudianteId))
+                .findFirst().orElseThrow().getSesionEstudio();
+        var bloques = individual.getBloques();
+        if (bloques.isEmpty() || bloques.get(bloques.size() - 1).getTipo() == TipoBloque.CONCENTRACION) {
+            throw new IllegalArgumentException("El chat se habilitará en el próximo descanso.");
+        }
         var autor = sesion.getParticipaciones().stream()
                 .map(ParticipacionCompartida::getEstudiante)
                 .filter(e -> e.getId().equals(estudianteId)).findFirst().orElseThrow();
