@@ -83,6 +83,7 @@ public class PersistenceListener implements ServletContextListener {
         monitorCiclo.scheduleWithFixedDelay(() -> {
             try {
                 cicloPrivado.avanzarAbiertas(Instant.now());
+                epn.edu.ec.web.CicloSalaSocket.publicarEstados();
             } catch (RuntimeException error) {
                 event.getServletContext().log(
                         "No se pudo revisar el ciclo privado.",
@@ -116,6 +117,9 @@ public class PersistenceListener implements ServletContextListener {
             try { monitor.awaitTermination(10, TimeUnit.SECONDS); }
             catch (InterruptedException e) { Thread.currentThread().interrupt(); }
         }
+
+        epn.edu.ec.web.CicloSalaSocket.cerrarTodas();
+
         var factory = (EntityManagerFactory) event.getServletContext().getAttribute("emf");
         if (factory != null && factory.isOpen()) factory.close();
     }

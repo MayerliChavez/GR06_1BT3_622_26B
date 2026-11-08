@@ -47,6 +47,22 @@ public class SalasPrivadasServlet extends HttpServlet {
                 .consultarActual(estudianteId)
                 .orElse(null);
 
+        boolean cicloIniciado = false;
+
+        if (sala != null) {
+            cicloIniciado = ciclo().consultar(
+                    estudianteId,
+                    Instant.now()
+            ).iniciado();
+
+            // Recupera también el bloque actualizado para la admisión.
+            sala = salas()
+                    .consultarActual(estudianteId)
+                    .orElse(null);
+        }
+
+        req.setAttribute("cicloIniciado", cicloIniciado);
+
         boolean esResponsable =
                 sala != null
                         && sala.getResponsableId().equals(estudianteId);
@@ -222,6 +238,18 @@ public class SalasPrivadasServlet extends HttpServlet {
                     req.getSession().setAttribute("mensajeSala", "Solicitud rechazada.");
                 }
 
+                case "iniciarEstudio" -> {
+                    ciclo().iniciar(
+                            estudianteId,
+                            Instant.now()
+                    );
+
+                    req.getSession().setAttribute(
+                            "mensajeSala",
+                            "El estudio compartido comenzó."
+                    );
+                }
+
                 default -> {
                     resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
                     return;
@@ -238,5 +266,12 @@ public class SalasPrivadasServlet extends HttpServlet {
         }
 
         resp.sendRedirect(req.getContextPath() + "/salas");
+    }
+
+    private epn.edu.ec.service.ServicioCicloSalaPrivada ciclo() {
+        return (epn.edu.ec.service.ServicioCicloSalaPrivada)
+                getServletContext().getAttribute(
+                        "servicioCicloSalaPrivada"
+                );
     }
 }

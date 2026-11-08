@@ -14,6 +14,9 @@
 
     <script src="${pageContext.request.contextPath}/assets/salas.js?v=3"
             defer></script>
+
+    <script src="${pageContext.request.contextPath}/assets/sala-ciclo.js?v=1"
+            defer></script>
 </head>
 
 <body>
@@ -105,6 +108,8 @@
                 <p class="timer-hint">
                     Comparte este código con tus compañeros.
                 </p>
+
+                <jsp:include page="salas-ciclo.jsp"/>
 
                 <c:if test="${esResponsable}">
                     <section id="esperaSala"
