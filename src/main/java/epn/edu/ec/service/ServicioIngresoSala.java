@@ -102,14 +102,24 @@ public class ServicioIngresoSala {
 
     public void cancelar(UUID estudianteId) {
         synchronized (sesiones) {
-            var solicitud = consultarPendiente(estudianteId)
-                    .orElseThrow(() -> new IllegalStateException(
-                            "No tienes una solicitud pendiente."
-                    ));
-
-            solicitud.cancelar(estudianteId);
-            solicitudes.guardar(solicitud);
+            solicitudes.cancelarPendiente(Objects.requireNonNull(estudianteId));
         }
+    }
+
+    public void aceptar(UUID responsableId, UUID solicitudId) {
+        synchronized (sesiones) {
+            solicitudes.decidir(Objects.requireNonNull(responsableId), Objects.requireNonNull(solicitudId), true);
+        }
+    }
+
+    public void rechazar(UUID responsableId, UUID solicitudId) {
+        synchronized (sesiones) {
+            solicitudes.decidir(Objects.requireNonNull(responsableId), Objects.requireNonNull(solicitudId), false);
+        }
+    }
+
+    public Optional<SolicitudIngresoSala> consultarUltima(UUID estudianteId) {
+        return solicitudes.buscarUltimaPorEstudiante(Objects.requireNonNull(estudianteId));
     }
 
     public List<SolicitudIngresoSala> pendientesParaResponsable(

@@ -7,13 +7,20 @@ Pomora: aplicación Java Web del grupo 06, con JSP, Servlet y Hibernate/JPA. Imp
 El menú **Salas privadas** (`/salas`) permite crear una sala con responsable y
 código alfanumérico de seis caracteres, copiarlo y recuperar la misma sala al
 recargar. Se guarda en H2 y se impide combinar una sala abierta con una sesión
-individual o emparejada. Ingreso por solicitudes, ciclo privado y cierre siguen
-pendientes; el chat existente corresponde al estudio emparejado.
+individual o emparejada. Se puede solicitar ingreso, cancelar la espera y,
+como responsable, aceptar o rechazar hasta completar cuatro participantes.
+Las decisiones se guardan de forma atómica y el solicitante recupera el resultado.
+El ciclo privado, el cierre y el chat de salas privadas siguen pendientes;
+el chat existente corresponde al estudio emparejado.
 
 La evidencia del aporte 5 está en
 [docs/iteracion1/evidencias/ariel/commit5](docs/iteracion1/evidencias/ariel/commit5/README.md).
 Con el servidor iniciado, `scripts/verificar-salas.ps1` comprueba el flujo HTTP y
 crea dos cuentas sintéticas; usarlo sobre una base de pruebas.
+
+El aporte 9 incorpora las decisiones de ingreso y sus pruebas:
+[evidencias del commit 9](docs/iteracion1/evidencias/ariel/commit9/README.md).
+`scripts/verificar-decisiones-sala.ps1` verifica ese flujo en una base de prueba.
 
 ## Preparación e inicio
 
@@ -47,7 +54,7 @@ Las cuentas guardan correo único normalizado y hash PBKDF2-HMAC-SHA256 con sal 
 .\mvnw.cmd package
 ```
 
-Ejecuta las 18 pruebas Java y genera `target/GR06_1BT3_622_26B.war`. Es desplegable en un contenedor Jakarta Servlet 6 compatible; Jetty usa contexto raíz `/` durante desarrollo.
+Ejecuta las pruebas Java y genera `target/GR06_1BT3_622_26B.war`. Es desplegable en un contenedor Jakarta Servlet 6 compatible; Jetty usa contexto raíz `/` durante desarrollo.
 
 Con el servidor iniciado:
 
