@@ -77,7 +77,7 @@ public class ServicioIngresoSala {
                                     + "a ninguna sala abierta."
                     ));
 
-            if (solicitudes.contarParticipantes(sala.getId()) >= 4) {
+            if (solicitudes.contarParticipantes(sala.getId()) >= PoliticaAdmisionSala.MAX_PARTICIPANTES) {
                 throw new IllegalStateException(
                         "La sala está llena. No es posible enviar la solicitud."
                 );

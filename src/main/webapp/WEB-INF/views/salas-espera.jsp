@@ -3,9 +3,9 @@
 
 <h2>Solicitudes de ingreso</h2>
 
-<p>Ocupación: <c:out value="${ocupacion}"/>/4</p>
+<p>Ocupación: <c:out value="${ocupacion}"/>/<c:out value="${maxParticipantes}"/></p>
 <c:if test="${not aceptacionPermitida}">
-    <p>Podrás aceptar nuevos participantes en el siguiente descanso.</p>
+    <p><c:out value="${motivoAdmision}"/></p>
 </c:if>
 
 <c:choose>
@@ -23,7 +23,7 @@
                         <input type="hidden" name="csrf" value="${csrf}">
                         <input type="hidden" name="solicitudId" value="${solicitud.id}">
                         <button class="button primary" type="submit" name="accion" value="aceptarSolicitud"
-                                ${ocupacion >= 4 || not aceptacionPermitida ? 'disabled' : ''}>Aceptar</button>
+                                ${not aceptacionPermitida ? 'disabled' : ''}>Aceptar</button>
                         <button class="button" type="submit" name="accion" value="rechazarSolicitud">Rechazar</button>
                     </form>
                 </li>
