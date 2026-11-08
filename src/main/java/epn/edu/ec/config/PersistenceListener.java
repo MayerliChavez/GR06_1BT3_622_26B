@@ -65,8 +65,51 @@ public class PersistenceListener implements ServletContextListener {
             catch (RuntimeException error) { event.getServletContext().log("No se pudo verificar la presencia compartida.", error); }
         }, 10, 10, TimeUnit.SECONDS);
         event.getServletContext().setAttribute("monitorPresencia", monitor);
+        var cicloPrivado =
+                new epn.edu.ec.service.ServicioCicloSalaPrivada(factory);
+
+        event.getServletContext().setAttribute(
+                "servicioCicloSalaPrivada",
+                cicloPrivado
+        );
+
+        var monitorCiclo =
+                Executors.newSingleThreadScheduledExecutor(r -> {
+                    var hilo = new Thread(r, "pomora-ciclo-privado");
+                    hilo.setDaemon(true);
+                    return hilo;
+                });
+
+        monitorCiclo.scheduleWithFixedDelay(() -> {
+            try {
+                cicloPrivado.avanzarAbiertas(Instant.now());
+            } catch (RuntimeException error) {
+                event.getServletContext().log(
+                        "No se pudo revisar el ciclo privado.",
+                        error
+                );
+            }
+        }, 1, 1, TimeUnit.SECONDS);
+
+        event.getServletContext().setAttribute(
+                "monitorCicloSalaPrivada",
+                monitorCiclo
+        );
     }
     public void contextDestroyed(ServletContextEvent event) {
+        var monitorCiclo =
+                (ScheduledExecutorService) event.getServletContext()
+                        .getAttribute("monitorCicloSalaPrivada");
+
+        if (monitorCiclo != null) {
+            monitorCiclo.shutdownNow();
+
+            try {
+                monitorCiclo.awaitTermination(10, TimeUnit.SECONDS);
+            } catch (InterruptedException error) {
+                Thread.currentThread().interrupt();
+            }
+        }
         var monitor = (ScheduledExecutorService) event.getServletContext().getAttribute("monitorPresencia");
         if (monitor != null) {
             monitor.shutdownNow();

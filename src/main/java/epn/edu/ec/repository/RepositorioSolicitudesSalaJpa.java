@@ -101,6 +101,14 @@ public class RepositorioSolicitudesSalaJpa {
             if (solicitud.getEstado() != SolicitudIngresoSala.Estado.PENDIENTE)
                 throw new IllegalStateException("La solicitud ya fue atendida.");
 
+            epn.edu.ec.service.ServicioCicloSalaPrivada
+                    .avanzarEnTransaccion(
+                            em,
+                            sala,
+                            java.time.Instant.now()
+                    );
+
+
             if (!aceptar) {
                 solicitud.rechazar(responsableId);
                 return;
@@ -130,8 +138,19 @@ public class RepositorioSolicitudesSalaJpa {
             if (individuales > 0 || emparejadas > 0)
                 throw new IllegalStateException("El estudiante ya tiene una sesión de estudio en curso.");
 
+            var participante =
+                    new ParticipacionSalaPrivada(estudianteId, sala);
+
+            epn.edu.ec.service.ServicioCicloSalaPrivada
+                    .incorporarEnTransaccion(
+                            em,
+                            sala,
+                            participante,
+                            java.time.Instant.now()
+                    );
+
             solicitud.aceptar(responsableId);
-            em.persist(new ParticipacionSalaPrivada(estudianteId, sala));
+            em.persist(participante);
         });
     }
 

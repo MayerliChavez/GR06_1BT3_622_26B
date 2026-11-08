@@ -28,6 +28,9 @@ public class SalaPrivada {
     @Enumerated(EnumType.STRING)
     private TipoBloque bloqueActual;
 
+    @Embedded
+    private CicloSalaPrivada ciclo = new CicloSalaPrivada();
+
     protected SalaPrivada() {
         // Requerido por JPA.
     }
@@ -69,8 +72,25 @@ public class SalaPrivada {
 
     public TipoBloque getBloqueActual() { return bloqueActual; }
 
+    public CicloSalaPrivada getCiclo() {
+        if (ciclo == null) {
+            ciclo = new CicloSalaPrivada();
+        }
+        return ciclo;
+    }
+
     public void actualizarBloqueActual(TipoBloque bloque) {
-        if (estado != Estado.ABIERTA) throw new IllegalStateException("La sala está cerrada.");
+        if (estado != Estado.ABIERTA) {
+            throw new IllegalStateException("La sala está cerrada.");
+        }
+
+        if (getCiclo().isIniciado()
+                && bloque != getCiclo().getTipo()) {
+            throw new IllegalStateException(
+                    "El bloque debe coincidir con el ciclo común."
+            );
+        }
+
         bloqueActual = bloque;
     }
 }

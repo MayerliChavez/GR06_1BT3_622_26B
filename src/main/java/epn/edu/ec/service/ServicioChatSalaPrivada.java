@@ -38,6 +38,12 @@ public class ServicioChatSalaPrivada {
                         LockModeType.PESSIMISTIC_WRITE
                 );
 
+                ServicioCicloSalaPrivada.avanzarEnTransaccion(
+                        em,
+                        sala,
+                        ahora
+                );
+
                 if (sala.getBloqueActual()
                         == TipoBloque.CONCENTRACION) {
 
