@@ -125,10 +125,6 @@ public class SalasPrivadasServlet extends HttpServlet {
                         .getSingleResult();
 
                 req.setAttribute("ocupacion", ocupacion);
-                var decision = new PoliticaAdmisionSala().evaluar(
-                        sala.getBloqueActual(), Math.toIntExact(ocupacion), esResponsable);
-                req.setAttribute("aceptacionPermitida", decision.permitida());
-                req.setAttribute("motivoAdmision", decision.mensaje());
             }
 
             req.setAttribute("solicitudes", solicitudes);
