@@ -215,7 +215,11 @@
 
                     escribir(
                         conexion,
-                        "La sala ya no está disponible. Recarga la página."
+                        "La sala ya no está disponible. Volviendo a Pomora…"
+                    );
+
+                    window.location.assign(
+                        new URL("pomodoro", window.location.href).href
                     );
 
                     return;

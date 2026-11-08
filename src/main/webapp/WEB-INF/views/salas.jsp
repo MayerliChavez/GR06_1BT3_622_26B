@@ -12,10 +12,10 @@
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/assets/pomora.css?v=salas1">
 
-    <script src="${pageContext.request.contextPath}/assets/salas.js?v=3"
+    <script src="${pageContext.request.contextPath}/assets/salas.js?v=5"
             defer></script>
 
-    <script src="${pageContext.request.contextPath}/assets/sala-ciclo.js?v=2"
+    <script src="${pageContext.request.contextPath}/assets/sala-ciclo.js?v=3"
             defer></script>
 
     <link rel="stylesheet"
@@ -118,6 +118,47 @@
                 <jsp:include page="salas-ciclo.jsp"/>
 
                 <jsp:include page="salas-chat.jsp"/>
+
+                <c:if test="${esResponsable}">
+                    <button id="abrirCierreSala"
+                            class="button"
+                            type="button">
+                        Cerrar sala
+                    </button>
+
+                    <dialog id="confirmarCierreSala">
+                        <form action="${pageContext.request.contextPath}/salas"
+                              method="post">
+                            <input type="hidden"
+                                   name="csrf"
+                                   value="${csrf}">
+                            <input type="hidden"
+                                   name="salaId"
+                                   value="${sala.id}">
+                            <input type="hidden"
+                                   name="confirmado"
+                                   value="true">
+
+                            <p>
+                                ¿Cerrar la sala? Se terminará el estudio de todos
+                                los participantes y su tiempo quedará guardado.
+                            </p>
+
+                            <button id="cancelarCierreSala"
+                                    class="button"
+                                    type="button">
+                                Cancelar
+                            </button>
+
+                            <button class="button primary"
+                                    type="submit"
+                                    name="accion"
+                                    value="cerrarSala">
+                                Cerrar sala
+                            </button>
+                        </form>
+                    </dialog>
+                </c:if>
 
                 <c:if test="${esResponsable}">
                     <section id="esperaSala"

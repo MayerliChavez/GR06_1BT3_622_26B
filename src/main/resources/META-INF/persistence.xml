@@ -17,6 +17,7 @@
   <class>epn.edu.ec.model.SolicitudIngresoSala</class>
   <class>epn.edu.ec.model.MensajeSalaPrivada</class>
   <class>epn.edu.ec.model.CicloSalaPrivada</class>
+  <class>epn.edu.ec.model.AvisoCierreSalaPrivada</class>
   <exclude-unlisted-classes>true</exclude-unlisted-classes>
   <properties>
    <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>

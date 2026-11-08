@@ -254,6 +254,28 @@ public class SalasPrivadasServlet extends HttpServlet {
                     );
                 }
 
+                case "cerrarSala" -> {
+                    var cierre =
+                            (epn.edu.ec.service.ServicioCierreSalaPrivada)
+                                    getServletContext().getAttribute(
+                                            "servicioCierreSalaPrivada"
+                                    );
+
+                    boolean cerrado = cierre.cerrar(
+                            estudianteId,
+                            UUID.fromString(req.getParameter("salaId")),
+                            "true".equals(req.getParameter("confirmado")),
+                            Instant.now()
+                    );
+
+                    if (cerrado) {
+                        resp.sendRedirect(
+                                req.getContextPath() + "/pomodoro"
+                        );
+                        return;
+                    }
+                }
+
                 default -> {
                     resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
                     return;
