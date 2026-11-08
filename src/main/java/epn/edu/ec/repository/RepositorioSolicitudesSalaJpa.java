@@ -117,10 +117,8 @@ public class RepositorioSolicitudesSalaJpa {
             long ocupacion = em.createQuery(
                     "select count(p) from ParticipacionSalaPrivada p where p.sala.id = :sala", Long.class)
                     .setParameter("sala", sala.getId()).getSingleResult();
-            if (ocupacion >= 4)
-                throw new IllegalStateException("La sala está llena. No es posible aceptar más participantes.");
-            if (!new PoliticaAdmisionSala().puedeAceptar(sala.getBloqueActual(), (int) ocupacion, true))
-                throw new IllegalStateException("Podrás aceptar nuevos participantes en el siguiente descanso.");
+            new PoliticaAdmisionSala().exigirAceptacion(
+                    sala.getBloqueActual(), Math.toIntExact(ocupacion), true);
 
             UUID estudianteId = solicitud.getEstudianteId();
             // También serializa aceptaciones del mismo estudiante en salas distintas.

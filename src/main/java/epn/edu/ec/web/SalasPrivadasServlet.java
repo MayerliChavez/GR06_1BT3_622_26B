@@ -2,7 +2,7 @@ package epn.edu.ec.web;
 
 import epn.edu.ec.model.Estudiante;
 import epn.edu.ec.model.SolicitudIngresoSala;
-import epn.edu.ec.model.TipoBloque;
+import epn.edu.ec.service.PoliticaAdmisionSala;
 import epn.edu.ec.service.ServicioIngresoSala;
 import epn.edu.ec.service.ServicioSalasPrivadas;
 
@@ -81,7 +81,7 @@ public class SalasPrivadasServlet extends HttpServlet {
         req.setAttribute("csrf", IdentidadWeb.csrf(req));
         req.setAttribute("sala", sala);
         req.setAttribute("esResponsable", esResponsable);
-        req.setAttribute("aceptacionPermitida", sala != null && sala.getBloqueActual() != TipoBloque.CONCENTRACION);
+        req.setAttribute("maxParticipantes", PoliticaAdmisionSala.MAX_PARTICIPANTES);
 
         req.setAttribute(
                 "pendiente",
@@ -125,6 +125,10 @@ public class SalasPrivadasServlet extends HttpServlet {
                         .getSingleResult();
 
                 req.setAttribute("ocupacion", ocupacion);
+                var decision = new PoliticaAdmisionSala().evaluar(
+                        sala.getBloqueActual(), Math.toIntExact(ocupacion), esResponsable);
+                req.setAttribute("aceptacionPermitida", decision.permitida());
+                req.setAttribute("motivoAdmision", decision.mensaje());
             }
 
             req.setAttribute("solicitudes", solicitudes);

@@ -45,7 +45,7 @@ public class ServicioCicloSalaPrivada {
                         "Se necesitan al menos dos participantes para iniciar el estudio."
                 );
             }
-            if (integrantes.size() > 4) {
+            if (integrantes.size() > PoliticaAdmisionSala.MAX_PARTICIPANTES) {
                 throw new IllegalStateException(
                         "La sala supera el máximo de participantes."
                 );
@@ -194,11 +194,8 @@ public class ServicioCicloSalaPrivada {
         Instant instante = normalizar(ahora);
         avanzarEnTransaccion(em, sala, instante);
 
-        if (sala.getBloqueActual() == TipoBloque.CONCENTRACION) {
-            throw new IllegalStateException(
-                    "Podrás aceptar nuevos participantes en el siguiente descanso."
-            );
-        }
+        new PoliticaAdmisionSala().exigirAceptacion(
+                sala.getBloqueActual(), participantes(em, sala).size(), true);
 
         crearSesion(em, sala, participante, instante);
     }
