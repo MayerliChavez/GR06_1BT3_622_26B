@@ -98,3 +98,19 @@ if (estadoSolicitudSala) {
     };
     setInterval(actualizarSolicitud, 3000);
 }
+
+(() => {
+    const abrir = document.getElementById("abrirCierreSala");
+    const dialogo = document.getElementById("confirmarCierreSala");
+    const cancelar = document.getElementById("cancelarCierreSala");
+
+    if (!abrir || !dialogo || !cancelar) return;
+
+    abrir.addEventListener("click", () => {
+        dialogo.showModal();
+    });
+
+    cancelar.addEventListener("click", () => {
+        dialogo.close();
+    });
+})();

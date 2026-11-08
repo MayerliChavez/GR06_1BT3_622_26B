@@ -17,6 +17,7 @@ public class PersistenceListener implements ServletContextListener {
         var factory = jdbc == null ? Persistence.createEntityManagerFactory("tarea3")
                 : Persistence.createEntityManagerFactory("tarea3", java.util.Map.of("jakarta.persistence.jdbc.url", jdbc));
         event.getServletContext().setAttribute("emf", factory);
+        event.getServletContext().setAttribute("servicioCierreSalaPrivada", new epn.edu.ec.service.ServicioCierreSalaPrivada(factory));
         event.getServletContext().setAttribute("servicioCuentas", new epn.edu.ec.service.ServicioCuentas(factory));
         var repositorio = new RepositorioSesionesJpa(factory);
         var salas = new RepositorioSalasPrivadasJpa(factory);
