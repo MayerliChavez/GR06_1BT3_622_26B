@@ -82,7 +82,7 @@ try {
     $page = Request $ana 'salas' $null
     $codigo = [regex]::Match($page.Text, 'id="codigoSala"[^>]*value="([A-Z0-9]{6})"').Groups[1].Value
     Check ($codigo.Length -eq 6) 'HU01: crear tras finalizar sesión'
-    Check ($page.Text.Contains('Sí, cerrar') -and $page.Text.Contains('¿Deseas cerrar la sala para todos los participantes?')) 'HU03a: confirmación y botón exactos'
+    Check ([regex]::IsMatch($page.Text, 'value="cerrarSala">\s*Aceptar\s*</button>') -and $page.Text.Contains('¿Deseas cerrar la sala para todos los participantes?')) 'HU03a: confirmación y botón exactos'
     $salaId = [regex]::Match($page.Text, 'name="salaId"\s+value="([^"]+)"').Groups[1].Value
     $tokenLuis = Token (Request $luis 'salas' $null).Text
     $null = Request $luis 'salas' @{accion='solicitar'; codigo=$codigo; csrf=$tokenLuis}

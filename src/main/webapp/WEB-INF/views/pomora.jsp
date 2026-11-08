@@ -7,7 +7,7 @@
  <meta name="theme-color" content="#29243b">
  <title>${esHistorial ? 'Historial' : 'Tu enfoque'} · Pomora</title>
  <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/pomora.css?v=aviso125">
- <script src="${pageContext.request.contextPath}/assets/pomora.js?v=aviso125" defer></script>
+ <script src="${pageContext.request.contextPath}/assets/pomora.js?v=sala-privada1" defer></script>
 <script src="${pageContext.request.contextPath}/assets/pomora-ui.js?v=aviso125" defer></script><script src="${pageContext.request.contextPath}/assets/racha.js?v=calendario1" defer></script></head>
 <body>
 <aside class="sidebar">

@@ -4,8 +4,8 @@
 <h2>Sala de espera</h2>
 
 <p>Ocupación: <c:out value="${ocupacion}"/>/<c:out value="${maxParticipantes}"/></p>
-<c:if test="${esResponsable and not aceptacionPermitida}">
-    <p><c:out value="${motivoAdmision}"/></p>
+<c:if test="${esResponsable}">
+    <p>Puedes aceptar solicitudes antes de iniciar el estudio o durante los descansos.</p>
 </c:if>
 
 <c:choose>
@@ -23,8 +23,7 @@
                     <form action="${pageContext.request.contextPath}/salas" method="post">
                         <input type="hidden" name="csrf" value="${csrf}">
                         <input type="hidden" name="solicitudId" value="${solicitud.id}">
-                        <button class="button primary" type="submit" name="accion" value="aceptarSolicitud"
-                                ${not aceptacionPermitida ? 'disabled' : ''}>Aceptar</button>
+                        <button class="button primary" type="submit" name="accion" value="aceptarSolicitud">Aceptar</button>
                         <button class="button" type="submit" name="accion" value="rechazarSolicitud">Rechazar</button>
                     </form>
                     </c:if>

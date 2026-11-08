@@ -153,7 +153,7 @@
                                     type="submit"
                                     name="accion"
                                     value="cerrarSala">
-                                Sí, cerrar
+                                Aceptar
                             </button>
                         </form>
                     </dialog>

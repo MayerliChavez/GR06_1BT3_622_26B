@@ -147,6 +147,10 @@ try {
     Check ($page.Status -eq 200 -and -not $page.Text.Contains('id="iniciarCicloSala"')) 'Participante recarga la JSP sin controles de responsable'
     $page = Request $ana 'salas' $null
     Check ($page.Status -eq 200 -and -not $page.Text.Contains('id="iniciarCicloSala"')) 'Tras el inicio la JSP del responsable oculta el botón'
+    $individual = (Request $luis 'pomodoro?formato=json' $null).Text | ConvertFrom-Json
+    Check ($individual.estado -eq 'LISTO' -and $individual.sesionId -eq '') 'El temporizador individual no corre durante la sala'
+    $intento = Request $luis 'pomodoro' @{accion='iniciar'; csrf=$luis.Csrf; formato='json'}
+    Check ($intento.Status -eq 409 -and ($intento.Text | ConvertFrom-Json).mensaje -eq 'Ya participas en una sala privada. Vuelve a tu sala actual.') 'Iniciar el temporizador individual en la sala muestra el aviso'
     $wsAna.Abort()
     $reconexion = Connect-Ciclo $ana $salaId $ana.Csrf
     $recuperado = Read-Estado $reconexion
@@ -154,11 +158,13 @@ try {
 
     $null = Request $pedro 'salas' @{accion='solicitar'; codigo=$codigo; csrf=$pedro.Csrf}
     $espera = Request $ana 'salas?formato=espera' $null
-    Check ($espera.Text.Contains('Podrás aceptar nuevos participantes en el siguiente descanso.') -and
-        $espera.Text -match 'value="aceptarSolicitud"\s+disabled') 'Vista utiliza la política común y deshabilita aceptar en concentración'
+    Check ($espera.Text -match 'value="aceptarSolicitud">Aceptar' -and
+        $espera.Text -notmatch 'value="aceptarSolicitud"\s+disabled') 'Aceptar está disponible para pulsar en concentración'
     $null = Request $ana 'salas' @{
         accion='aceptarSolicitud'; solicitudId=(Solicitud-Id $espera.Text); csrf=$ana.Csrf
     }
+    $page = Request $ana 'salas' $null
+    Check ($page.Text.Contains('Podrás aceptar nuevos participantes en el siguiente descanso.')) 'Al pulsar Aceptar en concentración se muestra el aviso'
     $pendiente = Request $pedro 'salas?formato=estadoSolicitud' $null
     Check (($pendiente.Text | ConvertFrom-Json).estado -eq 'PENDIENTE') 'El servidor también bloquea aceptar en concentración y conserva la solicitud'
     $ajeno = Connect-Ciclo $pedro $salaId $pedro.Csrf
