@@ -42,6 +42,7 @@ public class PersistenceListener implements ServletContextListener {
                 )
         );
         event.getServletContext().setAttribute("servicioChat", new epn.edu.ec.service.ServicioChat(factory, compartidas));
+        event.getServletContext().setAttribute("servicioChatSalaPrivada",new epn.edu.ec.service.ServicioChatSalaPrivada(factory));
         event.getServletContext().setAttribute("conexionesChat", new java.util.concurrent.ConcurrentHashMap<String, epn.edu.ec.web.ChatSocket>());
         var presencia = new PresenciaCompartida(compartido, Duration.ofSeconds(90));
         // Tras un reinicio, las participaciones abiertas disponen de una nueva ventana de reconexión.
