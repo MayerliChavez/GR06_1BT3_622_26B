@@ -15,7 +15,13 @@
     <script src="${pageContext.request.contextPath}/assets/salas.js?v=3"
             defer></script>
 
-    <script src="${pageContext.request.contextPath}/assets/sala-ciclo.js?v=1"
+    <script src="${pageContext.request.contextPath}/assets/sala-ciclo.js?v=2"
+            defer></script>
+
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/assets/chat.css?v=salas14">
+
+    <script src="${pageContext.request.contextPath}/assets/chat-sala.js?v=1"
             defer></script>
 </head>
 
@@ -110,6 +116,8 @@
                 </p>
 
                 <jsp:include page="salas-ciclo.jsp"/>
+
+                <jsp:include page="salas-chat.jsp"/>
 
                 <c:if test="${esResponsable}">
                     <section id="esperaSala"

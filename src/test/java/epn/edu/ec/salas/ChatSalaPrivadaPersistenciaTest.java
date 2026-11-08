@@ -198,6 +198,36 @@ class ChatSalaPrivadaPersistenciaTest {
         );
     }
 
+    @Test
+    void endpointDeOtraSalaNoPuedeGuardarEnLaSalaActual() {
+        assertThrows(
+                SecurityException.class,
+                () -> chat.registrar(
+                        UUID.randomUUID(),
+                        ana,
+                        "Mensaje ajeno",
+                        ahora
+                )
+        );
+
+        assertTrue(chat.historial(ana).isEmpty());
+    }
+
+    @Test
+    void endpointDeOtraSalaNoPuedeLeerElHistorialActual() {
+        chat.registrar(ana, "Mensaje privado", ahora);
+
+        assertThrows(
+                SecurityException.class,
+                () -> chat.historial(UUID.randomUUID(), ana)
+        );
+
+        assertEquals(
+                1,
+                chat.historial(salaAna.getId(), ana).size()
+        );
+    }
+
     private void fase(TipoBloque tipo) {
         try (var em = factory.createEntityManager()) {
             em.getTransaction().begin();
@@ -208,4 +238,5 @@ class ChatSalaPrivadaPersistenciaTest {
             em.getTransaction().commit();
         }
     }
+
 }

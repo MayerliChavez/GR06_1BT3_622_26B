@@ -9,6 +9,7 @@ import java.util.*;
 public class ServicioChatSalaPrivada {
 
     private final EntityManagerFactory factory;
+
     private final ValidadorMensajes validador =
             new ValidadorMensajes();
 
@@ -19,8 +20,17 @@ public class ServicioChatSalaPrivada {
     public MensajeSalaPrivada registrar(
             UUID estudianteId,
             String texto,
-            Instant ahora) {
+            Instant ahora
+    ) {
+        return registrar(null, estudianteId, texto, ahora);
+    }
 
+    public MensajeSalaPrivada registrar(
+            UUID salaEsperadaId,
+            UUID estudianteId,
+            String texto,
+            Instant ahora
+    ) {
         Objects.requireNonNull(estudianteId);
         Objects.requireNonNull(ahora);
 
@@ -38,6 +48,8 @@ public class ServicioChatSalaPrivada {
                         LockModeType.PESSIMISTIC_WRITE
                 );
 
+                comprobarSalaEsperada(salaEsperadaId, sala);
+
                 ServicioCicloSalaPrivada.avanzarEnTransaccion(
                         em,
                         sala,
@@ -46,7 +58,6 @@ public class ServicioChatSalaPrivada {
 
                 if (sala.getBloqueActual()
                         == TipoBloque.CONCENTRACION) {
-
                     throw new IllegalStateException(
                             "El chat se habilitará en el próximo descanso."
                     );
@@ -84,6 +95,13 @@ public class ServicioChatSalaPrivada {
     }
 
     public List<MensajeSalaPrivada> historial(UUID estudianteId) {
+        return historial(null, estudianteId);
+    }
+
+    public List<MensajeSalaPrivada> historial(
+            UUID salaEsperadaId,
+            UUID estudianteId
+    ) {
         Objects.requireNonNull(estudianteId);
 
         try (var em = factory.createEntityManager()) {
@@ -97,6 +115,8 @@ public class ServicioChatSalaPrivada {
                         estudianteId,
                         LockModeType.PESSIMISTIC_READ
                 );
+
+                comprobarSalaEsperada(salaEsperadaId, sala);
 
                 var mensajes = new ArrayList<>(
                         em.createQuery(
@@ -125,11 +145,22 @@ public class ServicioChatSalaPrivada {
         }
     }
 
+    private void comprobarSalaEsperada(
+            UUID esperada,
+            SalaPrivada sala
+    ) {
+        if (esperada != null && !esperada.equals(sala.getId())) {
+            throw new SecurityException(
+                    "La conexión no corresponde a tu sala actual."
+            );
+        }
+    }
+
     private SalaPrivada exigirSala(
             EntityManager em,
             UUID estudianteId,
-            LockModeType bloqueo) {
-
+            LockModeType bloqueo
+    ) {
         var participacion = em.find(
                 ParticipacionSalaPrivada.class,
                 estudianteId
@@ -153,6 +184,7 @@ public class ServicioChatSalaPrivada {
 
         try {
             em.refresh(participacion);
+
         } catch (EntityNotFoundException error) {
             throw new SecurityException(
                     "Tu participación terminó.",

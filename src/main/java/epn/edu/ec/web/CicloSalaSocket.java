@@ -13,6 +13,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import epn.edu.ec.service.ServicioChatSalaPrivada;
+import epn.edu.ec.web.SerializadorCicloSala.EventoChat;
+import java.util.ArrayList;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 @ServerEndpoint(
         value = "/salas/ciclo/{salaId}",
@@ -33,6 +38,10 @@ public class CicloSalaSocket {
     private UUID estudianteId;
     private UUID salaId;
     private ServicioCicloSalaPrivada servicio;
+    private ServicioChatSalaPrivada chat;
+
+    private final Queue<EventoChat> eventosChat =
+            new ConcurrentLinkedQueue<>();
 
     @OnOpen
     public void abrir(
@@ -42,7 +51,7 @@ public class CicloSalaSocket {
     ) {
         this.socket = socket;
 
-        socket.setMaxTextMessageBufferSize(64);
+        socket.setMaxTextMessageBufferSize(8192);
         socket.setMaxIdleTimeout(90000);
         socket.getAsyncRemote().setSendTimeout(5000);
 
@@ -86,7 +95,12 @@ public class CicloSalaSocket {
                             "servicioCicloSalaPrivada"
                     );
 
-            if (servicio == null) {
+            chat = (ServicioChatSalaPrivada)
+                    http.getServletContext().getAttribute(
+                            "servicioChatSalaPrivada"
+                    );
+
+            if (servicio == null || chat == null) {
                 throw new IllegalStateException(
                         "El ciclo no está disponible."
                 );
@@ -115,12 +129,66 @@ public class CicloSalaSocket {
 
     @OnMessage
     public void recibir(String texto) {
-        if (!"P".equals(texto)) {
+        if ("P".equals(texto)) {
+            publicarEstado();
+            return;
+        }
+
+        if (texto == null
+                || !texto.startsWith("M")
+                || eventosChat.size() >= 16) {
             cerrar(
                     CloseReason.CloseCodes.VIOLATED_POLICY,
                     "Mensaje no permitido."
             );
             return;
+        }
+
+        try {
+            comprobarIdentidad();
+
+            var mensaje = chat.registrar(
+                    salaId,
+                    estudianteId,
+                    texto.substring(1),
+                    Instant.now()
+            );
+
+            eventosChat.add(new EventoChat(
+                    "guardado",
+                    mensaje.getId(),
+                    null
+            ));
+
+        } catch (SecurityException error) {
+            cerrar(
+                    CloseReason.CloseCodes.VIOLATED_POLICY,
+                    "Acceso al chat no autorizado."
+            );
+            return;
+
+        } catch (IllegalArgumentException | IllegalStateException error) {
+            eventosChat.add(new EventoChat(
+                    "error",
+                    null,
+                    error.getMessage()
+            ));
+
+        } catch (RuntimeException error) {
+            Logger.getLogger(
+                    CicloSalaSocket.class.getName()
+            ).log(
+                    Level.WARNING,
+                    "No se pudo guardar el mensaje privado.",
+                    error
+            );
+
+            eventosChat.add(new EventoChat(
+                    "error",
+                    null,
+                    "No se pudo guardar el mensaje. "
+                            + "Revisa el historial antes de reenviarlo."
+            ));
         }
 
         publicarEstado();
@@ -155,8 +223,20 @@ public class CicloSalaSocket {
                 throw new SecurityException();
             }
 
+            var historial = chat.historial(salaId, estudianteId);
+            var respuestas = new ArrayList<EventoChat>();
+
+            for (EventoChat evento;
+                 (evento = eventosChat.poll()) != null;) {
+                respuestas.add(evento);
+            }
+
             socket.getAsyncRemote().sendText(
-                    serializador.serializar(estado),
+                    serializador.serializar(
+                            estado,
+                            historial,
+                            respuestas
+                    ),
                     resultado -> {
                         enviando.set(false);
 

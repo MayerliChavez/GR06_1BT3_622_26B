@@ -114,6 +114,10 @@
 
         escribir(conexion, "Conectado con la sala.");
         pintarTiempo();
+
+        raiz.dispatchEvent(
+            new CustomEvent("sala:estado", {detail: nuevo})
+        );
     }
 
     function programarReconexion() {
@@ -195,6 +199,11 @@
 
             canal.onclose = evento => {
                 if (socket !== canal || saliendo) return;
+                raiz.dispatchEvent(
+                    new CustomEvent("sala:desconexion", {
+                        detail: {permanente: evento.code === 1008}
+                    })
+                );
 
                 if (boton) {
                     boton.disabled = true;
@@ -258,5 +267,30 @@
         }
     });
 
+    raiz.addEventListener("sala:enviarChat", evento => {
+        try {
+            if (!socket || socket.readyState !== WebSocket.OPEN) {
+                throw new Error(
+                    "No hay conexión. "
+                    + "Espera a que se recupere la sala."
+                );
+            }
+
+            socket.send("M" + evento.detail);
+
+        } catch (error) {
+            raiz.dispatchEvent(
+                new CustomEvent("sala:errorChat", {
+                    detail: error.message
+                })
+            );
+        }
+    });
+
+    raiz.addEventListener("sala:reconectar", () => {
+        if (socket) {
+            socket.close(1000, "Recuperar conexión");
+        }
+    });
     conectar();
 })();
