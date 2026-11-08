@@ -1,15 +1,44 @@
 package epn.edu.ec.web;
 
 import epn.edu.ec.model.MensajeChat;
+import epn.edu.ec.model.MensajeSalaPrivada;
+import java.time.Instant;
+import java.util.UUID;
 
 public class SerializadorChat {
 
-    public String mensaje(MensajeChat m) {
-        return "{\"id\":" + m.getId()
-                + ",\"texto\":" + cadena(m.getTexto())
-                + ",\"autorId\":" + cadena(m.getAutorId().toString())
-                + ",\"autor\":" + cadena(m.getNombreAutor())
-                + ",\"fecha\":" + cadena(m.getFecha().toString())
+    public String mensaje(MensajeChat mensaje) {
+        return mensaje(
+                mensaje.getId(),
+                mensaje.getTexto(),
+                mensaje.getAutorId(),
+                mensaje.getNombreAutor(),
+                mensaje.getFecha()
+        );
+    }
+
+    public String mensaje(MensajeSalaPrivada mensaje) {
+        return mensaje(
+                mensaje.getId(),
+                mensaje.getTexto(),
+                mensaje.getAutorId(),
+                mensaje.getNombreAutor(),
+                mensaje.getFecha()
+        );
+    }
+
+    private String mensaje(
+            Long id,
+            String texto,
+            UUID autorId,
+            String autor,
+            Instant fecha
+    ) {
+        return "{\"id\":" + id
+                + ",\"texto\":" + cadena(texto)
+                + ",\"autorId\":" + cadena(autorId.toString())
+                + ",\"autor\":" + cadena(autor)
+                + ",\"fecha\":" + cadena(fecha.toString())
                 + "}";
     }
 
@@ -25,7 +54,9 @@ public class SerializadorChat {
                 case '\t' -> resultado.append("\\t");
                 default -> {
                     if (c < 32) {
-                        resultado.append(String.format("\\u%04x", (int) c));
+                        resultado.append(
+                                String.format("\\u%04x", (int) c)
+                        );
                     } else {
                         resultado.append(c);
                     }
