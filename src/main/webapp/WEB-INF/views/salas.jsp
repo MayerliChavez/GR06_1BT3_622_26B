@@ -12,7 +12,7 @@
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/assets/pomora.css?v=salas1">
 
-    <script src="${pageContext.request.contextPath}/assets/salas.js?v=2"
+    <script src="${pageContext.request.contextPath}/assets/salas.js?v=3"
             defer></script>
 </head>
 
@@ -117,7 +117,10 @@
             </c:when>
 
             <c:when test="${not empty pendiente}">
-                <h2>Sala de espera</h2>
+                <h2 id="estadoSolicitudSala"
+                    data-url="${pageContext.request.contextPath}/salas?formato=estadoSolicitud"
+                    data-destino="${pageContext.request.contextPath}/salas">Sala de espera</h2>
+                <p id="conexionSolicitud" role="status"></p>
 
                 <p>
                     Esperando la aprobación del responsable de la sala.

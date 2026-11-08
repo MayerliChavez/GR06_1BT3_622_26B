@@ -25,6 +25,9 @@ public class SalaPrivada {
     @Column(nullable = false)
     private Estado estado;
 
+    @Enumerated(EnumType.STRING)
+    private TipoBloque bloqueActual;
+
     protected SalaPrivada() {
         // Requerido por JPA.
     }
@@ -62,5 +65,12 @@ public class SalaPrivada {
 
     public Estado getEstado() {
         return estado;
+    }
+
+    public TipoBloque getBloqueActual() { return bloqueActual; }
+
+    public void actualizarBloqueActual(TipoBloque bloque) {
+        if (estado != Estado.ABIERTA) throw new IllegalStateException("La sala está cerrada.");
+        bloqueActual = bloque;
     }
 }
