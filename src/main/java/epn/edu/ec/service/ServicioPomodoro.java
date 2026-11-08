@@ -73,8 +73,17 @@ public class ServicioPomodoro {
         return bloque;
     }
 
-    public synchronized Optional<Duration> consultarTiempoRestante(UUID sesionId, Instant ahora) {
-        var sesion = obtenerSesionOExigirExistencia(sesionId);
+    public synchronized Optional<Duration> consultarTiempoRestante(
+            UUID sesionId,
+            Instant ahora
+    ) {
+        var sesion = repositorioSesiones.buscarPorId(sesionId)
+                .orElseThrow(
+                        () -> new IllegalArgumentException(
+                                "Sesión inexistente."
+                        )
+                );
+
         return sesion.tiempoRestanteBloqueActual(ahora);
     }
 
@@ -95,7 +104,22 @@ public class ServicioPomodoro {
     }
 
     private SesionEstudio obtenerSesionOExigirExistencia(UUID sesionId) {
-        return repositorioSesiones.buscarPorId(sesionId)
-                .orElseThrow(() -> new IllegalArgumentException("Sesión inexistente."));
+        var sesion = repositorioSesiones.buscarPorId(sesionId)
+                .orElseThrow(
+                        () -> new IllegalArgumentException(
+                                "Sesión inexistente."
+                        )
+                );
+
+        if (salasPrivadas != null
+                && salasPrivadas.buscarAbiertaPorEstudiante(
+                sesion.getEstudiante().getId()
+        ).isPresent()) {
+            throw new IllegalStateException(
+                    "Usa la sala privada para gestionar el ciclo común."
+            );
+        }
+
+        return sesion;
     }
 }
