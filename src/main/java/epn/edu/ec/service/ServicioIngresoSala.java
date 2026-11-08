@@ -140,4 +140,10 @@ public class ServicioIngresoSala {
 
         return solicitudes.pendientesDeSala(sala.getId());
     }
+
+    public List<SolicitudIngresoSala> pendientesParaParticipante(UUID estudianteId) {
+        var sala = salas.buscarAbiertaPorEstudiante(Objects.requireNonNull(estudianteId))
+                .orElseThrow(() -> new SecurityException("No participas en una sala abierta."));
+        return solicitudes.pendientesDeSala(sala.getId());
+    }
 }

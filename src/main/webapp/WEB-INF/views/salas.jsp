@@ -21,7 +21,7 @@
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/assets/chat.css?v=salas14">
 
-    <script src="${pageContext.request.contextPath}/assets/chat-sala.js?v=1"
+    <script src="${pageContext.request.contextPath}/assets/chat-sala.js?v=2"
             defer></script>
 </head>
 
@@ -140,8 +140,7 @@
                                    value="true">
 
                             <p>
-                                ¿Cerrar la sala? Se terminará el estudio de todos
-                                los participantes y su tiempo quedará guardado.
+                                ¿Deseas cerrar la sala para todos los participantes?
                             </p>
 
                             <button id="cancelarCierreSala"
@@ -154,20 +153,18 @@
                                     type="submit"
                                     name="accion"
                                     value="cerrarSala">
-                                Cerrar sala
+                                Sí, cerrar
                             </button>
                         </form>
                     </dialog>
                 </c:if>
 
-                <c:if test="${esResponsable}">
-                    <section id="esperaSala"
-                             data-url="${pageContext.request.contextPath}/salas?formato=espera">
-                        <jsp:include page="salas-espera.jsp"/>
-                    </section>
+                <section id="esperaSala"
+                         data-url="${pageContext.request.contextPath}/salas?formato=espera">
+                    <jsp:include page="salas-espera.jsp"/>
+                </section>
 
-                    <p id="conexionEspera" role="status"></p>
-                </c:if>
+                <p id="conexionEspera" role="status"></p>
             </c:when>
 
             <c:when test="${not empty pendiente}">
@@ -198,6 +195,7 @@
                         Cancelar solicitud
                     </button>
                 </form>
+                <jsp:include page="salas-ingreso.jsp"/>
             </c:when>
 
             <c:otherwise>
@@ -222,31 +220,7 @@
                     </button>
                 </form>
 
-                <h2>Ingresar a una sala</h2>
-
-                <form action="${pageContext.request.contextPath}/salas"
-                      method="post">
-                    <input type="hidden"
-                           name="csrf"
-                           value="${csrf}">
-
-                    <label for="codigoIngreso">Código de acceso</label>
-
-                    <input id="codigoIngreso"
-                           name="codigo"
-                           type="text"
-                           maxlength="6"
-                           required
-                           autocomplete="off"
-                           placeholder="K7M2QX">
-
-                    <button class="button primary"
-                            type="submit"
-                            name="accion"
-                            value="solicitar">
-                        Solicitar ingreso
-                    </button>
-                </form>
+                <jsp:include page="salas-ingreso.jsp"/>
             </c:otherwise>
         </c:choose>
     </section>

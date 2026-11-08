@@ -30,7 +30,6 @@
         </label>
 
         <textarea id="textoChatSala"
-                  maxlength="2000"
                   rows="2"
                   disabled
                   placeholder="Escribe un mensaje…"

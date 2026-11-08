@@ -65,6 +65,24 @@ class DecisionSalaPersistenciaTest {
         assertEquals(2, solicitudes.contarParticipantes(sala.getId()));
     }
 
+    @Test void participanteConsultaEsperaActualizadaPeroNoPuedeGestionarlaNiVerOtraSala() {
+        servicio.aceptar(ana, solicitar(luis).getId());
+        var solicitudPedro = solicitar(pedro);
+        var solicitudSofia = solicitar(sofia);
+        assertEquals(2, servicio.pendientesParaParticipante(luis).size());
+        assertThrows(SecurityException.class, () -> servicio.aceptar(luis, solicitudPedro.getId()));
+        assertThrows(SecurityException.class, () -> servicio.rechazar(luis, solicitudPedro.getId()));
+        assertThrows(SecurityException.class, () -> servicio.pendientesParaParticipante(carla));
+
+        salas.guardarNueva(new SalaPrivada(carla, "P4R8TW"));
+        assertTrue(servicio.pendientesParaParticipante(carla).isEmpty());
+        servicio.cancelar(sofia);
+        assertEquals(List.of(solicitudPedro.getId()), servicio.pendientesParaParticipante(luis)
+                .stream().map(SolicitudIngresoSala::getId).toList());
+        assertEquals(SolicitudIngresoSala.Estado.CANCELADA,
+                solicitudes.buscarPorId(solicitudSofia.getId()).orElseThrow().getEstado());
+    }
+
     @Test void ajenoNoPuedeAceptarNiRechazar() {
         var solicitud = solicitar(luis);
         assertThrows(SecurityException.class, () -> servicio.aceptar(pedro, solicitud.getId()));

@@ -88,9 +88,9 @@ public class SalasPrivadasServlet extends HttpServlet {
                 pendiente
         );
 
-        if (esResponsable) {
+        if (sala != null) {
             var solicitudes =
-                    ingreso().pendientesParaResponsable(estudianteId);
+                    ingreso().pendientesParaParticipante(estudianteId);
 
             var nombresSolicitantes = new HashMap<UUID, String>();
 
@@ -139,7 +139,7 @@ public class SalasPrivadasServlet extends HttpServlet {
         }
 
         if ("espera".equals(req.getParameter("formato"))) {
-            if (!esResponsable) {
+            if (sala == null) {
                 resp.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return;
             }
