@@ -13,6 +13,7 @@
                class="chat-status"
                role="status">Conectando…</p>
         </div>
+        <span aria-hidden="true">♧</span>
     </header>
 
     <div id="mensajesChatSala"

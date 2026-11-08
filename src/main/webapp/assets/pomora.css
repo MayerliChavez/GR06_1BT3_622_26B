@@ -74,3 +74,80 @@ html{scroll-behavior:smooth}body{-webkit-font-smoothing:antialiased;background:r
 .completion-card .completion-title{position:relative;z-index:2}
 @media(max-width:650px),(max-height:620px){.completion-art{width:150px;height:150px;margin-bottom:-8px}}
 @media(prefers-reduced-motion:reduce){.completion-backdrop{transition:none}}
+/* Salas privadas: crear e ingresar como opciones separadas. */
+.room-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;align-items:stretch}
+.notice+.room-options,.notice+.timer-card{margin-top:22px}
+.room-card{display:flex;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:18px;padding:34px 36px 32px;box-shadow:0 9px 35px #29243b05}
+.room-card-soft{background:#eeebf3;border-color:#e5dfee}
+.room-card .card-symbol{margin-bottom:22px}
+.room-card .eyebrow{font-size:9px;letter-spacing:1.5px}
+.room-card h2{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:28px;line-height:1.2;letter-spacing:-.5px;color:#3d314e;margin:0 0 12px}
+.room-card-text{color:#8e8499;font-size:13px;line-height:1.75;margin:0 0 26px;max-width:420px}
+.room-facts{list-style:none;padding:0;margin:0 0 30px}
+.room-facts li{display:flex;align-items:center;gap:10px;padding:13px 0;border-top:1px solid #f0edf3;font-size:12px;color:#81728c}
+.room-facts strong{margin-left:auto;font-weight:500;color:#6b597d}
+.room-form{display:flex;flex-direction:column;gap:10px;margin-top:auto}
+.room-form label{font-size:11px;font-weight:600;color:#60516c}
+.room-code-input{width:100%;min-width:0;padding:15px 16px;border:1px solid #ddd3e8;border-radius:10px;background:#fff;color:#4a3a5c;font-size:20px;font-weight:600;letter-spacing:6px;text-align:center;text-transform:uppercase;font-variant-numeric:tabular-nums}
+.room-code-input::placeholder{color:#cdc2d9;font-weight:500}
+.room-code-input:focus{outline:2px solid #a78abf;outline-offset:2px}
+.room-form .button{width:100%;min-height:47px;margin-top:6px}
+.button.secondary{background:#fff;color:#6b5786;border:1px solid #e0d7ea}
+.button.secondary:hover{background:#f7f3fb;color:var(--purple-dark)}
+.room-code-chip{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;margin-bottom:8px;border-radius:12px;background:#f7f5f9}
+.room-code-chip span{font-size:10px;font-weight:650;letter-spacing:1.5px;text-transform:uppercase;color:#9a8ba9}
+.room-code-chip strong{font-size:20px;font-weight:600;letter-spacing:5px;color:#4a3a5c;font-variant-numeric:tabular-nums}
+.room-options~.bottom-note{margin-top:30px}
+@media(max-width:900px){.room-options{grid-template-columns:1fr}}
+@media(max-width:650px){.room-card{padding:26px 22px}.room-card h2{font-size:24px}.room-code-input{font-size:18px;letter-spacing:4px}}
+
+/* Sala privada abierta: barra del código, chat, ciclo común y sala de espera. */
+.room-bar{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:32px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px 30px;box-shadow:0 9px 35px #29243b05;margin-bottom:24px}
+.notice+.room-bar{margin-top:22px}
+.room-bar-title .eyebrow{display:flex;align-items:center;gap:8px;font-size:9px;letter-spacing:1.5px;margin-bottom:8px}
+.room-live-dot{width:7px;height:7px;border-radius:50%;background:#9bb29b;box-shadow:0 0 0 4px #9bb29b26}
+.room-bar-title h2{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:26px;letter-spacing:-.4px;color:#3d314e;margin:0 0 8px}
+.room-role{display:inline-block;padding:5px 10px;border-radius:6px;background:#f1edf7;color:#7e65a6;font-size:10px;font-weight:650;letter-spacing:.6px;text-transform:uppercase}
+.room-bar-code label{display:block;font-size:10px;font-weight:650;letter-spacing:1.5px;text-transform:uppercase;color:#9a8ba9;margin-bottom:8px}
+.room-code-row{display:flex;align-items:center;gap:10px}
+.room-code-display{width:170px;padding:11px 14px;border:1px dashed #d6c6e6;border-radius:10px;background:#faf8fc;color:#4a3a5c;font-size:20px;font-weight:600;letter-spacing:5px;text-align:center;font-variant-numeric:tabular-nums}
+.room-code-display:focus{outline:2px solid #a78abf;outline-offset:2px}
+.room-code-row .button{padding:13px 18px;font-size:12px}
+.room-copy-status{font-size:11px;color:#a49aaa;margin:8px 0 0;min-height:14px}
+.room-close{align-self:center;padding:12px 18px;font-size:12px}
+.room-layout{display:grid;grid-template-columns:minmax(280px,1fr) minmax(400px,1.5fr);grid-template-areas:"chat timer" "chat espera";gap:24px;align-items:stretch}
+.room-layout>.chat-card{grid-area:chat;margin:0;display:flex;flex-direction:column;border-radius:18px;min-height:0}
+.room-layout>.chat-card .chat-log{flex:1 1 0;height:auto;min-height:260px}
+.room-layout>.chat-card .chat-head h2{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:24px;letter-spacing:-.3px}
+.room-layout>.room-timer{grid-area:timer}
+.room-timer #faseCicloSala{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:24px;letter-spacing:-.3px;color:#3d314e;margin:22px 0 0}
+.room-timer .clock-wrap{margin:18px auto 14px}
+.room-timer #formIniciarCicloSala{margin-top:14px}
+.waiting-card{grid-area:espera;background:#eeebf3;border:1px solid #e5dfee;border-radius:18px;padding:24px 26px}
+.waiting-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.waiting-head .eyebrow{font-size:9px;letter-spacing:1.5px;margin-bottom:6px}
+.waiting-head h2{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:22px;color:#3d314e;margin:0}
+.seat-meter{display:flex;flex-direction:column;align-items:flex-end;gap:6px;font-size:11px;color:#81728c;white-space:nowrap}
+.seats{display:flex;gap:5px}
+.seats i{width:22px;height:8px;border-radius:4px;background:#ddd4e8}
+.seats i.taken{background:var(--purple)}
+.waiting-hint{font-size:11px;color:#8e8499;line-height:1.6;margin:14px 0 0}
+.waiting-empty{margin:16px 0 0;padding:16px;border:1px dashed #d8cde5;border-radius:12px;text-align:center;font-size:12px;color:#9b8ca8}
+.waiting-list{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.waiting-list li{display:flex;align-items:center;gap:12px;padding:10px 12px;background:#fff;border-radius:12px;border:1px solid #ebe5f1}
+.waiting-avatar{display:grid;place-items:center;flex:none;width:34px;height:34px;border-radius:50%;background:#e4d9ef;color:#7e65a6;font-weight:600}
+.waiting-name{display:flex;flex-direction:column;min-width:0}
+.waiting-name strong{font-size:13px;font-weight:550;color:#4a3a5c;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.waiting-name small{font-size:10px;color:#a092ae}
+.waiting-actions{display:flex;gap:6px;margin-left:auto}
+.waiting-actions .button{padding:9px 13px;font-size:11px;border-radius:8px}
+.room-dialog{border:0;border-radius:20px;padding:34px 34px 28px;max-width:400px;text-align:center;box-shadow:0 24px 70px #29243b30;color:var(--ink)}
+.room-dialog::backdrop{background:#29243b66;backdrop-filter:blur(2px)}
+.room-dialog .card-symbol{margin:0 0 14px}
+.room-dialog p{font-family:Georgia,"Times New Roman",serif;font-size:21px;line-height:1.35;margin:0 0 10px;color:#3d314e}
+.room-dialog small{display:block;font-size:12px;line-height:1.6;color:#8e8499}
+.room-dialog-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:24px}
+@media(max-width:1180px){.room-bar{grid-template-columns:1fr auto}.room-close{grid-column:1/-1;justify-self:start}}
+@media(max-width:1000px){.room-layout{grid-template-columns:1fr;grid-template-areas:"timer" "chat" "espera"}.room-layout>.chat-card .chat-log{flex:none;height:300px}}
+@media(max-width:650px){.room-bar{grid-template-columns:1fr;padding:22px;gap:18px}.room-code-display{width:100%;font-size:18px}.room-code-row{flex-wrap:wrap}.room-code-row .button{flex:1}.waiting-list li{flex-wrap:wrap}.waiting-actions{width:100%;margin-left:0}.waiting-actions .button{flex:1}}
+.room-timer #conexionCicloSala{color:#9b8ca8}

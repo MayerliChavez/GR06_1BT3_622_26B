@@ -143,7 +143,7 @@
    flushBells();
   }
  };
- const revealTargets = document.querySelectorAll(".page-heading,.timer-card,.rhythm-card,.progress-card,.stat,.history-card,.shared-notice-details>div,.bottom-note,.page-footer,.access-card");
+ const revealTargets = document.querySelectorAll(".page-heading,.timer-card,.room-card,.rhythm-card,.progress-card,.stat,.history-card,.shared-notice-details>div,.bottom-note,.page-footer,.access-card");
  if (!reduce && "IntersectionObserver" in window) {
   const observer = new IntersectionObserver(entries => entries.forEach(entry => {
    if (entry.isIntersecting) { entry.target.classList.add("is-visible"); observer.unobserve(entry.target); }
