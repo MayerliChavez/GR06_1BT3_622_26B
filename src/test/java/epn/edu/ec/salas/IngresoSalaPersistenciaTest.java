@@ -6,11 +6,11 @@ import epn.edu.ec.service.*;
 import jakarta.persistence.*;
 import java.time.*;
 import java.util.*;
-import org.junit.jupiter.api.*;
+import org.junit.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
-class IngresoSalaPersistenciaTest {
+public class IngresoSalaPersistenciaTest extends PruebaSalaPrivada {
 
     private EntityManagerFactory factory;
     private RepositorioSolicitudesSalaJpa solicitudes;
@@ -24,8 +24,8 @@ class IngresoSalaPersistenciaTest {
     private final Instant ahora =
             Instant.parse("2026-11-07T15:00:00Z");
 
-    @BeforeEach
-    void preparar() {
+    @Before
+    public void setUp() {
         factory = Persistence.createEntityManagerFactory(
                 "tarea3",
                 Map.of(
@@ -52,15 +52,15 @@ class IngresoSalaPersistenciaTest {
         );
     }
 
-    @AfterEach
-    void cerrar() {
+    @After
+    public void tearDown() {
         if (factory != null) {
             factory.close();
         }
     }
 
     @Test
-    void repositorioRecuperaSolicitudYSalaConOtraInstancia() {
+    public void given_solicitud_guardada_when_consultar_con_otro_repositorio_then_recupera_solicitud_y_sala() {
         var creada = new SolicitudIngresoSala(luis, sala, ahora);
 
         solicitudes.guardar(creada);
@@ -78,7 +78,7 @@ class IngresoSalaPersistenciaTest {
     }
 
     @Test
-    void solicitarNormalizaCodigoYNoIncorporaAlEstudiante() {
+    public void given_codigo_sin_normalizar_when_solicitar_ingreso_then_normaliza_sin_incorporar_estudiante() {
         var creada = ingreso.solicitar(luis, " k7m2qx ", ahora);
 
         assertEquals(
@@ -108,7 +108,7 @@ class IngresoSalaPersistenciaTest {
     }
 
     @Test
-    void unaPendienteSeConservaYDebeCancelarseAntesDeOtraSala() {
+    public void given_solicitud_pendiente_when_solicitar_otra_sala_then_exige_cancelacion_previa() {
         var primera = ingreso.solicitar(luis, "K7M2QX", ahora);
 
         assertEquals(
@@ -154,7 +154,7 @@ class IngresoSalaPersistenciaTest {
     }
 
     @Test
-    void codigoInexistenteNoGuardaSolicitud() {
+    public void given_codigo_inexistente_when_solicitar_ingreso_then_rechaza_sin_guardar_solicitud() {
         var error = assertThrows(
                 IllegalArgumentException.class,
                 () -> ingreso.solicitar(luis, "ZZ99AA", ahora)
@@ -171,7 +171,7 @@ class IngresoSalaPersistenciaTest {
     }
 
     @Test
-    void actividadIndividualImpideSolicitarIngreso() {
+    public void given_actividad_individual_when_solicitar_ingreso_then_rechaza_solicitud() {
         var configuracion = new ConfiguracionPomodoro(
                 Duration.ofMinutes(25),
                 Duration.ofMinutes(5),
@@ -193,7 +193,7 @@ class IngresoSalaPersistenciaTest {
     }
 
     @Test
-    void salaLlenaImpideCrearSolicitud() {
+    public void given_sala_llena_when_solicitar_ingreso_then_rechaza_solicitud() {
         try (var em = factory.createEntityManager()) {
             var tx = em.getTransaction();
             tx.begin();

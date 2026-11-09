@@ -7,12 +7,12 @@ import jakarta.persistence.*;
 import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
-import org.junit.jupiter.api.*;
+import org.junit.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
 /** Integración con JPA/H2; no se cuenta como prueba unitaria. */
-class SalasPrivadasPersistenciaTest {
+public class SalasPrivadasPersistenciaTest extends PruebaSalaPrivada {
     private EntityManagerFactory factory;
     private RepositorioSalasPrivadasJpa salas;
     private RepositorioSesionesJpa sesiones;
@@ -20,7 +20,8 @@ class SalasPrivadasPersistenciaTest {
     private final ConfiguracionPomodoro configuracion = new ConfiguracionPomodoro(
             Duration.ofMinutes(25), Duration.ofMinutes(5), Duration.ofMinutes(15), 4);
 
-    @BeforeEach void preparar() {
+    @Before
+    public void setUp() {
         factory = Persistence.createEntityManagerFactory("tarea3", Map.of(
                 "jakarta.persistence.jdbc.url", "jdbc:h2:mem:salas" + UUID.randomUUID(),
                 "hibernate.hbm2ddl.auto", "create-drop", "hibernate.show_sql", "false"));
@@ -29,9 +30,15 @@ class SalasPrivadasPersistenciaTest {
         compartidas = new RepositorioSesionesCompartidasJpa(factory);
     }
 
-    @AfterEach void cerrar() { if (factory != null) factory.close(); }
+    @After
+    public void tearDown() {
+        if (factory != null) {
+            factory.close();
+        }
+    }
 
-    @Test void recuperaSalaCodigoYResponsableConOtroRepositorio() {
+    @Test
+    public void given_sala_guardada_when_consultar_con_otro_repositorio_then_conserva_codigo_y_responsable() {
         UUID ana = UUID.randomUUID();
         SalaPrivada creada = new ServicioSalasPrivadas(salas, sesiones, compartidas, () -> "K7M2QX").crear(ana);
         var otro = new RepositorioSalasPrivadasJpa(factory);
@@ -41,11 +48,12 @@ class SalasPrivadasPersistenciaTest {
         assertEquals(ana, recuperada.getResponsableId());
         assertEquals(creada.getId(), otro.buscarAbiertaPorCodigo("K7M2QX").orElseThrow().getId());
         try (var em = factory.createEntityManager()) {
-            assertEquals(1L, em.createQuery("select count(p) from ParticipacionSalaPrivada p", Long.class).getSingleResult());
+            assertEquals(1L, em.createQuery("select count(p) from ParticipacionSalaPrivada p", Long.class).getSingleResult().longValue());
         }
     }
 
-    @Test void unaColisionEnBaseRevierteSalaYParticipacionJuntas() {
+    @Test
+    public void given_codigo_duplicado_en_base_when_guardar_sala_then_revierte_sala_y_participacion() {
         UUID ana = UUID.randomUUID();
         salas.guardarNueva(new SalaPrivada(ana, "K7M2QX"));
         UUID luis = UUID.randomUUID();
@@ -53,12 +61,13 @@ class SalasPrivadasPersistenciaTest {
                 () -> salas.guardarNueva(new SalaPrivada(luis, "K7M2QX")));
         assertTrue(salas.buscarAbiertaPorEstudiante(luis).isEmpty());
         try (var em = factory.createEntityManager()) {
-            assertEquals(1L, em.createQuery("select count(s) from SalaPrivada s", Long.class).getSingleResult());
-            assertEquals(1L, em.createQuery("select count(p) from ParticipacionSalaPrivada p", Long.class).getSingleResult());
+            assertEquals(1L, em.createQuery("select count(s) from SalaPrivada s", Long.class).getSingleResult().longValue());
+            assertEquals(1L, em.createQuery("select count(p) from ParticipacionSalaPrivada p", Long.class).getSingleResult().longValue());
         }
     }
 
-    @Test void salaSinCicloBloqueaInicioIndividualYEmparejado() {
+    @Test
+    public void given_sala_sin_ciclo_when_iniciar_individual_o_emparejado_then_rechaza_otra_actividad() {
         UUID ana = UUID.randomUUID();
         new ServicioSalasPrivadas(salas, sesiones, compartidas, () -> "K7M2QX").crear(ana);
         var individual = new ServicioPomodoro(sesiones, salas);
@@ -70,7 +79,8 @@ class SalasPrivadasPersistenciaTest {
         assertTrue(compartidas.buscarAbiertaPorEstudiante(ana).isEmpty());
     }
 
-    @Test void carreraEntreCrearSalaEIniciarSesionDejaUnaSolaActividad() throws Exception {
+    @Test
+    public void given_estudiante_disponible_when_crear_sala_e_iniciar_sesion_concurrentemente_then_una_sola_actividad() throws Exception {
         UUID ana = UUID.randomUUID();
         var privada = new ServicioSalasPrivadas(salas, sesiones, compartidas, () -> "K7M2QX");
         var individual = new ServicioPomodoro(sesiones, salas);

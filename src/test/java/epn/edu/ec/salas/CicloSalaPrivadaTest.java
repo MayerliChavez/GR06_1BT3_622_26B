@@ -3,16 +3,23 @@ package epn.edu.ec.salas;
 import epn.edu.ec.model.*;
 import java.time.*;
 import org.junit.Test;
+import org.junit.Before;
+import org.junit.After;
 
 import static org.junit.Assert.*;
 
-public class CicloSalaPrivadaTest {
-    private final Instant inicio =
-            Instant.parse("2026-11-08T15:00:00Z");
+public class CicloSalaPrivadaTest extends PruebaSalaPrivada {
+    private CicloSalaPrivada ciclo;
+    private Instant inicio;
+
+    @Before
+    public void setUp() {
+        inicio = Instant.parse("2026-11-08T15:00:00Z");
+        ciclo = new CicloSalaPrivada();
+    }
 
     @Test
-    public void inicioFijaConcentracionDe25Minutos() {
-        var ciclo = new CicloSalaPrivada();
+    public void given_ciclo_sin_iniciar_when_iniciar_then_concentracion_de_25_minutos() {
 
         ciclo.iniciar(inicio);
 
@@ -25,8 +32,7 @@ public class CicloSalaPrivadaTest {
     }
 
     @Test
-    public void vencimientoIniciaDescansoSinDuplicarLaTransicion() {
-        var ciclo = new CicloSalaPrivada();
+    public void given_concentracion_when_vencer_bloque_then_descanso_sin_transicion_duplicada() {
         ciclo.iniciar(inicio);
 
         assertFalse(
@@ -45,8 +51,7 @@ public class CicloSalaPrivadaTest {
     }
 
     @Test
-    public void cuartaConcentracionDaDescansoLargoDe15Minutos() {
-        var ciclo = new CicloSalaPrivada();
+    public void given_cuarta_concentracion_when_finalizar_then_descanso_largo_de_15_minutos() {
         ciclo.iniciar(inicio);
 
         for (int i = 1; i <= 4; i++) {
@@ -72,8 +77,7 @@ public class CicloSalaPrivadaTest {
     }
 
     @Test
-    public void unCicloIniciadoNoSeReinicia() {
-        var ciclo = new CicloSalaPrivada();
+    public void given_ciclo_iniciado_when_reiniciar_then_rechaza_y_conserva_inicio() {
         ciclo.iniciar(inicio);
 
         assertThrows(
@@ -81,5 +85,11 @@ public class CicloSalaPrivadaTest {
                 () -> ciclo.iniciar(inicio.plusSeconds(60))
         );
         assertEquals(inicio, ciclo.getInicioBloque());
+    }
+
+    @After
+    public void tearDown() {
+        ciclo = null;
+        inicio = null;
     }
 }

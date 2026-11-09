@@ -3,20 +3,21 @@ package epn.edu.ec.salas;
 import epn.edu.ec.repository.TransaccionesJpa;
 import jakarta.persistence.*;
 import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
 import org.mockito.InOrder;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-public class TransaccionesJpaMockTest {
+public class TransaccionesJpaMockTest extends PruebaSalaPrivada {
 
     private EntityManagerFactory factory;
     private EntityManager em;
     private EntityTransaction tx;
 
     @Before
-    public void preparar() {
+    public void setUp() {
         factory = mock(EntityManagerFactory.class);
         em = mock(EntityManager.class);
         tx = mock(EntityTransaction.class);
@@ -27,7 +28,7 @@ public class TransaccionesJpaMockTest {
     }
 
     @Test
-    public void confirmaYLiberaElEntityManagerCuandoLaAccionTermina() {
+    public void given_accion_exitosa_when_ejecutar_transaccion_then_confirma_y_cierra_contexto() {
         String resultado = TransaccionesJpa.ejecutar(
                 factory,
                 contexto -> {
@@ -47,7 +48,7 @@ public class TransaccionesJpaMockTest {
     }
 
     @Test
-    public void revierteYConservaElErrorCuandoFallaLaAccion() {
+    public void given_accion_fallida_when_ejecutar_transaccion_then_revierte_y_conserva_error() {
         var fallo = new IllegalStateException(
                 "No se pudo guardar."
         );
@@ -73,7 +74,7 @@ public class TransaccionesJpaMockTest {
     }
 
     @Test
-    public void revierteYLiberaRecursosSiFallaElCommit() {
+    public void given_commit_fallido_when_ejecutar_transaccion_then_revierte_y_cierra_contexto() {
         var fallo = new IllegalStateException(
                 "Falló el commit."
         );
@@ -95,5 +96,13 @@ public class TransaccionesJpaMockTest {
         orden.verify(tx).commit();
         orden.verify(tx).rollback();
         orden.verify(em).close();
+    }
+
+    @After
+    public void tearDown() {
+        validateMockitoUsage();
+        tx = null;
+        em = null;
+        factory = null;
     }
 }

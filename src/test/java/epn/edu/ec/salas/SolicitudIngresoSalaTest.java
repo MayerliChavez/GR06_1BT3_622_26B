@@ -4,26 +4,31 @@ import epn.edu.ec.model.SalaPrivada;
 import epn.edu.ec.model.SolicitudIngresoSala;
 import java.time.Instant;
 import java.util.UUID;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class SolicitudIngresoSalaTest {
+public class SolicitudIngresoSalaTest extends PruebaSalaPrivada {
 
-    private final UUID ana = UUID.randomUUID();
-    private final UUID luis = UUID.randomUUID();
+    private UUID ana;
+    private UUID luis;
+    private SalaPrivada sala;
+    private Instant fecha;
+    private SolicitudIngresoSala solicitud;
 
-    private final SalaPrivada sala =
-            new SalaPrivada(ana, "K7M2QX");
-
-    private final Instant fecha =
-            Instant.parse("2026-11-07T15:00:00Z");
+    @Before
+    public void setUp() {
+        ana = UUID.randomUUID();
+        luis = UUID.randomUUID();
+        sala = new SalaPrivada(ana, "K7M2QX");
+        fecha = Instant.parse("2026-11-07T15:00:00Z");
+        solicitud = new SolicitudIngresoSala(luis, sala, fecha);
+    }
 
     @Test
-    public void crearSolicitudLaDejaPendienteSinModificarLaSala() {
-        SolicitudIngresoSala solicitud =
-                new SolicitudIngresoSala(luis, sala, fecha);
-
+    public void given_estudiante_y_sala_when_crear_solicitud_then_pendiente_sin_modificar_sala() {
         assertNotNull(solicitud.getId());
         assertEquals(luis, solicitud.getEstudianteId());
         assertEquals(sala.getId(), solicitud.getSala().getId());
@@ -38,10 +43,7 @@ public class SolicitudIngresoSalaTest {
     }
 
     @Test
-    public void estudiantePuedeCancelarSuSolicitudPendiente() {
-        SolicitudIngresoSala solicitud =
-                new SolicitudIngresoSala(luis, sala, fecha);
-
+    public void given_solicitud_pendiente_when_estudiante_cancela_then_cancelada_y_no_repetible() {
         solicitud.cancelar(luis);
 
         assertEquals(
@@ -56,10 +58,7 @@ public class SolicitudIngresoSalaTest {
     }
 
     @Test
-    public void responsablePuedeRechazarLaSolicitudPendiente() {
-        SolicitudIngresoSala solicitud =
-                new SolicitudIngresoSala(luis, sala, fecha);
-
+    public void given_solicitud_pendiente_when_responsable_rechaza_then_rechazada_y_sala_abierta() {
         solicitud.rechazar(ana);
 
         assertEquals(
@@ -68,5 +67,15 @@ public class SolicitudIngresoSalaTest {
         );
 
         assertEquals(SalaPrivada.Estado.ABIERTA, sala.getEstado());
+    }
+
+
+    @After
+    public void tearDown() {
+        solicitud = null;
+        sala = null;
+        ana = null;
+        luis = null;
+        fecha = null;
     }
 }
