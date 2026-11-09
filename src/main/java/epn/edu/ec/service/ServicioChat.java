@@ -2,6 +2,7 @@ package epn.edu.ec.service;
 
 import epn.edu.ec.model.*;
 import epn.edu.ec.repository.RepositorioSesionesCompartidas;
+import epn.edu.ec.repository.TransaccionesJpa;
 import epn.edu.ec.tdd.chat.*;
 import jakarta.persistence.EntityManagerFactory;
 import java.util.*;
@@ -40,21 +41,13 @@ public class ServicioChat {
                 .map(ParticipacionCompartida::getEstudiante)
                 .filter(e -> e.getId().equals(estudianteId)).findFirst().orElseThrow();
         var datos = controlador.crearMensaje(texto, estudianteId, sesionId);
-        try (var em = factory.createEntityManager()) {
-            var tx = em.getTransaction();
-            try {
-                tx.begin();
-                var mensaje = new MensajeChat(datos,
-                        em.getReference(Estudiante.class, autor.getId()),
-                        em.getReference(SesionCompartida.class, sesionId));
-                em.persist(mensaje);
-                tx.commit();
-                return mensaje;
-            } catch (RuntimeException e) {
-                if (tx.isActive()) tx.rollback();
-                throw e;
-            }
-        }
+        return TransaccionesJpa.ejecutar(factory, em -> {
+            var mensaje = new MensajeChat(datos,
+                    em.getReference(Estudiante.class, autor.getId()),
+                    em.getReference(SesionCompartida.class, sesionId));
+            em.persist(mensaje);
+            return mensaje;
+        });
     }
 
     public List<MensajeChat> historial(UUID sesionId, UUID estudianteId) {
