@@ -88,9 +88,9 @@ public class SalasPrivadasServlet extends HttpServlet {
                 pendiente
         );
 
-        if (esResponsable) {
+        if (sala != null) {
             var solicitudes =
-                    ingreso().pendientesParaResponsable(estudianteId);
+                    ingreso().pendientesParaParticipante(estudianteId);
 
             var nombresSolicitantes = new HashMap<UUID, String>();
 
@@ -125,10 +125,6 @@ public class SalasPrivadasServlet extends HttpServlet {
                         .getSingleResult();
 
                 req.setAttribute("ocupacion", ocupacion);
-                var decision = new PoliticaAdmisionSala().evaluar(
-                        sala.getBloqueActual(), Math.toIntExact(ocupacion), esResponsable);
-                req.setAttribute("aceptacionPermitida", decision.permitida());
-                req.setAttribute("motivoAdmision", decision.mensaje());
             }
 
             req.setAttribute("solicitudes", solicitudes);
@@ -139,7 +135,7 @@ public class SalasPrivadasServlet extends HttpServlet {
         }
 
         if ("espera".equals(req.getParameter("formato"))) {
-            if (!esResponsable) {
+            if (sala == null) {
                 resp.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return;
             }

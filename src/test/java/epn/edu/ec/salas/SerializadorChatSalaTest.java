@@ -6,21 +6,27 @@ import epn.edu.ec.web.*;
 import java.time.Instant;
 import java.util.*;
 import org.junit.Test;
+import org.junit.Before;
+import org.junit.After;
 
 import static org.junit.Assert.*;
 
-public class SerializadorChatSalaTest {
-    private final Instant ahora =
-            Instant.parse("2026-11-08T15:00:00Z");
+public class SerializadorChatSalaTest extends PruebaSalaPrivada {
+    private Instant ahora;
 
-    private final Estudiante ana =
-            new Estudiante(UUID.randomUUID(), "Ana \"A\"");
+    private Estudiante ana;
 
-    private final SalaPrivada sala =
-            new SalaPrivada(ana.getId(), "K7M2QX");
+    private SalaPrivada sala;
+
+    @Before
+    public void setUp() {
+        ahora = Instant.parse("2026-11-08T15:00:00Z");
+        ana = new Estudiante(UUID.randomUUID(), "Ana \"A\"");
+        sala = new SalaPrivada(ana.getId(), "K7M2QX");
+    }
 
     @Test
-    public void mensajePrivadoEscapaTextoYConservaAutorYFecha() {
+    public void given_mensaje_con_caracteres_especiales_when_serializar_then_escapa_y_conserva_autor_y_fecha() {
         var mensaje = new MensajeSalaPrivada(
                 "Hola \"grupo\"\n¿Listos?",
                 ana,
@@ -46,7 +52,7 @@ public class SerializadorChatSalaTest {
     }
 
     @Test
-    public void estadoSinMensajesMantieneElProtocoloDelReloj() {
+    public void given_ciclo_sin_mensajes_when_serializar_then_conserva_protocolo_del_reloj() {
         String json = new SerializadorCicloSala().serializar(
                 estado(),
                 List.of(),
@@ -62,7 +68,7 @@ public class SerializadorChatSalaTest {
     }
 
     @Test
-    public void confirmacionYErrorViajanSinRomperElJson() {
+    public void given_confirmacion_y_error_when_serializar_then_eventos_con_json_escapado() {
         var mensaje =
                 new MensajeSalaPrivada("Hola", ana, sala, ahora);
 
@@ -103,5 +109,12 @@ public class SerializadorChatSalaTest {
                 0,
                 ahora
         );
+    }
+
+    @After
+    public void tearDown() {
+        sala = null;
+        ana = null;
+        ahora = null;
     }
 }

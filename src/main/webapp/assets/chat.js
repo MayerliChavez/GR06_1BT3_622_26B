@@ -5,9 +5,21 @@
  const form = panel.querySelector("form"), input = panel.querySelector("textarea");
  const list = panel.querySelector("[role=log]"), status = panel.querySelector(".chat-status");
  const error = panel.querySelector(".chat-error"), button = form.querySelector("button");
+ const card = document.getElementById("sharedCard");
+ let phase = card?.dataset.type, synchronized = true, connected = false;
  let ws, retry, pending = false, stopped = false;
  const ids = new Set();
- function ready(value) { button.disabled = !value || pending; }
+ function allowed() { return synchronized && (phase === "DESCANSO_CORTO" || phase === "DESCANSO_LARGO"); }
+ function ready(value) {
+  connected = value;
+  input.disabled = !connected || !allowed();
+  button.disabled = input.disabled || pending;
+  if (connected) status.textContent = !synchronized ? "Sin conexión con el temporizador. Sincronizando…"
+   : allowed() ? "En línea · Solo tu sesión" : "El chat se habilitará en el próximo descanso.";
+ }
+ card?.addEventListener("compartido:estado", event => {
+  phase = event.detail.tipo; synchronized = event.detail.conectado; ready(connected);
+ });
  function append(m) {
   if (ids.has(m.id)) return;
   ids.add(m.id);
@@ -67,6 +79,7 @@
  }
  form.addEventListener("submit", event => {
   event.preventDefault(); error.textContent = "";
+  if (!allowed()) return;
   if (!input.value.trim()) { error.textContent = "Escribe un mensaje con contenido."; input.focus(); return; }
   if (!ws || ws.readyState !== WebSocket.OPEN || pending) return;
   pending = true; input.readOnly = true; ready(false);

@@ -27,6 +27,28 @@ class EstudioCompartidoTest {
 
     @AfterEach void cerrar() { if (factory != null) factory.close(); }
 
+    @Test void chatDelMatchSoloPermiteEnviarDuranteDescansosYConservaHistorial() {
+        var ritmo = new ConfiguracionPomodoro(Duration.ofMinutes(25), Duration.ofMinutes(5), Duration.ofMinutes(15), 4);
+        var match = new ServicioEstudioCompartido(new EmparejadorEnMemoria(), individuales, compartidas, ritmo);
+        var chat = new ServicioChat(factory, compartidas);
+        // La fase se calcula al enviar, sin depender de un sondeo previo del navegador.
+        for (int segundos : new int[]{1, 1501, 1801, 6901}) {
+            UUID a = UUID.randomUUID(), b = UUID.randomUUID();
+            Instant comienzo = Instant.now().minusSeconds(segundos);
+            match.solicitarEmparejamiento(a, comienzo);
+            var sesion = match.solicitarEmparejamiento(b, comienzo).orElseThrow();
+            if (segundos == 1 || segundos == 1801) {
+                var error = assertThrows(IllegalArgumentException.class,
+                        () -> chat.registrar(sesion.getId(), a, "Una duda"));
+                assertEquals("El chat se habilitará en el próximo descanso.", error.getMessage());
+                assertTrue(chat.historial(sesion.getId(), b).isEmpty());
+            } else {
+                chat.registrar(sesion.getId(), a, "Una duda");
+                assertEquals("Una duda", chat.historial(sesion.getId(), b).get(0).getTexto());
+            }
+        }
+    }
+
     @Test void venceSoloLaParticipacionSinSenalesYConservaAlCompanero() {
         UUID a = UUID.randomUUID(), b = UUID.randomUUID();
         servicio.solicitarEmparejamiento(a, inicio);

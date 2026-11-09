@@ -6,11 +6,11 @@ import epn.edu.ec.service.ServicioChatSalaPrivada;
 import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.*;
-import org.junit.jupiter.api.*;
+import org.junit.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
-class ChatSalaPrivadaPersistenciaTest {
+public class ChatSalaPrivadaPersistenciaTest extends PruebaSalaPrivada {
 
     private EntityManagerFactory factory;
     private ServicioChatSalaPrivada chat;
@@ -23,8 +23,8 @@ class ChatSalaPrivadaPersistenciaTest {
     private final Instant ahora =
             Instant.parse("2026-11-08T15:00:00Z");
 
-    @BeforeEach
-    void preparar() {
+    @Before
+    public void setUp() {
         factory = Persistence.createEntityManagerFactory(
                 "tarea3",
                 Map.of(
@@ -69,15 +69,15 @@ class ChatSalaPrivadaPersistenciaTest {
         chat = new ServicioChatSalaPrivada(factory);
     }
 
-    @AfterEach
-    void cerrar() {
+    @After
+    public void tearDown() {
         if (factory != null) {
             factory.close();
         }
     }
 
     @Test
-    void guardarConservaAutorHoraYSeparaLosHistorialesPorSala() {
+    public void given_dos_salas_when_guardar_mensajes_then_historiales_separados_con_autor_y_fecha() {
         var salaPedro = new SalaPrivada(pedro, "P4R8TW");
 
         new RepositorioSalasPrivadasJpa(factory)
@@ -122,7 +122,7 @@ class ChatSalaPrivadaPersistenciaTest {
     }
 
     @Test
-    void estudianteSinParticipacionNoPuedeEnviarNiLeer() {
+    public void given_estudiante_sin_participacion_when_enviar_o_leer_then_rechaza_acceso() {
         assertThrows(
                 SecurityException.class,
                 () -> chat.registrar(pedro, "Hola", ahora)
@@ -137,7 +137,7 @@ class ChatSalaPrivadaPersistenciaTest {
     }
 
     @Test
-    void concentracionConservaHistorialPeroBloqueaEnvioYDescansosLoPermiten() {
+    public void given_historial_existente_when_cambiar_entre_concentracion_y_descansos_then_controla_envio_y_conserva_historial() {
         chat.registrar(ana, "Antes de iniciar", ahora);
 
         fase(TipoBloque.CONCENTRACION);
@@ -173,7 +173,7 @@ class ChatSalaPrivadaPersistenciaTest {
     }
 
     @Test
-    void contenidoInvalidoNoSeGuardaYElLimiteDe2000SeConservaCompleto() {
+    public void given_textos_invalidos_y_texto_limite_when_enviar_then_rechaza_invalidos_y_conserva_2000_caracteres() {
         assertThrows(
                 IllegalArgumentException.class,
                 () -> chat.registrar(ana, "   ", ahora)
@@ -199,7 +199,7 @@ class ChatSalaPrivadaPersistenciaTest {
     }
 
     @Test
-    void endpointDeOtraSalaNoPuedeGuardarEnLaSalaActual() {
+    public void given_endpoint_de_otra_sala_when_enviar_then_rechaza_sin_guardar() {
         assertThrows(
                 SecurityException.class,
                 () -> chat.registrar(
@@ -214,7 +214,7 @@ class ChatSalaPrivadaPersistenciaTest {
     }
 
     @Test
-    void endpointDeOtraSalaNoPuedeLeerElHistorialActual() {
+    public void given_endpoint_de_otra_sala_when_leer_historial_then_rechaza_acceso() {
         chat.registrar(ana, "Mensaje privado", ahora);
 
         assertThrows(

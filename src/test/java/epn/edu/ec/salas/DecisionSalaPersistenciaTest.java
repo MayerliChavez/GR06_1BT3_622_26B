@@ -7,11 +7,11 @@ import jakarta.persistence.*;
 import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
-import org.junit.jupiter.api.*;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.*;
+import static org.junit.Assert.*;
 
 /** Verifica transacciones y carreras reales; no se cuenta como prueba unitaria. */
-class DecisionSalaPersistenciaTest {
+public class DecisionSalaPersistenciaTest extends PruebaSalaPrivada {
     private EntityManagerFactory factory;
     private RepositorioSolicitudesSalaJpa solicitudes;
     private RepositorioSesionesJpa sesiones;
@@ -21,7 +21,8 @@ class DecisionSalaPersistenciaTest {
     private final UUID ana = UUID.randomUUID(), luis = UUID.randomUUID(), pedro = UUID.randomUUID(),
             sofia = UUID.randomUUID(), carla = UUID.randomUUID();
 
-    @BeforeEach void preparar() {
+    @Before
+    public void setUp() {
         factory = Persistence.createEntityManagerFactory("tarea3", Map.of(
                 "jakarta.persistence.jdbc.url", "jdbc:h2:mem:decision" + UUID.randomUUID() + ";LOCK_TIMEOUT=10000",
                 "hibernate.hbm2ddl.auto", "create-drop", "hibernate.show_sql", "false"));
@@ -38,7 +39,12 @@ class DecisionSalaPersistenciaTest {
         salas.guardarNueva(sala);
     }
 
-    @AfterEach void cerrar() { if (factory != null) factory.close(); }
+    @After
+    public void tearDown() {
+        if (factory != null) {
+            factory.close();
+        }
+    }
 
     private SolicitudIngresoSala solicitar(UUID estudiante) {
         var solicitud = new SolicitudIngresoSala(estudiante, sala, Instant.now());
@@ -54,7 +60,8 @@ class DecisionSalaPersistenciaTest {
         }
     }
 
-    @Test void aceptarGuardaDecisionYParticipanteJuntos() {
+    @Test
+    public void given_solicitud_pendiente_when_aceptar_then_guarda_decision_y_participante_juntos() {
         var solicitud = solicitar(luis);
         servicio.aceptar(ana, solicitud.getId());
         assertEquals(SolicitudIngresoSala.Estado.ACEPTADA, solicitudes.buscarPorId(solicitud.getId()).orElseThrow().getEstado());
@@ -65,7 +72,27 @@ class DecisionSalaPersistenciaTest {
         assertEquals(2, solicitudes.contarParticipantes(sala.getId()));
     }
 
-    @Test void ajenoNoPuedeAceptarNiRechazar() {
+    @Test
+    public void given_participante_when_consultar_y_gestionar_espera_then_solo_lee_pendientes_de_su_sala() {
+        servicio.aceptar(ana, solicitar(luis).getId());
+        var solicitudPedro = solicitar(pedro);
+        var solicitudSofia = solicitar(sofia);
+        assertEquals(2, servicio.pendientesParaParticipante(luis).size());
+        assertThrows(SecurityException.class, () -> servicio.aceptar(luis, solicitudPedro.getId()));
+        assertThrows(SecurityException.class, () -> servicio.rechazar(luis, solicitudPedro.getId()));
+        assertThrows(SecurityException.class, () -> servicio.pendientesParaParticipante(carla));
+
+        salas.guardarNueva(new SalaPrivada(carla, "P4R8TW"));
+        assertTrue(servicio.pendientesParaParticipante(carla).isEmpty());
+        servicio.cancelar(sofia);
+        assertEquals(List.of(solicitudPedro.getId()), servicio.pendientesParaParticipante(luis)
+                .stream().map(SolicitudIngresoSala::getId).toList());
+        assertEquals(SolicitudIngresoSala.Estado.CANCELADA,
+                solicitudes.buscarPorId(solicitudSofia.getId()).orElseThrow().getEstado());
+    }
+
+    @Test
+    public void given_estudiante_ajeno_when_aceptar_o_rechazar_then_solicitud_permanece_pendiente() {
         var solicitud = solicitar(luis);
         assertThrows(SecurityException.class, () -> servicio.aceptar(pedro, solicitud.getId()));
         assertThrows(SecurityException.class, () -> servicio.rechazar(pedro, solicitud.getId()));
@@ -73,7 +100,8 @@ class DecisionSalaPersistenciaTest {
         assertEquals(1, solicitudes.contarParticipantes(sala.getId()));
     }
 
-    @Test void concentracionBloqueaAceptacionYDescansoLaPermite() {
+    @Test
+    public void given_solicitud_pendiente_when_aceptar_en_concentracion_y_descanso_then_solo_acepta_en_descanso() {
         var solicitud = solicitar(luis);
         fase(TipoBloque.CONCENTRACION);
         var error = assertThrows(IllegalStateException.class, () -> servicio.aceptar(ana, solicitud.getId()));
@@ -84,7 +112,8 @@ class DecisionSalaPersistenciaTest {
         assertTrue(salas.buscarAbiertaPorEstudiante(luis).isPresent());
     }
 
-    @Test void rechazoDuranteConcentracionEsInmediato() {
+    @Test
+    public void given_solicitud_en_concentracion_when_rechazar_then_rechazo_inmediato_sin_ingreso() {
         var solicitud = solicitar(luis);
         fase(TipoBloque.CONCENTRACION);
         servicio.rechazar(ana, solicitud.getId());
@@ -93,7 +122,8 @@ class DecisionSalaPersistenciaTest {
         assertTrue(salas.buscarAbiertaPorEstudiante(luis).isEmpty());
     }
 
-    @Test void estudianteConActividadYaIniciadaNoPuedeSerAceptado() {
+    @Test
+    public void given_solicitante_con_actividad_iniciada_when_aceptar_then_rechaza_y_conserva_pendiente() {
         var solicitud = solicitar(luis);
         new ServicioPomodoro(sesiones, salas).iniciarSesion(luis,
                 new ConfiguracionPomodoro(Duration.ofMinutes(25), Duration.ofMinutes(5), Duration.ofMinutes(15), 4), Instant.now());
@@ -102,7 +132,8 @@ class DecisionSalaPersistenciaTest {
         assertTrue(salas.buscarAbiertaPorEstudiante(luis).isEmpty());
     }
 
-    @Test void dosAceptacionesConcurrentesRespetanElUltimoCupo() throws Exception {
+    @Test
+    public void given_ultimo_cupo_when_aceptar_dos_solicitudes_concurrentes_then_solo_una_aceptada() throws Exception {
         try (var em = factory.createEntityManager()) {
             em.getTransaction().begin();
             var referencia = em.getReference(SalaPrivada.class, sala.getId());
@@ -133,7 +164,8 @@ class DecisionSalaPersistenciaTest {
         catch (IllegalStateException salaLlena) { return false; }
     }
 
-    @Test void cancelacionConcurrenteNoSobrescribeUnaAceptacion() throws Exception {
+    @Test
+    public void given_solicitud_pendiente_when_aceptar_y_cancelar_concurrentemente_then_una_sola_decision_consistente() throws Exception {
         var solicitud = solicitar(luis);
         var inicio = new CountDownLatch(1);
         var executor = Executors.newFixedThreadPool(2);
@@ -155,7 +187,8 @@ class DecisionSalaPersistenciaTest {
         }
     }
 
-    @Test void falloDeBaseRevierteDecisionYParticipacion() {
+    @Test
+    public void given_fallo_de_base_when_aceptar_then_revierte_decision_y_participacion() {
         var solicitud = solicitar(luis);
         try (var em = factory.createEntityManager()) {
             em.getTransaction().begin();

@@ -13,6 +13,7 @@
                class="chat-status"
                role="status">Conectando…</p>
         </div>
+        <span aria-hidden="true">♧</span>
     </header>
 
     <div id="mensajesChatSala"
@@ -30,7 +31,6 @@
         </label>
 
         <textarea id="textoChatSala"
-                  maxlength="2000"
                   rows="2"
                   disabled
                   placeholder="Escribe un mensaje…"

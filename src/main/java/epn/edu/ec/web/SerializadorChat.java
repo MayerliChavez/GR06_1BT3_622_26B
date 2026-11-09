@@ -42,6 +42,17 @@ public class SerializadorChat {
                 + "}";
     }
 
+    public String evento(SerializadorCicloSala.EventoChat evento) {
+        return "{\"tipo\":" + cadena(evento.tipo())
+                + ",\"mensajeId\":"
+                + evento.mensajeId()
+                + ",\"mensaje\":"
+                + (evento.mensaje() == null
+                ? "null"
+                : cadena(evento.mensaje()))
+                + "}";
+    }
+
     public String cadena(String valor) {
         StringBuilder resultado = new StringBuilder("\"");
 

@@ -2,6 +2,7 @@ package epn.edu.ec.service;
 
 import epn.edu.ec.model.*;
 import epn.edu.ec.repository.RepositorioSesionesCompartidas;
+import epn.edu.ec.repository.TransaccionesJpa;
 import epn.edu.ec.tdd.chat.*;
 import jakarta.persistence.EntityManagerFactory;
 import java.util.*;
@@ -27,25 +28,26 @@ public class ServicioChat {
     public MensajeChat registrar(UUID sesionId, UUID estudianteId, String texto) {
         validador.validar(texto);
         SesionCompartida sesion = exigirParticipante(sesionId, estudianteId);
+        // Calcula la fase vigente aunque el siguiente sondeo del temporizador no haya llegado.
+        sesion.avanzarSiCorresponde(java.time.Instant.now());
+        var individual = sesion.getParticipaciones().stream()
+                .filter(p -> p.getEstudiante().getId().equals(estudianteId))
+                .findFirst().orElseThrow().getSesionEstudio();
+        var bloques = individual.getBloques();
+        if (bloques.isEmpty() || bloques.get(bloques.size() - 1).getTipo() == TipoBloque.CONCENTRACION) {
+            throw new IllegalArgumentException("El chat se habilitará en el próximo descanso.");
+        }
         var autor = sesion.getParticipaciones().stream()
                 .map(ParticipacionCompartida::getEstudiante)
                 .filter(e -> e.getId().equals(estudianteId)).findFirst().orElseThrow();
         var datos = controlador.crearMensaje(texto, estudianteId, sesionId);
-        try (var em = factory.createEntityManager()) {
-            var tx = em.getTransaction();
-            try {
-                tx.begin();
-                var mensaje = new MensajeChat(datos,
-                        em.getReference(Estudiante.class, autor.getId()),
-                        em.getReference(SesionCompartida.class, sesionId));
-                em.persist(mensaje);
-                tx.commit();
-                return mensaje;
-            } catch (RuntimeException e) {
-                if (tx.isActive()) tx.rollback();
-                throw e;
-            }
-        }
+        return TransaccionesJpa.ejecutar(factory, em -> {
+            var mensaje = new MensajeChat(datos,
+                    em.getReference(Estudiante.class, autor.getId()),
+                    em.getReference(SesionCompartida.class, sesionId));
+            em.persist(mensaje);
+            return mensaje;
+        });
     }
 
     public List<MensajeChat> historial(UUID sesionId, UUID estudianteId) {

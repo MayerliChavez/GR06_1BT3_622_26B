@@ -6,18 +6,20 @@ import epn.edu.ec.service.*;
 import java.time.*;
 import java.util.*;
 import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class ServicioSalasPrivadasTest {
+public class ServicioSalasPrivadasTest extends PruebaSalaPrivada {
     private final UUID ana = UUID.randomUUID();
     private final Map<UUID, SalaPrivada> almacen = new HashMap<>();
     private SesionEstudio individual;
     private SesionCompartida emparejada;
     private ServicioSalasPrivadas servicio;
 
-    @Before public void preparar() {
+    @Before
+    public void setUp() {
         RepositorioSalasPrivadas salas = new RepositorioSalasPrivadas() {
             public Optional<SalaPrivada> buscarAbiertaPorEstudiante(UUID id) {
                 return almacen.values().stream().filter(s -> s.getResponsableId().equals(id)).findFirst();
@@ -41,7 +43,8 @@ public class ServicioSalasPrivadasTest {
         servicio = new ServicioSalasPrivadas(salas, sesiones, compartidas, () -> "K7M2QX");
     }
 
-    @Test public void crearYConsultarConservaLaMismaSalaYCodigo() {
+    @Test
+    public void given_estudiante_disponible_when_crear_y_consultar_then_conserva_sala_y_codigo() {
         SalaPrivada creada = servicio.crear(ana);
         SalaPrivada recuperada = servicio.consultarActual(ana).orElseThrow();
         assertEquals(creada.getId(), recuperada.getId());
@@ -51,14 +54,16 @@ public class ServicioSalasPrivadasTest {
         assertEquals(1, almacen.size());
     }
 
-    @Test public void unaSegundaCreacionNoDuplicaLaSalaExistente() {
+    @Test
+    public void given_sala_existente_when_crear_otra_then_rechaza_sin_duplicar() {
         SalaPrivada primera = servicio.crear(ana);
         assertThrows(IllegalStateException.class, () -> servicio.crear(ana));
         assertEquals(primera.getId(), servicio.consultarActual(ana).orElseThrow().getId());
         assertEquals(1, almacen.size());
     }
 
-    @Test public void sesionIndividualImpideCrearYSigueSinCambios() {
+    @Test
+    public void given_sesion_individual_activa_when_crear_sala_then_rechaza_sin_modificar_sesion() {
         Instant inicio = Instant.parse("2026-11-07T15:00:00Z");
         individual = sesion(ana, inicio);
         individual.iniciarSiguienteBloque(inicio);
@@ -68,7 +73,8 @@ public class ServicioSalasPrivadasTest {
         assertTrue(almacen.isEmpty());
     }
 
-    @Test public void sesionEmparejadaImpideCrearOtraSala() {
+    @Test
+    public void given_sesion_emparejada_activa_when_crear_sala_then_rechaza_sin_modificar_sesion() {
         Instant inicio = Instant.parse("2026-11-07T15:00:00Z");
         emparejada = new SesionCompartida(sesion(ana, inicio), sesion(UUID.randomUUID(), inicio));
         emparejada.iniciar(inicio);
@@ -80,5 +86,13 @@ public class ServicioSalasPrivadasTest {
     private SesionEstudio sesion(UUID id, Instant inicio) {
         return new SesionEstudio(new Estudiante(id, "Estudiante"),
                 new ConfiguracionPomodoro(Duration.ofMinutes(25), Duration.ofMinutes(5), Duration.ofMinutes(15), 4), inicio);
+    }
+
+    @After
+    public void tearDown() {
+        almacen.clear();
+        individual = null;
+        emparejada = null;
+        servicio = null;
     }
 }

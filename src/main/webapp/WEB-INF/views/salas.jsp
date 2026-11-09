@@ -6,11 +6,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#29243b">
 
     <title>Salas privadas · Pomora</title>
 
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/assets/pomora.css?v=salas1">
+          href="${pageContext.request.contextPath}/assets/pomora.css?v=salas3">
+
+    <script src="${pageContext.request.contextPath}/assets/pomora-ui.js?v=salas2"
+            defer></script>
 
     <script src="${pageContext.request.contextPath}/assets/salas.js?v=5"
             defer></script>
@@ -21,7 +25,7 @@
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/assets/chat.css?v=salas14">
 
-    <script src="${pageContext.request.contextPath}/assets/chat-sala.js?v=1"
+    <script src="${pageContext.request.contextPath}/assets/chat-sala.js?v=2"
             defer></script>
 </head>
 
@@ -40,38 +44,67 @@
     <nav aria-label="Navegación principal">
         <a class="nav-link"
            href="${pageContext.request.contextPath}/pomodoro">
-            Temporizador
+            <span aria-hidden="true">◷</span> Temporizador
         </a>
 
         <a class="nav-link"
            href="${pageContext.request.contextPath}/historial">
-            Historial de estudio
+            <span aria-hidden="true">▤</span> Historial de estudio
         </a>
 
         <a class="nav-link"
            href="${pageContext.request.contextPath}/compartido">
-            Estudio compartido
+            <span aria-hidden="true">♧</span> Estudio compartido
         </a>
 
         <a class="nav-link selected"
            href="${pageContext.request.contextPath}/salas"
            aria-current="page">
-            Salas privadas
+            <span aria-hidden="true">⌂</span> Salas privadas
+            <span class="nav-marker"></span>
         </a>
     </nav>
+
+    <div class="sidebar-note">
+        <img class="custom-note-icon"
+             src="${pageContext.request.contextPath}/assets/mi_icono_pomodora.png"
+             alt="Pomora">
+        <p>El progreso empieza<br>con un pequeño paso.</p>
+        <span>Haz espacio para lo que importa.</span>
+    </div>
+
+    <details class="profile-menu">
+        <summary class="profile" aria-label="Abrir opciones de mi perfil">
+            <span class="avatar">E</span>
+            <span class="profile-copy">
+                <strong class="profile-name"><c:out value="${sessionScope.nombreVisible}"/></strong>
+                <small>Mi espacio de estudio</small>
+            </span>
+            <span class="profile-chevron" aria-hidden="true">⌃</span>
+        </summary>
+        <div class="profile-dropdown">
+            <span class="profile-dropdown-label">TU CUENTA</span>
+            <strong><c:out value="${sessionScope.nombreVisible}"/></strong>
+            <a href="${pageContext.request.contextPath}/historial">Ver mi historial <span>↗</span></a>
+            <form class="logout-form"
+                  action="${pageContext.request.contextPath}/salir"
+                  method="post">
+                <input type="hidden" name="csrf" value="${csrf}">
+                <button type="submit">Cerrar sesión <span>→</span></button>
+            </form>
+        </div>
+    </details>
 </aside>
 
 <main class="workspace">
     <header class="topbar">
         <span>SALAS PRIVADAS</span>
-        <span>
-            <c:out value="${sessionScope.nombreVisible}"/>
-        </span>
+        <a href="${pageContext.request.contextPath}/historial">Ver tu historial →</a>
     </header>
 
     <section class="page-heading">
         <p class="eyebrow">ESTUDIA CON TU GRUPO</p>
-        <h1>Tu sala privada.</h1>
+        <h1>Tu sala privada<span>.</span></h1>
         <p>Reúnete con los compañeros que tú elijas.</p>
     </section>
 
@@ -81,52 +114,47 @@
         </p>
     </c:if>
 
-    <section class="timer-card">
-        <c:choose>
-            <c:when test="${not empty sala}">
-                <div class="timer-card-head">
-                    <span class="session-indicator">Sala abierta</span>
-                    <strong>
-                        ${esResponsable ? 'Responsable' : 'Participante'}
-                    </strong>
+    <c:choose>
+        <c:when test="${not empty sala}">
+            <section class="room-bar">
+                <div class="room-bar-title">
+                    <p class="eyebrow">
+                        <i class="room-live-dot" aria-hidden="true"></i> SALA ABIERTA
+                    </p>
+                    <h2>Tu sala de estudio</h2>
+                    <span class="room-role">${esResponsable ? 'Responsable' : 'Participante'}</span>
                 </div>
 
-                <h2>Tu sala de estudio</h2>
+                <div class="room-bar-code">
+                    <label for="codigoSala">Código de acceso</label>
+                    <div class="room-code-row">
+                        <input id="codigoSala"
+                               class="room-code-display"
+                               type="text"
+                               readonly
+                               value="${sala.codigo}"
+                               aria-label="Código de acceso de seis caracteres">
 
-                <label for="codigoSala">Código de acceso</label>
-
-                <input id="codigoSala"
-                       type="text"
-                       readonly
-                       value="${sala.codigo}"
-                       aria-label="Código de acceso de seis caracteres">
-
-                <button class="button primary"
-                        id="copiarCodigoSala"
-                        type="button">
-                    Copiar código
-                </button>
-
-                <p id="resultadoCopiar"
-                   role="status"
-                   aria-live="polite"></p>
-
-                <p class="timer-hint">
-                    Comparte este código con tus compañeros.
-                </p>
-
-                <jsp:include page="salas-ciclo.jsp"/>
-
-                <jsp:include page="salas-chat.jsp"/>
+                        <button class="button primary"
+                                id="copiarCodigoSala"
+                                type="button">
+                            Copiar código
+                        </button>
+                    </div>
+                    <p id="resultadoCopiar"
+                       class="room-copy-status"
+                       role="status"
+                       aria-live="polite">Comparte este código con tus compañeros.</p>
+                </div>
 
                 <c:if test="${esResponsable}">
                     <button id="abrirCierreSala"
-                            class="button"
+                            class="button secondary room-close"
                             type="button">
                         Cerrar sala
                     </button>
 
-                    <dialog id="confirmarCierreSala">
+                    <dialog id="confirmarCierreSala" class="room-dialog">
                         <form action="${pageContext.request.contextPath}/salas"
                               method="post">
                             <input type="hidden"
@@ -139,117 +167,141 @@
                                    name="confirmado"
                                    value="true">
 
+                            <span class="card-symbol" aria-hidden="true">⌂</span>
                             <p>
-                                ¿Cerrar la sala? Se terminará el estudio de todos
-                                los participantes y su tiempo quedará guardado.
+                                ¿Deseas cerrar la sala para todos los participantes?
                             </p>
+                            <small>El tiempo de concentración de cada uno quedará guardado en su historial.</small>
 
-                            <button id="cancelarCierreSala"
-                                    class="button"
-                                    type="button">
-                                Cancelar
-                            </button>
+                            <div class="room-dialog-actions">
+                                <button id="cancelarCierreSala"
+                                        class="button secondary"
+                                        type="button">
+                                    Cancelar
+                                </button>
 
-                            <button class="button primary"
-                                    type="submit"
-                                    name="accion"
-                                    value="cerrarSala">
-                                Cerrar sala
-                            </button>
+                                <button class="button primary"
+                                        type="submit"
+                                        name="accion"
+                                        value="cerrarSala">
+                                    Aceptar
+                                </button>
+                            </div>
                         </form>
                     </dialog>
                 </c:if>
+            </section>
 
-                <c:if test="${esResponsable}">
-                    <section id="esperaSala"
-                             data-url="${pageContext.request.contextPath}/salas?formato=espera">
+            <div class="room-layout">
+                <jsp:include page="salas-chat.jsp"/>
+
+                <section class="timer-card room-timer">
+                    <div class="timer-card-head">
+                        <span class="session-indicator"><i></i> Ciclo del grupo</span>
+                        <span class="quiet-label">25 · 5 · 15 MIN</span>
+                    </div>
+
+                    <jsp:include page="salas-ciclo.jsp"/>
+                </section>
+
+                <section class="waiting-card">
+                    <div id="esperaSala"
+                         data-url="${pageContext.request.contextPath}/salas?formato=espera">
                         <jsp:include page="salas-espera.jsp"/>
-                    </section>
+                    </div>
 
-                    <p id="conexionEspera" role="status"></p>
-                </c:if>
-            </c:when>
+                    <p id="conexionEspera" class="connection-message" role="status"></p>
+                </section>
+            </div>
+        </c:when>
 
-            <c:when test="${not empty pendiente}">
-                <h2 id="estadoSolicitudSala"
-                    data-url="${pageContext.request.contextPath}/salas?formato=estadoSolicitud"
-                    data-destino="${pageContext.request.contextPath}/salas">Sala de espera</h2>
-                <p id="conexionSolicitud" role="status"></p>
+        <c:when test="${not empty pendiente}">
+            <div class="room-options">
+                <article class="room-card">
+                    <span class="card-symbol" aria-hidden="true">◷</span>
+                    <p class="eyebrow">SOLICITUD ENVIADA</p>
+                    <h2 id="estadoSolicitudSala"
+                        data-url="${pageContext.request.contextPath}/salas?formato=estadoSolicitud"
+                        data-destino="${pageContext.request.contextPath}/salas">Sala de espera</h2>
 
-                <p>
-                    Esperando la aprobación del responsable de la sala.
-                </p>
+                    <p class="room-card-text">
+                        Esperando la aprobación del responsable de la sala.
+                    </p>
 
-                <p>
-                    Código:
-                    <c:out value="${pendiente.sala.codigo}"/>
-                </p>
+                    <div class="room-code-chip">
+                        <span>Código</span>
+                        <strong><c:out value="${pendiente.sala.codigo}"/></strong>
+                    </div>
 
-                <form action="${pageContext.request.contextPath}/salas"
-                      method="post">
-                    <input type="hidden"
-                           name="csrf"
-                           value="${csrf}">
+                    <p id="conexionSolicitud" class="connection-message" role="status"></p>
 
-                    <button class="button primary"
-                            type="submit"
-                            name="accion"
-                            value="cancelarSolicitud">
-                        Cancelar solicitud
-                    </button>
-                </form>
-            </c:when>
+                    <form class="room-form"
+                          action="${pageContext.request.contextPath}/salas"
+                          method="post">
+                        <input type="hidden"
+                               name="csrf"
+                               value="${csrf}">
 
-            <c:otherwise>
-                <h2>Crea un espacio para estudiar juntos</h2>
+                        <button class="button secondary"
+                                type="submit"
+                                name="accion"
+                                value="cancelarSolicitud">
+                            Cancelar solicitud
+                        </button>
+                    </form>
+                </article>
 
-                <p>
-                    Serás el responsable de la sala y recibirás un código
-                    de acceso.
-                </p>
+                <jsp:include page="salas-ingreso.jsp"/>
+            </div>
+        </c:when>
 
-                <form action="${pageContext.request.contextPath}/salas"
-                      method="post">
-                    <input type="hidden"
-                           name="csrf"
-                           value="${csrf}">
+        <c:otherwise>
+            <div class="room-options">
+                <article class="room-card">
+                    <span class="card-symbol" aria-hidden="true">✦</span>
+                    <p class="eyebrow">CREA TU ESPACIO</p>
+                    <h2>Crear una sala</h2>
 
-                    <button class="button primary"
-                            type="submit"
-                            name="accion"
-                            value="crear">
-                        Crear sala
-                    </button>
-                </form>
+                    <p class="room-card-text">
+                        Serás el responsable de la sala y recibirás un código
+                        de acceso para compartir con tus compañeros.
+                    </p>
 
-                <h2>Ingresar a una sala</h2>
+                    <ul class="room-facts">
+                        <li><span class="step-dot focus-dot"></span>Participantes <strong>2 a 4</strong></li>
+                        <li><span class="step-dot short-dot"></span>Código de acceso <strong>6 caracteres</strong></li>
+                        <li><span class="step-dot long-dot"></span>Quién entra <strong>Tú decides</strong></li>
+                    </ul>
 
-                <form action="${pageContext.request.contextPath}/salas"
-                      method="post">
-                    <input type="hidden"
-                           name="csrf"
-                           value="${csrf}">
+                    <form class="room-form"
+                          action="${pageContext.request.contextPath}/salas"
+                          method="post">
+                        <input type="hidden"
+                               name="csrf"
+                               value="${csrf}">
 
-                    <label for="codigoIngreso">Código de acceso</label>
+                        <button class="button primary"
+                                type="submit"
+                                name="accion"
+                                value="crear">
+                            Crear sala
+                        </button>
+                    </form>
+                </article>
 
-                    <input id="codigoIngreso"
-                           name="codigo"
-                           type="text"
-                           maxlength="6"
-                           required
-                           autocomplete="off"
-                           placeholder="K7M2QX">
+                <jsp:include page="salas-ingreso.jsp"/>
+            </div>
+        </c:otherwise>
+    </c:choose>
 
-                    <button class="button primary"
-                            type="submit"
-                            name="accion"
-                            value="solicitar">
-                        Solicitar ingreso
-                    </button>
-                </form>
-            </c:otherwise>
-        </c:choose>
-    </section>
+    <p class="bottom-note">
+        <span>✦</span> Concéntrense juntos y conversen solo en los descansos.
+    </p>
+
+    <footer class="page-footer">
+        <span>Pomora · un espacio para concentrarte</span>
+        <span>Un bloque a la vez.</span>
+    </footer>
 </main>
 </body>
 </html>

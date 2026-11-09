@@ -163,11 +163,12 @@ evento.preventDefault();
 
 if (!conectado || !permitido || pendiente) return;
 
-if (!input.value.trim() || input.value.length > 2000) {
-mostrarError(
-"Escribe un mensaje de 1 a 2000 caracteres "
-+ "con contenido."
-);
+if (!input.value.trim()) {
+mostrarError("Escribe un mensaje antes de enviarlo.");
+return;
+}
+if (input.value.length > 2000) {
+mostrarError("El mensaje no puede superar los 2000 caracteres.");
 return;
 }
 

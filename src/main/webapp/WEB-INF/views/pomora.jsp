@@ -7,7 +7,7 @@
  <meta name="theme-color" content="#29243b">
  <title>${esHistorial ? 'Historial' : 'Tu enfoque'} · Pomora</title>
  <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/pomora.css?v=aviso125">
- <script src="${pageContext.request.contextPath}/assets/pomora.js?v=aviso125" defer></script>
+ <script src="${pageContext.request.contextPath}/assets/pomora.js?v=sala-privada1" defer></script>
 <script src="${pageContext.request.contextPath}/assets/pomora-ui.js?v=aviso125" defer></script><script src="${pageContext.request.contextPath}/assets/racha.js?v=calendario1" defer></script></head>
 <body>
 <aside class="sidebar">
@@ -17,7 +17,7 @@
   <a class="nav-link ${!esHistorial ? 'selected' : ''}" href="${pageContext.request.contextPath}/pomodoro"><span aria-hidden="true">◷</span> Temporizador <span class="nav-marker"></span></a>
   <a class="nav-link ${esHistorial ? 'selected' : ''}" href="${pageContext.request.contextPath}/historial"><span aria-hidden="true">▤</span> Historial de estudio</a>
   <a class="nav-link" href="${pageContext.request.contextPath}/compartido"><span aria-hidden="true">♧</span> Estudio compartido</a>
- <a class="nav-link" href="${pageContext.request.contextPath}/salas">Salas privadas</a></nav>
+ <a class="nav-link" href="${pageContext.request.contextPath}/salas"><span aria-hidden="true">⌂</span> Salas privadas</a></nav>
  <div class="sidebar-note"><img class="custom-note-icon" src="${pageContext.request.contextPath}/assets/mi_icono_pomodora.png" alt="Pomora"><p>El progreso empieza<br>con un pequeño paso.</p><span>Haz espacio para lo que importa.</span></div>
  <details class="profile-menu"><summary class="profile" aria-label="Abrir opciones de mi perfil"><span class="avatar">E</span><span class="profile-copy"><strong class="profile-name"><c:out value="${sessionScope.nombreVisible}"/></strong><small>Mi espacio de estudio</small></span><span class="profile-chevron" aria-hidden="true">⌃</span></summary><div class="profile-dropdown"><span class="profile-dropdown-label">TU CUENTA</span><strong><c:out value="${sessionScope.nombreVisible}"/></strong><a href="${pageContext.request.contextPath}/historial">Ver mi historial <span>↗</span></a><form class="logout-form" action="${pageContext.request.contextPath}/salir" method="post"><input type="hidden" name="csrf" value="${csrf}"><button type="submit">Cerrar sesión <span>→</span></button></form></div></details>
 </aside>
@@ -71,6 +71,10 @@
     <form id="timerForm" action="${pageContext.request.contextPath}/pomodoro" method="post"><input type="hidden" name="csrf" value="${csrf}"><input type="hidden" name="sesionId" value="${sesionId}" id="sessionInput"><input type="hidden" name="accion" id="actionInput" value="${estadoBloque == 'PAUSADO' ? 'reanudar' : (estadoBloque == 'EN_EJECUCION' ? 'pausar' : (estadoBloque == 'COMPLETADO' ? 'siguiente' : 'iniciar'))}"><button class="button primary timer-button" id="mainAction" type="submit"><span id="mainActionIcon" aria-hidden="true">${estadoBloque == 'EN_EJECUCION' ? 'Ⅱ' : '▶'}</span> <span id="mainActionLabel">${estadoBloque == 'PAUSADO' ? 'Reanudar temporizador' : (estadoBloque == 'EN_EJECUCION' ? 'Pausar temporizador' : (estadoBloque == 'COMPLETADO' ? 'Iniciar siguiente bloque' : 'Iniciar temporizador'))}</span></button></form>
     <p class="timer-hint" id="timerHint">${estadoBloque == 'PAUSADO' ? 'Continúa cuando estés listo.' : 'El siguiente bloque comienza automáticamente. Puedes pausar cuando lo necesites.'}</p>
     <div class="session-actions" id="sessionActions" ${hayActiva ? "" : "hidden"}><form method="post" action="${pageContext.request.contextPath}/pomodoro"><input type="hidden" name="csrf" value="${csrf}"><input type="hidden" name="sesionId" value="${sesionId}"><button name="accion" value="finalizar" class="text-button">Finalizar sesión</button></form><span>·</span><form method="post" action="${pageContext.request.contextPath}/pomodoro"><input type="hidden" name="csrf" value="${csrf}"><input type="hidden" name="sesionId" value="${sesionId}"><button name="accion" value="abandonar" class="text-button muted">Abandonar</button></form></div>
+    <form method="post" action="${pageContext.request.contextPath}/salas">
+     <input type="hidden" name="csrf" value="${csrf}">
+     <button class="button" type="submit" name="accion" value="crear">Crear sala</button>
+    </form>
     <noscript><p class="connection-message">Activa JavaScript para ver la cuenta regresiva y completar los bloques automáticamente.</p></noscript>
     <div class="sound-controls"><button class="sound-toggle" type="button" aria-pressed="false">♪ Activar sonido</button></div>
     <p class="connection-message" id="connectionMessage" role="status"></p>

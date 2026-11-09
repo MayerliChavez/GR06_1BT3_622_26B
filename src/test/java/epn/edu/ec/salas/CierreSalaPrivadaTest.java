@@ -4,19 +4,27 @@ import epn.edu.ec.model.*;
 import java.time.Instant;
 import java.util.UUID;
 import org.junit.Test;
+import org.junit.Before;
+import org.junit.After;
 
 import static org.junit.Assert.*;
 
-public class CierreSalaPrivadaTest {
+public class CierreSalaPrivadaTest extends PruebaSalaPrivada {
+    private SalaPrivada sala;
 
-    private final UUID responsable = UUID.randomUUID();
+    private UUID responsable;
 
-    private final Instant ahora =
-            Instant.parse("2026-11-08T15:18:00Z");
+    private Instant ahora;
+
+    @Before
+    public void setUp() {
+        responsable = UUID.randomUUID();
+        ahora = Instant.parse("2026-11-08T15:18:00Z");
+        sala = new SalaPrivada(responsable, "K7M2QX");
+    }
 
     @Test
-    public void responsableCierraYConservaLaFecha() {
-        var sala = new SalaPrivada(responsable, "K7M2QX");
+    public void given_sala_abierta_when_responsable_cierra_then_conserva_fecha_y_bloquea_cambios() {
 
         sala.cerrar(responsable, ahora);
 
@@ -32,8 +40,7 @@ public class CierreSalaPrivadaTest {
     }
 
     @Test
-    public void otroEstudianteNoPuedeCerrarLaSala() {
-        var sala = new SalaPrivada(responsable, "K7M2QX");
+    public void given_estudiante_ajeno_when_cerrar_sala_then_rechaza_y_conserva_sala_abierta() {
 
         assertThrows(
                 SecurityException.class,
@@ -42,5 +49,12 @@ public class CierreSalaPrivadaTest {
 
         assertEquals(SalaPrivada.Estado.ABIERTA, sala.getEstado());
         assertNull(sala.getFechaCierre());
+    }
+
+    @After
+    public void tearDown() {
+        sala = null;
+        ahora = null;
+        responsable = null;
     }
 }
