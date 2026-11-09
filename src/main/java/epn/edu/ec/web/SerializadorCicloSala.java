@@ -30,16 +30,7 @@ public class SerializadorCicloSala {
                 .collect(Collectors.joining(","));
 
         String respuestas = eventos.stream()
-                .map(evento ->
-                        "{\"tipo\":" + chat.cadena(evento.tipo())
-                                + ",\"mensajeId\":"
-                                + evento.mensajeId()
-                                + ",\"mensaje\":"
-                                + (evento.mensaje() == null
-                                ? "null"
-                                : chat.cadena(evento.mensaje()))
-                                + "}"
-                )
+                .map(chat::evento)
                 .collect(Collectors.joining(","));
 
         return campos(estado)
