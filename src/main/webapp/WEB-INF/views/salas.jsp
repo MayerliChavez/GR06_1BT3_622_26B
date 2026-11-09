@@ -60,7 +60,7 @@
         <a class="nav-link selected"
            href="${pageContext.request.contextPath}/salas"
            aria-current="page">
-            <span aria-hidden="true">⌂</span> Salas privadas
+            <span aria-hidden="true"><%@ include file="icono-sala-privada.jspf" %></span> Salas privadas
             <span class="nav-marker"></span>
         </a>
     </nav>
@@ -167,7 +167,7 @@
                                    name="confirmado"
                                    value="true">
 
-                            <span class="card-symbol" aria-hidden="true">⌂</span>
+                            <span class="card-symbol" aria-hidden="true"><%@ include file="icono-sala-privada.jspf" %></span>
                             <p>
                                 ¿Deseas cerrar la sala para todos los participantes?
                             </p>
