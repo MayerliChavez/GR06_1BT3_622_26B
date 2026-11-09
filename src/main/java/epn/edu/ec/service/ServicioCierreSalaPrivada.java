@@ -12,9 +12,11 @@ import java.util.function.Function;
 public class ServicioCierreSalaPrivada {
 
     private final EntityManagerFactory factory;
+    private final ServicioAvisosCierreSala avisos;
 
     public ServicioCierreSalaPrivada(EntityManagerFactory factory) {
         this.factory = Objects.requireNonNull(factory);
+        this.avisos = new ServicioAvisosCierreSala(factory);
     }
 
     public boolean cerrar(
@@ -108,19 +110,13 @@ public class ServicioCierreSalaPrivada {
             sala.cerrar(responsableId, instante);
 
             for (var integrante : integrantes) {
-                UUID estudianteId = integrante.getEstudianteId();
-
-                String mensaje = estudianteId.equals(responsableId)
-                        ? "La sala se cerró correctamente."
-                        : "El responsable cerró la sala. "
-                          + "Tu tiempo de estudio quedó guardado.";
-
-                em.merge(new AvisoCierreSalaPrivada(
-                        estudianteId,
+                avisos.registrarEnTransaccion(
+                        em,
+                        integrante.getEstudianteId(),
+                        responsableId,
                         salaId,
-                        mensaje,
                         instante
-                ));
+                );
 
                 // La sesión personal se conserva en el historial.
                 em.remove(integrante);
@@ -131,24 +127,7 @@ public class ServicioCierreSalaPrivada {
     }
 
     public Optional<String> consumirAviso(UUID estudianteId) {
-        Objects.requireNonNull(estudianteId);
-
-        return enTransaccion(em -> {
-            var aviso = em.find(
-                    AvisoCierreSalaPrivada.class,
-                    estudianteId,
-                    LockModeType.PESSIMISTIC_WRITE
-            );
-
-            if (aviso == null) {
-                return Optional.empty();
-            }
-
-            String mensaje = aviso.getMensaje();
-            em.remove(aviso);
-
-            return Optional.of(mensaje);
-        });
+        return avisos.consumirAviso(estudianteId);
     }
 
     private <T> T enTransaccion(Function<EntityManager, T> accion) {

@@ -6,17 +6,24 @@ import epn.edu.ec.web.SerializadorCicloSala;
 import java.time.Instant;
 import java.util.UUID;
 import org.junit.Test;
+import org.junit.Before;
+import org.junit.After;
 
 import static org.junit.Assert.*;
 
-public class SerializadorCicloSalaTest {
-    private final UUID salaId = UUID.randomUUID();
+public class SerializadorCicloSalaTest extends PruebaSalaPrivada {
+    private UUID salaId;
 
-    private final Instant ahora =
-            Instant.parse("2026-11-08T15:00:00Z");
+    private Instant ahora;
+
+    @Before
+    public void setUp() {
+        salaId = UUID.randomUUID();
+        ahora = Instant.parse("2026-11-08T15:00:00Z");
+    }
 
     @Test
-    public void salaSinIniciarSeComunicaSinFechasInventadas() {
+    public void given_sala_sin_iniciar_when_serializar_then_fechas_nulas_y_tiempo_cero() {
         var estado = new EstadoCiclo(
                 salaId,
                 false,
@@ -40,7 +47,7 @@ public class SerializadorCicloSalaTest {
     }
 
     @Test
-    public void cicloIniciadoComunicaVencimientoEnMilisegundos() {
+    public void given_ciclo_iniciado_when_serializar_then_comunica_vencimiento_en_milisegundos() {
         Instant inicio = ahora.minusSeconds(60);
         Instant fin = ahora.plusSeconds(1440);
 
@@ -73,5 +80,11 @@ public class SerializadorCicloSalaTest {
         ));
         assertTrue(json.contains("\"restanteMillis\":1440000"));
         assertTrue(json.contains("\"orden\":1"));
+    }
+
+    @After
+    public void tearDown() {
+        ahora = null;
+        salaId = null;
     }
 }

@@ -44,11 +44,7 @@ public class CicloSalaPrivada {
         if (!isIniciado()) {
             return false;
         }
-        if (ahora.isBefore(inicioBloque)) {
-            throw new IllegalArgumentException(
-                    "La fecha no puede retroceder."
-            );
-        }
+        exigirQueNoRetroceda(ahora);
         if (ahora.isBefore(finBloque)) {
             return false;
         }
@@ -82,13 +78,17 @@ public class CicloSalaPrivada {
         if (!isIniciado() || !ahora.isBefore(finBloque)) {
             return Duration.ZERO;
         }
+        exigirQueNoRetroceda(ahora);
+
+        return Duration.between(ahora, finBloque);
+    }
+
+    private void exigirQueNoRetroceda(Instant ahora) {
         if (ahora.isBefore(inicioBloque)) {
             throw new IllegalArgumentException(
                     "La fecha no puede retroceder."
             );
         }
-
-        return Duration.between(ahora, finBloque);
     }
 
     public boolean isIniciado() {

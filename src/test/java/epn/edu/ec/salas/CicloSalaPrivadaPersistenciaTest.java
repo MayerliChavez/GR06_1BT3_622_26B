@@ -8,11 +8,11 @@ import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.*;
-import org.junit.jupiter.api.*;
+import org.junit.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
-class CicloSalaPrivadaPersistenciaTest {
+public class CicloSalaPrivadaPersistenciaTest extends PruebaSalaPrivada {
     private EntityManagerFactory factory;
     private SalaPrivada sala;
     private ServicioCicloSalaPrivada ciclo;
@@ -24,8 +24,8 @@ class CicloSalaPrivadaPersistenciaTest {
     private final Instant inicio =
             Instant.parse("2026-11-08T15:00:00Z");
 
-    @BeforeEach
-    void preparar() {
+    @Before
+    public void setUp() {
         factory = Persistence.createEntityManagerFactory(
                 "tarea3",
                 Map.of(
@@ -54,8 +54,8 @@ class CicloSalaPrivadaPersistenciaTest {
         ciclo = new ServicioCicloSalaPrivada(factory);
     }
 
-    @AfterEach
-    void cerrar() {
+    @After
+    public void tearDown() {
         if (factory != null) {
             factory.close();
         }
@@ -75,7 +75,7 @@ class CicloSalaPrivadaPersistenciaTest {
     }
 
     @Test
-    void soloResponsableConAlMenosDosParticipantesPuedeIniciar() {
+    public void given_sala_sin_cupo_minimo_o_invitado_when_iniciar_then_rechaza_sin_crear_sesiones() {
         assertThrows(
                 IllegalStateException.class,
                 () -> ciclo.iniciar(ana, inicio)
@@ -96,7 +96,7 @@ class CicloSalaPrivadaPersistenciaTest {
     }
 
     @Test
-    void inicioComunYRecargaConservanBloqueVencimientoYSesiones() {
+    public void given_dos_participantes_when_iniciar_y_recargar_then_conserva_reloj_y_sesiones_comunes() {
         agregarLuis();
         ciclo.iniciar(ana, inicio);
 
@@ -131,7 +131,7 @@ class CicloSalaPrivadaPersistenciaTest {
     }
 
     @Test
-    void avanceDelServidorRecuperaVencimientosSinContarDescansos() {
+    public void given_cuatro_concentraciones_vencidas_when_avanzar_servidor_then_descanso_largo_y_solo_tiempo_estudiado() {
         agregarLuis();
         ciclo.iniciar(ana, inicio);
 
@@ -156,7 +156,7 @@ class CicloSalaPrivadaPersistenciaTest {
     }
 
     @Test
-    void dosRevisionesConcurrentesNoCreanBloquesDuplicados()
+    public void given_bloque_vencido_when_avanzar_concurrentemente_then_sin_bloques_duplicados()
             throws Exception {
 
         agregarLuis();
@@ -210,7 +210,7 @@ class CicloSalaPrivadaPersistenciaTest {
     }
 
     @Test
-    void incorporacionDuranteDescansoNoAtribuyeConcentracionAnterior() {
+    public void given_ciclo_en_descanso_when_aceptar_participante_then_no_atribuye_concentracion_anterior() {
         agregarLuis();
 
         Instant inicioReal = Instant.now()
@@ -273,7 +273,7 @@ class CicloSalaPrivadaPersistenciaTest {
     }
 
     @Test
-    void sesionPrivadaNoPuedePausarseDesdeServicioIndividual() {
+    public void given_sesion_privada_activa_when_pausar_desde_individual_then_rechaza_y_conserva_reloj() {
         agregarLuis();
         ciclo.iniciar(ana, inicio);
 

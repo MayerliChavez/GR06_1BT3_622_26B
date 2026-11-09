@@ -5,13 +5,17 @@ import epn.edu.ec.service.PoliticaAdmisionSala;
 import java.util.Arrays;
 import java.util.Collection;
 import org.junit.Test;
+import org.junit.Before;
+import org.junit.After;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
-public class PoliticaAdmisionSalaParametersTest {
+public class PoliticaAdmisionSalaParametersTest extends PruebaSalaPrivada {
+
+    private PoliticaAdmisionSala politica;
 
     private final TipoBloque bloque;
     private final int participantes;
@@ -64,9 +68,13 @@ public class PoliticaAdmisionSalaParametersTest {
         this.esperado = esperado;
     }
 
+    @Before
+    public void setUp() {
+        politica = new PoliticaAdmisionSala();
+    }
+
     @Test
-    public void aceptarDependeDeFaseCupoYResponsable() {
-        PoliticaAdmisionSala politica = new PoliticaAdmisionSala();
+    public void given_fase_cupo_y_rol_when_evaluar_admision_then_coincide_con_resultado_esperado() {
 
         boolean resultado = politica.puedeAceptar(
                 bloque,
@@ -75,5 +83,10 @@ public class PoliticaAdmisionSalaParametersTest {
         );
 
         assertEquals(esperado, resultado);
+    }
+
+    @After
+    public void tearDown() {
+        politica = null;
     }
 }

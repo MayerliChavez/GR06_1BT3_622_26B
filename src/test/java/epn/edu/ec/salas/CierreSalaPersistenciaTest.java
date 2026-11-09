@@ -6,11 +6,11 @@ import epn.edu.ec.service.*;
 import jakarta.persistence.*;
 import java.time.*;
 import java.util.*;
-import org.junit.jupiter.api.*;
+import org.junit.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
-class CierreSalaPersistenciaTest {
+public class CierreSalaPersistenciaTest extends PruebaSalaPrivada {
 
     private EntityManagerFactory factory;
     private ServicioCierreSalaPrivada cierre;
@@ -24,8 +24,8 @@ class CierreSalaPersistenciaTest {
     private final Instant inicio =
             Instant.parse("2026-11-08T15:00:00Z");
 
-    @BeforeEach
-    void preparar() {
+    @Before
+    public void setUp() {
         factory = Persistence.createEntityManagerFactory(
                 "tarea3",
                 Map.of(
@@ -53,8 +53,8 @@ class CierreSalaPersistenciaTest {
         salas.guardarNueva(sala);
     }
 
-    @AfterEach
-    void cerrarFactory() {
+    @After
+    public void tearDown() {
         if (factory != null) {
             factory.close();
         }
@@ -87,7 +87,7 @@ class CierreSalaPersistenciaTest {
     }
 
     @Test
-    void cerrarSinCompanerosNoCreaUnaSesionDeEstudio() {
+    public void given_sala_sin_companeros_when_cerrar_then_no_crea_sesion_de_estudio() {
         assertTrue(
                 cierre.cerrar(ana, sala.getId(), true, inicio)
         );
@@ -101,7 +101,7 @@ class CierreSalaPersistenciaTest {
     }
 
     @Test
-    void cerrarConCompanerosAntesDeIniciarNoRegistraTiempo() {
+    public void given_companeros_sin_ciclo_when_cerrar_then_no_registra_tiempo() {
         agregarLuis();
 
         assertTrue(
@@ -114,7 +114,7 @@ class CierreSalaPersistenciaTest {
     }
 
     @Test
-    void cerrarEnConcentracionConserva18MinutosParaAmbos() {
+    public void given_concentracion_de_18_minutos_when_cerrar_then_conserva_tiempo_para_ambos() {
         iniciarConDos();
         Instant fin = inicio.plusSeconds(18 * 60);
 
@@ -151,7 +151,7 @@ class CierreSalaPersistenciaTest {
     }
 
     @Test
-    void cerrarDuranteDescansoNoCuentaElDescansoComoEstudio() {
+    public void given_ciclo_en_descanso_when_cerrar_then_no_cuenta_descanso_como_estudio() {
         iniciarConDos();
         Instant fin = inicio.plusSeconds(26 * 60);
 
@@ -171,7 +171,7 @@ class CierreSalaPersistenciaTest {
     }
 
     @Test
-    void cancelarLaConfirmacionMantieneElCicloEnEjecucion() {
+    public void given_ciclo_activo_when_cancelar_confirmacion_de_cierre_then_continua_en_ejecucion() {
         iniciarConDos();
         Instant ahora = inicio.plusSeconds(18 * 60);
 
@@ -195,7 +195,7 @@ class CierreSalaPersistenciaTest {
     }
 
     @Test
-    void participanteNoPuedeCerrarLaSala() {
+    public void given_participante_invitado_when_cerrar_sala_then_rechaza_y_conserva_ciclo() {
         iniciarConDos();
 
         assertThrows(
@@ -216,7 +216,7 @@ class CierreSalaPersistenciaTest {
     }
 
     @Test
-    void avisoSeRecuperaDesdeOtraInstanciaYSeConsumeUnaVez() {
+    public void given_sala_cerrada_when_recuperar_aviso_desde_otra_instancia_then_se_consume_una_vez() {
         iniciarConDos();
 
         assertTrue(
@@ -252,7 +252,7 @@ class CierreSalaPersistenciaTest {
     }
 
     @Test
-    void falloAlGuardarAvisosRevierteTodoElCierre() {
+    public void given_fallo_al_guardar_avisos_when_cerrar_then_revierte_cierre_completo() {
         iniciarConDos();
 
         try (var em = factory.createEntityManager()) {
