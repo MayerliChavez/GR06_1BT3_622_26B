@@ -295,7 +295,7 @@
     </c:choose>
 
     <p class="bottom-note">
-        <span>✦</span> Concéntrense juntos y conversen solo en los descansos.
+        <span>✦</span> Concéntrense juntos y aprovechen los descansos para conversar.
     </p>
 
     <footer class="page-footer">
