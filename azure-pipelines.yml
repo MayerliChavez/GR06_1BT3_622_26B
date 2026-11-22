@@ -1,0 +1,50 @@
+
+# Azure Pipeline - Proyecto Pomora
+# Practica de integracion continua
+
+trigger:
+  branches:
+    include:
+      - ci/azure-pipelines-practica
+
+pr: none
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  # Paso 1: Configurar Java 21
+  - task: JavaToolInstaller@0
+    displayName: 'Configurar Java 21'
+    inputs:
+      versionSpec: '21'
+      jdkArchitectureOption: 'x64'
+      jdkSourceOption: 'PreInstalled'
+
+  # Paso 2: Verificar herramientas
+  - script: |
+      java -version
+      mvn -version
+    displayName: 'Verificar Java y Maven'
+
+  # Paso 3: Compilar y ejecutar pruebas
+  - script: mvn -B clean verify
+    displayName: 'Compilar y probar Pomora'
+
+  # Paso 4: Publicar resultados de pruebas
+  - task: PublishTestResults@2
+    displayName: 'Publicar resultados JUnit'
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: '**/surefire-reports/TEST-*.xml'
+      failTaskOnFailedTests: true
+
+  # Paso 5: Publicar archivo WAR
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publicar WAR de Pomora'
+    condition: succeeded()
+    inputs:
+      targetPath: '$(Build.SourcesDirectory)/target/GR06_1BT3_622_26B.war'
+      artifact: 'Pomora-WAR'
+      publishLocation: 'pipeline'
